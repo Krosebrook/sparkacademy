@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Course } from "@/entities/Course";
 import { Enrollment } from "@/entities/Enrollment";
@@ -124,16 +125,28 @@ export default function Dashboard() {
         const userData = await base44.auth.me();
         setUser(userData);
         
-        // Check if user has active subscription
+        // STRICT subscription check - must have subscription object with active/trialing status
         const subscription = userData?.subscription;
-        const isActive = subscription?.status === 'active' || subscription?.status === 'trialing';
-        setHasAccess(isActive);
+        const hasValidSubscription = subscription && 
+                                     subscription.status && 
+                                     (subscription.status === 'active' || subscription.status === 'trialing');
         
-        // If logged in but no subscription, redirect to billing
-        if (userData && !isActive) {
+        console.log('[Dashboard] Subscription check:', {
+          email: userData?.email,
+          hasSubscription: !!subscription,
+          status: subscription?.status,
+          hasValidSubscription
+        });
+        
+        setHasAccess(hasValidSubscription);
+        
+        // If logged in but no valid subscription, redirect to landing page
+        if (userData && !hasValidSubscription) {
+          console.log('[Dashboard] No valid subscription - redirecting to landing page');
           window.location.href = createPageUrl("LandingPage");
         }
       } catch (error) {
+        console.log('[Dashboard] User not authenticated - showing landing page');
         // User not logged in - show landing page
         setUser(null);
         setHasAccess(false);
@@ -152,7 +165,7 @@ export default function Dashboard() {
     );
   }
 
-  // Show landing page if not logged in OR no subscription access
+  // Show landing page if not logged in OR no valid subscription
   if (!user || !hasAccess) {
     return <LandingPage />;
   }

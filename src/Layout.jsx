@@ -99,21 +99,25 @@ export default function Layout({ children, currentPageName }) {
       const userData = await base44.auth.me();
       setUser(userData);
       
-      // Check if user has active subscription
+      // STRICT subscription check - must have subscription object with active/trialing status
       const subscription = userData?.subscription;
-      const isActive = subscription?.status === 'active' || subscription?.status === 'trialing';
-      setHasAccess(isActive);
+      const hasValidSubscription = subscription && 
+                                   subscription.status && 
+                                   (subscription.status === 'active' || subscription.status === 'trialing');
+      
+      console.log('[Layout] Subscription check:', {
+        hasSubscription: !!subscription,
+        status: subscription?.status,
+        hasValidSubscription
+      });
+      
+      setHasAccess(hasValidSubscription);
     } catch (error) {
-      console.log("User not authenticated");
+      console.log("[Layout] User not authenticated");
       setUser(null);
       setHasAccess(false);
     }
     setIsLoading(false);
-  };
-
-  const handleLogout = async () => {
-    await base44.auth.logout();
-    window.location.href = createPageUrl("LandingPage");
   };
 
   // Show loading state
@@ -131,13 +135,17 @@ export default function Layout({ children, currentPageName }) {
     return <div className="min-h-screen">{children}</div>;
   }
 
-  // If not logged in OR no subscription, redirect to landing page
+  // STRICT CHECK: Block if not logged in OR no valid subscription
   if (!user || !hasAccess) {
+    console.log('[Layout] Access denied - redirecting to landing page', {
+      hasUser: !!user,
+      hasAccess
+    });
     window.location.href = createPageUrl("LandingPage");
     return null;
   }
 
-  // User has access, show full app
+  // User has active subscription - show full app
   return (
     <SidebarProvider>
       <style>{`
@@ -276,7 +284,10 @@ export default function Layout({ children, currentPageName }) {
                     <span>Billing</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50">
+                <DropdownMenuItem onClick={async () => {
+                  await base44.auth.logout();
+                  window.location.href = createPageUrl("LandingPage");
+                }} className="cursor-pointer text-red-500 focus:text-red-500 focus:bg-red-50">
                   <LogOut className="mr-2 h-4 w-4" />
                   <span>Sign Out</span>
                 </DropdownMenuItem>
