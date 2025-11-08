@@ -1,0 +1,63 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { lesson_content, course_title, lesson_title, difficulty } = await req.json();
+
+    const prompt = `Based on this lesson content, generate a practical project assignment:
+
+Course: ${course_title}
+Lesson: ${lesson_title}
+Difficulty: ${difficulty || 'medium'}
+
+Lesson Content:
+${lesson_content}
+
+Generate a project assignment that:
+1. Applies the concepts from this lesson
+2. Is challenging but achievable
+3. Includes clear requirements
+4. Estimates time needed
+5. Provides assessment criteria
+
+Return JSON with this structure:
+{
+  "title": "project title",
+  "description": "detailed project description",
+  "requirements": ["requirement 1", "requirement 2", "requirement 3"],
+  "estimated_time": "e.g., 2-3 hours",
+  "difficulty": "easy/medium/hard",
+  "assessment_criteria": ["criterion 1", "criterion 2"],
+  "hints": ["hint 1", "hint 2"]
+}`;
+
+    const project = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          description: { type: "string" },
+          requirements: { type: "array", items: { type: "string" } },
+          estimated_time: { type: "string" },
+          difficulty: { type: "string" },
+          assessment_criteria: { type: "array", items: { type: "string" } },
+          hints: { type: "array", items: { type: "string" } }
+        }
+      }
+    });
+
+    return Response.json({ success: true, project });
+
+  } catch (error) {
+    console.error('Error generating project:', error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});

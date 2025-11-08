@@ -1,0 +1,79 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@12.18.0';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { sessionId } = await req.json();
+    if (!sessionId) {
+      return Response.json({ error: 'Missing sessionId' }, { status: 400 });
+    }
+
+    const stripeSecret = Deno.env.get('secret_key');
+    if (!stripeSecret) {
+      return Response.json({ error: 'Stripe API key not configured' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' });
+
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const isPayment = session.mode === 'payment';
+    const isComplete = session.status === 'complete';
+    const isPaid = session.payment_status === 'paid';
+    const sessionEmail = session.customer_details?.email || session.customer_email || '';
+    const emailMatches = sessionEmail && user.email && sessionEmail.toLowerCase() === user.email.toLowerCase();
+
+    if (!(isPayment && isComplete && isPaid && emailMatches)) {
+      return Response.json({
+        ok: false,
+        reason: 'Session not valid',
+        details: { isPayment, isComplete, isPaid, emailMatches }
+      }, { status: 400 });
+    }
+
+    const courseId = session.metadata?.course_id;
+    if (!courseId) {
+      return Response.json({ ok: false, reason: 'Missing course_id in session metadata' }, { status: 400 });
+    }
+
+    // Check if enrollment already exists to avoid duplicates
+    const existing = await base44.entities.Enrollment.filter({
+      course_id: courseId,
+      student_email: user.email
+    });
+    if (!existing || existing.length === 0) {
+      // Create enrollment (user-scoped write allowed)
+      await base44.entities.Enrollment.create({
+        course_id: courseId,
+        student_email: user.email,
+        progress: [],
+        completion_percentage: 0,
+        purchase_date: new Date().toISOString(),
+        amount_paid: (session.amount_total || 0) / 100
+      });
+    }
+
+    // Update course stats (requires privilege; use service role)
+    const courseArr = await base44.asServiceRole.entities.Course.filter({ id: courseId });
+    const course = courseArr?.[0];
+    if (course) {
+      const newStudents = (course.total_students || 0) + 1;
+      const additionalSales = (session.amount_total || 0) / 100;
+      const newSales = (course.total_sales || 0) + additionalSales;
+
+      await base44.asServiceRole.entities.Course.update(course.id, {
+        total_students: newStudents,
+        total_sales: newSales
+      });
+    }
+
+    return Response.json({ ok: true, courseId });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});

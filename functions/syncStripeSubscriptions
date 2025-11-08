@@ -1,0 +1,125 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@12.18.0';
+
+Deno.serve(async (req) => {
+  console.log('=== Starting Stripe Subscription Sync ===');
+  
+  try {
+    const base44 = createClientFromRequest(req);
+    
+    // Only allow admin users to run this
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
+    }
+
+    const stripeSecret = Deno.env.get('secret_key');
+    if (!stripeSecret) {
+      return Response.json({ error: 'Stripe API key not configured' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' });
+
+    // Fetch all active subscriptions from Stripe
+    console.log('Fetching active subscriptions from Stripe...');
+    const subscriptions = await stripe.subscriptions.list({
+      status: 'active',
+      limit: 100
+    });
+
+    console.log(`Found ${subscriptions.data.length} active subscriptions`);
+
+    const results = {
+      total: subscriptions.data.length,
+      updated: 0,
+      notFound: 0,
+      errors: [],
+      details: []
+    };
+
+    // Process each subscription
+    for (const subscription of subscriptions.data) {
+      try {
+        // Get customer details
+        const customer = await stripe.customers.retrieve(subscription.customer);
+        const customerEmail = customer.email;
+
+        if (!customerEmail) {
+          console.log(`⚠️ No email for customer ${subscription.customer}`);
+          results.notFound++;
+          results.details.push({
+            customerId: subscription.customer,
+            status: 'no_email'
+          });
+          continue;
+        }
+
+        console.log(`Processing subscription for: ${customerEmail}`);
+
+        // Find user in database
+        const users = await base44.asServiceRole.entities.User.filter({ 
+          email: customerEmail 
+        });
+
+        if (users && users.length > 0) {
+          const dbUser = users[0];
+          const currentSub = dbUser.subscription || {};
+          
+          // Update subscription status
+          const renewDate = new Date(subscription.current_period_end * 1000);
+          
+          await base44.asServiceRole.entities.User.update(dbUser.id, {
+            subscription: {
+              ...currentSub,
+              plan: 'premium',
+              status: subscription.status,
+              renews_at: renewDate.toISOString(),
+              stripe_customer_id: subscription.customer,
+              stripe_subscription_id: subscription.id
+            }
+          });
+
+          console.log(`✓ Updated user: ${customerEmail}`);
+          results.updated++;
+          results.details.push({
+            email: customerEmail,
+            userId: dbUser.id,
+            status: 'updated',
+            subscriptionStatus: subscription.status
+          });
+        } else {
+          console.log(`✗ User not found: ${customerEmail}`);
+          results.notFound++;
+          results.details.push({
+            email: customerEmail,
+            status: 'not_found'
+          });
+        }
+      } catch (error) {
+        console.error(`Error processing subscription ${subscription.id}:`, error.message);
+        results.errors.push({
+          subscriptionId: subscription.id,
+          error: error.message
+        });
+      }
+    }
+
+    console.log('=== Sync Complete ===');
+    console.log(`Updated: ${results.updated}`);
+    console.log(`Not Found: ${results.notFound}`);
+    console.log(`Errors: ${results.errors.length}`);
+
+    return Response.json({
+      success: true,
+      message: 'Subscription sync completed',
+      results
+    });
+
+  } catch (error) {
+    console.error('✗ Sync error:', error.message);
+    return Response.json({ 
+      error: error.message,
+      stack: error.stack
+    }, { status: 500 });
+  }
+});

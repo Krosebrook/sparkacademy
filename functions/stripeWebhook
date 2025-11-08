@@ -1,0 +1,179 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@12.18.0';
+
+Deno.serve(async (req) => {
+  console.log('=== Webhook Received ===');
+  
+  try {
+    const stripeSecret = Deno.env.get('secret_key');
+    const webhookSecret = Deno.env.get('webhook_secret');
+
+    console.log('Stripe Secret exists:', !!stripeSecret);
+    console.log('Webhook Secret exists:', !!webhookSecret);
+
+    if (!stripeSecret || !webhookSecret) {
+      console.error('Missing Stripe configuration');
+      return Response.json({ error: 'Stripe configuration missing' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' });
+
+    const signature = req.headers.get('stripe-signature');
+    console.log('Stripe Signature exists:', !!signature);
+    
+    if (!signature) {
+      console.error('No signature provided');
+      return Response.json({ error: 'No signature provided' }, { status: 400 });
+    }
+
+    const body = await req.text();
+    console.log('Body length:', body.length);
+
+    let event;
+    try {
+      event = await stripe.webhooks.constructEventAsync(
+        body,
+        signature,
+        webhookSecret
+      );
+      console.log('✓ Webhook signature verified');
+      console.log('Event type:', event.type);
+    } catch (err) {
+      console.error('✗ Webhook signature verification failed:', err.message);
+      return Response.json({ error: 'Invalid signature' }, { status: 400 });
+    }
+
+    const base44 = createClientFromRequest(req);
+
+    console.log('Event data:', JSON.stringify(event.data.object, null, 2));
+
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      
+      console.log('=== Processing checkout.session.completed ===');
+      console.log('Session ID:', session.id);
+      console.log('Session Mode:', session.mode);
+      console.log('Customer Email:', session.customer_details?.email || session.customer_email);
+      
+      const customerEmail = 
+        session.customer_details?.email || 
+        session.customer_email || 
+        session.metadata?.customer_email;
+      
+      console.log('Final customer email:', customerEmail);
+      
+      if (!customerEmail) {
+        console.error('✗ No customer email found in session');
+        return Response.json({ error: 'No customer email' }, { status: 400 });
+      }
+
+      if (session.mode === 'subscription') {
+        try {
+          console.log('Searching for user with email:', customerEmail);
+          const users = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
+          
+          console.log('Found users:', users.length);
+          
+          if (users && users.length > 0) {
+            const user = users[0];
+            console.log('Updating user:', user.id, user.email);
+            
+            const now = new Date();
+            const renew = new Date();
+            renew.setMonth(renew.getMonth() + 1);
+            
+            await base44.asServiceRole.entities.User.update(user.id, {
+              subscription: {
+                plan: 'premium',
+                status: 'active',
+                started_at: now.toISOString(),
+                renews_at: renew.toISOString(),
+                stripe_customer_id: typeof session.customer === 'string' ? session.customer : session.customer?.id,
+                stripe_subscription_id: session.subscription
+              }
+            });
+            
+            console.log('✓ Successfully activated subscription for:', customerEmail);
+          } else {
+            console.error('✗ User not found:', customerEmail);
+            return Response.json({ error: 'User not found', email: customerEmail }, { status: 404 });
+          }
+        } catch (error) {
+          console.error('✗ Error updating user:', error.message);
+          console.error('Error stack:', error.stack);
+          return Response.json({ error: 'Error updating user', details: error.message }, { status: 500 });
+        }
+      } else {
+        console.log(`Ignoring non-subscription checkout: ${session.mode}`);
+      }
+    } else if (event.type === 'customer.subscription.updated') {
+      const subscription = event.data.object;
+      console.log('=== Processing subscription update ===');
+      console.log('Subscription status:', subscription.status);
+      
+      try {
+        const customer = await stripe.customers.retrieve(subscription.customer);
+        const customerEmail = customer.email;
+        
+        if (customerEmail) {
+          const users = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
+          
+          if (users && users.length > 0) {
+            const user = users[0];
+            const currentSub = user.subscription || {};
+            
+            await base44.asServiceRole.entities.User.update(user.id, {
+              subscription: {
+                ...currentSub,
+                status: subscription.status,
+                renews_at: subscription.current_period_end ? new Date(subscription.current_period_end * 1000).toISOString() : currentSub.renews_at
+              }
+            });
+            
+            console.log('✓ Updated subscription status to:', subscription.status);
+          }
+        }
+      } catch (error) {
+        console.error('✗ Error updating subscription status:', error.message);
+      }
+    } else if (event.type === 'customer.subscription.deleted') {
+      const subscription = event.data.object;
+      console.log('=== Processing subscription cancellation ===');
+      
+      try {
+        const customer = await stripe.customers.retrieve(subscription.customer);
+        const customerEmail = customer.email;
+        
+        if (customerEmail) {
+          const users = await base44.asServiceRole.entities.User.filter({ email: customerEmail });
+          
+          if (users && users.length > 0) {
+            const user = users[0];
+            const currentSub = user.subscription || {};
+            
+            await base44.asServiceRole.entities.User.update(user.id, {
+              subscription: {
+                ...currentSub,
+                status: 'cancelled'
+              }
+            });
+            
+            console.log('✓ Subscription cancelled for:', customerEmail);
+          }
+        }
+      } catch (error) {
+        console.error('✗ Error cancelling subscription:', error.message);
+      }
+    } else {
+      console.log('Ignoring event type:', event.type);
+    }
+
+    console.log('=== Webhook Processing Complete ===');
+    return Response.json({ received: true, event_type: event.type });
+    
+  } catch (error) {
+    console.error('✗ Webhook error:', error.message);
+    console.error('Error stack:', error.stack);
+    return Response.json({ error: error.message, stack: error.stack }, { status: 500 });
+  }
+});

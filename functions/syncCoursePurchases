@@ -1,0 +1,147 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@12.18.0';
+
+Deno.serve(async (req) => {
+  console.log('=== Starting Course Purchase Sync ===');
+  
+  try {
+    const base44 = createClientFromRequest(req);
+    
+    // Only allow admin users to run this
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
+    }
+
+    const stripeSecret = Deno.env.get('secret_key');
+    if (!stripeSecret) {
+      return Response.json({ error: 'Stripe API key not configured' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' });
+
+    // Fetch completed checkout sessions from the last 30 days
+    console.log('Fetching completed checkout sessions from Stripe...');
+    const sessions = await stripe.checkout.sessions.list({
+      limit: 100,
+      created: {
+        gte: Math.floor(Date.now() / 1000) - (30 * 24 * 60 * 60) // Last 30 days
+      }
+    });
+
+    console.log(`Found ${sessions.data.length} checkout sessions`);
+
+    const results = {
+      total: 0,
+      created: 0,
+      alreadyExists: 0,
+      skipped: 0,
+      errors: [],
+      details: []
+    };
+
+    // Process each session
+    for (const session of sessions.data) {
+      try {
+        // Only process completed payment sessions (not subscriptions)
+        if (session.mode !== 'payment' || session.status !== 'complete' || session.payment_status !== 'paid') {
+          continue;
+        }
+
+        results.total++;
+
+        const customerEmail = session.customer_details?.email || session.customer_email;
+        const courseId = session.metadata?.course_id;
+
+        if (!customerEmail || !courseId) {
+          console.log(`⚠️ Missing email or course_id for session ${session.id}`);
+          results.skipped++;
+          results.details.push({
+            sessionId: session.id,
+            status: 'missing_data',
+            email: customerEmail || 'unknown',
+            courseId: courseId || 'unknown'
+          });
+          continue;
+        }
+
+        console.log(`Processing purchase: ${customerEmail} → Course ${courseId}`);
+
+        // Check if enrollment already exists
+        const existingEnrollments = await base44.asServiceRole.entities.Enrollment.filter({
+          course_id: courseId,
+          student_email: customerEmail
+        });
+
+        if (existingEnrollments && existingEnrollments.length > 0) {
+          console.log(`✓ Enrollment already exists for ${customerEmail} in course ${courseId}`);
+          results.alreadyExists++;
+          results.details.push({
+            email: customerEmail,
+            courseId: courseId,
+            status: 'already_exists'
+          });
+          continue;
+        }
+
+        // Create enrollment
+        await base44.asServiceRole.entities.Enrollment.create({
+          course_id: courseId,
+          student_email: customerEmail,
+          progress: [],
+          completion_percentage: 0,
+          purchase_date: new Date(session.created * 1000).toISOString(),
+          amount_paid: (session.amount_total || 0) / 100
+        });
+
+        console.log(`✓ Created enrollment for ${customerEmail} in course ${courseId}`);
+
+        // Update course stats
+        const courses = await base44.asServiceRole.entities.Course.filter({ id: courseId });
+        if (courses && courses.length > 0) {
+          const course = courses[0];
+          await base44.asServiceRole.entities.Course.update(course.id, {
+            total_students: (course.total_students || 0) + 1,
+            total_sales: (course.total_sales || 0) + ((session.amount_total || 0) / 100)
+          });
+          console.log(`✓ Updated stats for course ${courseId}`);
+        }
+
+        results.created++;
+        results.details.push({
+          email: customerEmail,
+          courseId: courseId,
+          amount: (session.amount_total || 0) / 100,
+          status: 'created'
+        });
+
+      } catch (error) {
+        console.error(`Error processing session ${session.id}:`, error.message);
+        results.errors.push({
+          sessionId: session.id,
+          error: error.message
+        });
+      }
+    }
+
+    console.log('=== Sync Complete ===');
+    console.log(`Total payment sessions: ${results.total}`);
+    console.log(`New enrollments created: ${results.created}`);
+    console.log(`Already existed: ${results.alreadyExists}`);
+    console.log(`Skipped: ${results.skipped}`);
+    console.log(`Errors: ${results.errors.length}`);
+
+    return Response.json({
+      success: true,
+      message: 'Course purchase sync completed',
+      results
+    });
+
+  } catch (error) {
+    console.error('✗ Sync error:', error.message);
+    return Response.json({ 
+      error: error.message,
+      stack: error.stack
+    }, { status: 500 });
+  }
+});

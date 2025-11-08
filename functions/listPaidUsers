@@ -1,0 +1,99 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@12.18.0';
+
+Deno.serve(async (req) => {
+  console.log('=== Listing Paid Users ===');
+  
+  try {
+    const base44 = createClientFromRequest(req);
+    
+    // Only allow admin users
+    const user = await base44.auth.me();
+    if (!user || user.role !== 'admin') {
+      return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
+    }
+
+    const stripeSecret = Deno.env.get('secret_key');
+    if (!stripeSecret) {
+      return Response.json({ error: 'Stripe API key not configured' }, { status: 500 });
+    }
+
+    const stripe = new Stripe(stripeSecret, { apiVersion: '2024-06-20' });
+
+    // Fetch all active subscriptions from Stripe
+    console.log('Fetching active subscriptions from Stripe...');
+    const subscriptions = await stripe.subscriptions.list({
+      status: 'active',
+      limit: 100,
+      expand: ['data.customer']
+    });
+
+    console.log(`Found ${subscriptions.data.length} active subscriptions`);
+
+    const users = [];
+
+    // Process each subscription
+    for (const subscription of subscriptions.data) {
+      const customer = subscription.customer;
+      const customerEmail = typeof customer === 'object' ? customer.email : null;
+
+      if (!customerEmail) {
+        users.push({
+          subscriptionId: subscription.id,
+          customerId: typeof customer === 'string' ? customer : customer.id,
+          email: 'No email found',
+          status: subscription.status,
+          foundInDatabase: false,
+          ai_tutor_unlocked: false,
+          ai_tools_unlocked: false
+        });
+        continue;
+      }
+
+      // Check if user exists in database
+      const dbUsers = await base44.asServiceRole.entities.User.filter({ 
+        email: customerEmail 
+      });
+
+      if (dbUsers && dbUsers.length > 0) {
+        const dbUser = dbUsers[0];
+        users.push({
+          subscriptionId: subscription.id,
+          customerId: typeof customer === 'string' ? customer : customer.id,
+          email: customerEmail,
+          status: subscription.status,
+          foundInDatabase: true,
+          ai_tutor_unlocked: dbUser.ai_tutor_unlocked || false,
+          ai_tools_unlocked: dbUser.ai_tools_unlocked || false
+        });
+      } else {
+        users.push({
+          subscriptionId: subscription.id,
+          customerId: typeof customer === 'string' ? customer : customer.id,
+          email: customerEmail,
+          status: subscription.status,
+          foundInDatabase: false,
+          ai_tutor_unlocked: false,
+          ai_tools_unlocked: false
+        });
+      }
+    }
+
+    console.log('=== List Complete ===');
+    console.log(`Total users: ${users.length}`);
+    console.log(`Found in DB: ${users.filter(u => u.foundInDatabase).length}`);
+    console.log(`Not in DB: ${users.filter(u => !u.foundInDatabase).length}`);
+
+    return Response.json({
+      success: true,
+      users
+    });
+
+  } catch (error) {
+    console.error('✗ Error:', error.message);
+    return Response.json({ 
+      error: error.message,
+      stack: error.stack
+    }, { status: 500 });
+  }
+});

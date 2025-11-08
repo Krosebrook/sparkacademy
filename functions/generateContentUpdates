@@ -1,0 +1,77 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { course_id } = await req.json();
+
+    const course = await base44.entities.Course.get(course_id);
+    if (!course || course.created_by !== user.email) {
+      return Response.json({ error: 'Unauthorized or course not found' }, { status: 403 });
+    }
+
+    const prompt = `Analyze this course topic and suggest content updates based on recent developments:
+
+Course Title: ${course.title}
+Description: ${course.description}
+Category: ${course.category}
+Skills Taught: ${course.skills_taught?.join(', ') || 'Not specified'}
+
+Search for:
+1. New industry trends related to this topic
+2. Updated best practices
+3. New tools or technologies
+4. Recent case studies or examples
+5. Emerging concepts to add
+
+Return JSON with this structure:
+{
+  "updates": [
+    {
+      "type": "new_trend/best_practice/tool/case_study/concept",
+      "title": "update title",
+      "description": "why this is relevant",
+      "suggested_lesson": "which lesson to add this to or 'new lesson'",
+      "priority": "high/medium/low"
+    }
+  ],
+  "overall_relevance": "assessment of how current the course is"
+}`;
+
+    const updates = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      add_context_from_internet: true,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          updates: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                type: { type: "string" },
+                title: { type: "string" },
+                description: { type: "string" },
+                suggested_lesson: { type: "string" },
+                priority: { type: "string" }
+              }
+            }
+          },
+          overall_relevance: { type: "string" }
+        }
+      }
+    });
+
+    return Response.json({ success: true, updates });
+
+  } catch (error) {
+    console.error('Error generating content updates:', error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});
