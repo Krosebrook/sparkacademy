@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { Course } from "@/entities/Course";
 import { Enrollment } from "@/entities/Enrollment";
@@ -13,16 +12,6 @@ import { base44 } from "@/api/base44Client";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import RecentCourses from "../components/dashboard/RecentCourses";
 import QuickActions from "../components/dashboard/QuickActions";
-
-// Landing Page Components
-import LandingHeader from "../components/landing/LandingHeader";
-import HeroSection from "../components/landing/HeroSection";
-import SocialProof from "../components/landing/SocialProof";
-import FeaturesSection from "../components/landing/FeaturesSection";
-import PricingSection from "../components/landing/PricingSection";
-import FAQSection from "../components/landing/FAQSection";
-import CTASection from "../components/landing/CTASection";
-import LandingFooter from "../components/landing/LandingFooter";
 
 function LoggedInDashboard({ user }) {
   const [stats, setStats] = useState({
@@ -97,59 +86,43 @@ function LoggedInDashboard({ user }) {
   )
 }
 
-function LandingPage() {
-  return (
-    <div className="bg-white">
-      <LandingHeader />
-      <main>
-        <HeroSection />
-        <SocialProof />
-        <FeaturesSection />
-        <PricingSection />
-        <FAQSection />
-        <CTASection />
-      </main>
-      <LandingFooter />
-    </div>
-  );
-}
-
 export default function Dashboard() {
   const [user, setUser] = useState(null);
-  const [hasAccess, setHasAccess] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUser = async () => {
       try {
         const userData = await base44.auth.me();
-        setUser(userData);
         
-        // STRICT subscription check - must have subscription object with active/trialing status
+        // CRITICAL: Check for valid subscription
         const subscription = userData?.subscription;
         const hasValidSubscription = subscription && 
                                      subscription.status && 
                                      (subscription.status === 'active' || subscription.status === 'trialing');
         
-        console.log('[Dashboard] Subscription check:', {
+        console.log('[Dashboard] Access check:', {
           email: userData?.email,
           hasSubscription: !!subscription,
-          status: subscription?.status,
-          hasValidSubscription
+          subscriptionStatus: subscription?.status || 'NO_SUBSCRIPTION',
+          hasValidSubscription,
+          fullSubscriptionObject: subscription
         });
         
-        setHasAccess(hasValidSubscription);
-        
-        // If logged in but no valid subscription, redirect to landing page
-        if (userData && !hasValidSubscription) {
-          console.log('[Dashboard] No valid subscription - redirecting to landing page');
+        // If user exists but NO valid subscription, redirect immediately
+        if (!hasValidSubscription) {
+          console.log('[Dashboard] ❌ ACCESS DENIED - No valid subscription, redirecting...');
           window.location.href = createPageUrl("LandingPage");
+          return; // Don't set user or continue loading
         }
+        
+        // Only set user if they have valid subscription
+        console.log('[Dashboard] ✅ ACCESS GRANTED - Valid subscription found');
+        setUser(userData);
+        
       } catch (error) {
-        console.log('[Dashboard] User not authenticated - showing landing page');
-        // User not logged in - show landing page
-        setUser(null);
-        setHasAccess(false);
+        console.log('[Dashboard] User not authenticated, redirecting to landing...');
+        window.location.href = createPageUrl("LandingPage");
       } finally {
         setIsLoading(false);
       }
@@ -157,6 +130,7 @@ export default function Dashboard() {
     checkUser();
   }, []);
 
+  // Show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen w-full flex items-center justify-center bg-white">
@@ -165,11 +139,15 @@ export default function Dashboard() {
     );
   }
 
-  // Show landing page if not logged in OR no valid subscription
-  if (!user || !hasAccess) {
-    return <LandingPage />;
+  // If no user (redirect in progress or failed auth), show loading
+  if (!user) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500"></div>
+      </div>
+    );
   }
 
-  // User has active subscription - show dashboard
+  // User has valid subscription - show dashboard
   return <LoggedInDashboard user={user} />;
 }
