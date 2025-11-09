@@ -1,12 +1,16 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton'; // This might not be needed anymore if the new loader is used exclusively
+import { Card } from '@/components/ui/card'; // This might not be needed anymore
 import LessonSidebar from '../components/course-viewer/LessonSidebar';
 import LessonContent from '../components/course-viewer/LessonContent';
 import CourseCompletion from '../components/course-viewer/CourseCompletion';
+import AITutorWidget from '../components/course-viewer/AITutorWidget';
+import { Bot, Loader2 } from 'lucide-react'; // Added Loader2
+import { Button } from '@/components/ui/button'; // Added Button for AI Tutor toggle
 
 export default function CourseViewer() {
   const location = useLocation();
@@ -14,9 +18,11 @@ export default function CourseViewer() {
 
   const [course, setCourse] = useState(null);
   const [enrollment, setEnrollment] = useState(null);
+  // activeLesson now stores the order number, not the full lesson object
   const [activeLesson, setActiveLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const [showAITutor, setShowAITutor] = useState(false); // New state for AI Tutor visibility
 
   const courseId = new URLSearchParams(location.search).get('id');
 
@@ -65,7 +71,9 @@ export default function CourseViewer() {
       
       const nextLessonOrder = lastCompletedLessonOrder + 1;
       const firstLesson = courseData.lessons.find(l => l.order === nextLessonOrder) || courseData.lessons[0];
-      setActiveLesson(firstLesson);
+      
+      // Set active lesson to its order number
+      setActiveLesson(firstLesson ? firstLesson.order : null);
 
     } catch (error) {
       console.error("Error loading course viewer:", error);
@@ -81,12 +89,14 @@ export default function CourseViewer() {
     }
   }, [courseId, loadData]);
 
+  // handleLessonSelect now takes a lesson object and sets its order as active
   const handleLessonSelect = (lesson) => {
-    setActiveLesson(lesson);
+    setActiveLesson(lesson.order);
   };
 
   const handleQuizComplete = async (score, passed) => {
-    const lessonOrder = activeLesson.order;
+    // activeLesson is now an order number, so we need to find the lesson object
+    const lessonOrder = activeLesson; 
     let newProgress = [...(enrollment.progress || [])];
     const progressIndex = newProgress.findIndex(p => p.lesson_order === lessonOrder);
 
@@ -117,8 +127,11 @@ export default function CourseViewer() {
     if (passed) {
       const nextLesson = course.lessons.find(l => l.order === lessonOrder + 1);
       if (nextLesson) {
-        setActiveLesson(nextLesson);
+        // Set active lesson to its order number
+        setActiveLesson(nextLesson.order);
       } else {
+        // All lessons completed, set activeLesson to null to show CourseCompletion
+        setActiveLesson(null);
         // All lessons completed, fetch recommendations
         const allCourses = await base44.entities.Course.filter({ is_published: true });
         const recommendations = allCourses
@@ -129,6 +142,7 @@ export default function CourseViewer() {
     }
   };
   
+  // isCourseCompleted is defined but not directly used in the new render logic for CourseCompletion
   const isCourseCompleted = enrollment?.completion_percentage === 100;
 
   const isLessonLocked = (lesson) => {
@@ -144,46 +158,68 @@ export default function CourseViewer() {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen bg-slate-50">
-        <div className="w-1/4 h-full p-4 border-r"><Skeleton className="h-full w-full" /></div>
-        <div className="w-3/4 h-full p-8"><Skeleton className="h-full w-full" /></div>
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
       </div>
     );
   }
 
   if (!course) {
-    return <div className="text-center p-8">Course not found or an error occurred.</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-slate-600">Course not found</p>
+      </div>
+    );
   }
 
+  // Find the current lesson data based on the activeLesson order number
+  const currentLessonData = course.lessons?.find(l => l.order === activeLesson);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-orange-50">
-      <div className="flex h-[calc(100vh-4rem)] bg-white">
-        <div className="w-full md:w-1/4 h-full overflow-y-auto border-r bg-slate-50">
-          <LessonSidebar
-            course={course}
-            enrollment={enrollment}
-            activeLesson={activeLesson}
-            onLessonClick={handleLessonSelect}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
+      <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4 md:p-6 gap-6">
+        <div className="w-full md:w-1/4 h-full md:h-[calc(100vh-8rem)] overflow-y-auto bg-white rounded-lg shadow-md p-4">
+          <LessonSidebar 
+            lessons={course.lessons || []}
+            activeLesson={activeLesson} {/* Pass the order number */}
+            onLessonClick={handleLessonSelect} {/* handleLessonSelect now expects lesson object */}
+            progress={enrollment?.progress || []}
             isLessonLocked={isLessonLocked}
           />
         </div>
 
-        <main className="flex-1 h-full overflow-y-auto p-4 sm:p-6 lg:p-8">
-          {isCourseCompleted ? (
-            <CourseCompletion course={course} enrollment={enrollment} recommendedCourses={recommendedCourses} />
-          ) : activeLesson ? (
-            <LessonContent
-              lesson={activeLesson}
+        <main className="flex-1 h-full md:h-[calc(100vh-8rem)] overflow-y-auto bg-white rounded-lg shadow-md p-4 sm:p-6 lg:p-8">
+          {activeLesson && currentLessonData ? (
+            <LessonContent 
+              lesson={currentLessonData}
               onQuizComplete={handleQuizComplete}
-              enrollment={enrollment}
+              progress={enrollment?.progress?.find(p => p.lesson_order === activeLesson)}
             />
           ) : (
-            <div className="text-center">
-              <h2 className="text-xl font-semibold">Select a lesson to get started.</h2>
-            </div>
+            <CourseCompletion course={course} enrollment={enrollment} />
+            // recommendedCourses prop is removed as per outline
           )}
         </main>
       </div>
+
+      {/* AI Tutor Toggle Button */}
+      {!showAITutor && (
+        <Button
+          onClick={() => setShowAITutor(true)}
+          className="fixed bottom-4 right-4 z-40 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-2xl rounded-full w-14 h-14"
+          size="icon"
+        >
+          <Bot className="w-6 h-6" />
+        </Button>
+      )}
+
+      {/* AI Tutor Widget */}
+      <AITutorWidget 
+        course={course}
+        currentLesson={currentLessonData}
+        isOpen={showAITutor}
+        onClose={() => setShowAITutor(false)}
+      />
     </div>
   );
 }

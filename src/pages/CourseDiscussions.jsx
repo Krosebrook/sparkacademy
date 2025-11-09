@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { MessageSquare, ThumbsUp, Reply, Send } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Reply, Send, Sparkles, TrendingUp, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function CourseDiscussions() {
@@ -19,6 +20,8 @@ export default function CourseDiscussions() {
   const [replyingTo, setReplyingTo] = useState(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [aiPrompts, setAiPrompts] = useState([]);
+  const [isGeneratingPrompts, setIsGeneratingPrompts] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -41,6 +44,55 @@ export default function CourseDiscussions() {
       console.error('Error loading discussions:', error);
     }
     setIsLoading(false);
+  };
+
+  const generateAIPrompts = async () => {
+    if (!course) return;
+    setIsGeneratingPrompts(true);
+
+    try {
+      const prompt = `Generate 3 engaging discussion prompts for students taking the course "${course.title}".
+
+Course Description: ${course.description}
+Course Topics: ${course.lessons?.map(l => l.title).join(', ') || 'Various topics'}
+
+Create prompts that:
+- Encourage critical thinking
+- Relate to real-world applications
+- Spark debate and different perspectives
+- Are open-ended and thought-provoking
+
+Format as a JSON array of objects with "prompt" and "category" fields.`;
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            prompts: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  prompt: { type: "string" },
+                  category: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      setAiPrompts(result.prompts || []);
+    } catch (error) {
+      console.error('Error generating prompts:', error);
+    }
+    setIsGeneratingPrompts(false);
+  };
+
+  const useAIPrompt = (prompt) => {
+    setNewMessage(prompt);
+    setAiPrompts([]);
   };
 
   const handlePostMessage = async () => {
@@ -83,7 +135,19 @@ export default function CourseDiscussions() {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center">Loading discussions...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p>Course not found</p>
+      </div>
+    );
   }
 
   const topLevelDiscussions = discussions.filter(d => !d.parent_id);
@@ -96,6 +160,78 @@ export default function CourseDiscussions() {
           <h1 className="text-2xl md:text-3xl font-bold text-slate-800 mb-2">Course Discussions</h1>
           <p className="text-slate-600">{course?.title}</p>
         </div>
+
+        {/* AI Discussion Prompts */}
+        {aiPrompts.length === 0 ? (
+          <Card className="border-0 shadow-lg mb-6 bg-gradient-to-r from-purple-50 to-pink-50">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-slate-800">Need discussion ideas?</h3>
+                    <p className="text-sm text-slate-600">Get AI-generated prompts to start engaging conversations</p>
+                  </div>
+                </div>
+                <Button
+                  onClick={generateAIPrompts}
+                  disabled={isGeneratingPrompts}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500"
+                >
+                  {isGeneratingPrompts ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Get AI Prompts
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-0 shadow-lg mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-purple-500" />
+                AI-Generated Discussion Prompts
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {aiPrompts.map((item, idx) => (
+                <div key={idx} className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-purple-300 transition-colors">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <Badge className="mb-2 bg-purple-100 text-purple-700">{item.category}</Badge>
+                      <p className="text-slate-700">{item.prompt}</p>
+                    </div>
+                    <Button
+                      onClick={() => useAIPrompt(item.prompt)}
+                      size="sm"
+                      variant="outline"
+                    >
+                      Use This
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              <Button
+                onClick={() => setAiPrompts([])}
+                variant="ghost"
+                size="sm"
+                className="w-full"
+              >
+                Hide Prompts
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
         {/* New Post */}
         <Card className="mb-6 border-0 shadow-lg">

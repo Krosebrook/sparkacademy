@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -13,6 +14,7 @@ import {
   Home,
   Wand2,
   CreditCard,
+  BarChart3, // Added BarChart3 icon
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -56,6 +58,12 @@ const navigationItems = [
     url: createPageUrl("MyCourses"),
     icon: Library,
     description: "Manage"
+  },
+  {
+    title: "Student Analytics",
+    url: createPageUrl("StudentAnalytics"),
+    icon: BarChart3,
+    description: "Track Progress"
   },
   {
     title: "AI Tutor",
