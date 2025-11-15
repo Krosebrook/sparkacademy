@@ -2,13 +2,14 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { createPageUrl } from '@/utils';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Card } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import LessonSidebar from '../components/course-viewer/LessonSidebar';
 import LessonContent from '../components/course-viewer/LessonContent';
 import CourseCompletion from '../components/course-viewer/CourseCompletion';
 import AITutorWidget from '../components/course-viewer/AITutorWidget';
-import { Bot, Loader2 } from 'lucide-react';
+import ProgressTracker from '../components/course-viewer/ProgressTracker';
+import CourseDiscussions from '../components/course-viewer/CourseDiscussions';
+import { Bot, Loader2, BookOpen, MessageCircle, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CourseViewer() {
@@ -19,8 +20,8 @@ export default function CourseViewer() {
   const [enrollment, setEnrollment] = useState(null);
   const [activeLesson, setActiveLesson] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [recommendedCourses, setRecommendedCourses] = useState([]);
   const [showAITutor, setShowAITutor] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
 
   const courseId = new URLSearchParams(location.search).get('id');
 
@@ -28,14 +29,14 @@ export default function CourseViewer() {
     setIsLoading(true);
     try {
       const user = await base44.auth.me();
+      setCurrentUser(user);
+      
       const courseData = await base44.entities.Course.get(courseId);
-
       if (!courseData) {
         console.error("Course not found:", courseId);
         navigate(createPageUrl("MyCourses"));
         return;
       }
-
       setCourse(courseData);
 
       const enrollments = await base44.entities.Enrollment.filter({ 
@@ -44,7 +45,6 @@ export default function CourseViewer() {
       });
       
       let enrollmentData;
-      
       if (enrollments.length === 0) {
         enrollmentData = await base44.entities.Enrollment.create({
           course_id: courseId,
@@ -53,20 +53,17 @@ export default function CourseViewer() {
           completion_percentage: 0,
           enrollment_date: new Date().toISOString()
         });
-        console.log('✓ Created enrollment for user');
       } else {
         enrollmentData = enrollments[0];
       }
-      
       setEnrollment(enrollmentData);
 
       const lastCompletedLessonOrder = enrollmentData.progress
-        .filter(p => p.completed)
-        .reduce((max, p) => Math.max(max, p.lesson_order), 0);
+        ?.filter(p => p.completed)
+        .reduce((max, p) => Math.max(max, p.lesson_order), 0) || 0;
       
       const nextLessonOrder = lastCompletedLessonOrder + 1;
-      const firstLesson = courseData.lessons.find(l => l.order === nextLessonOrder) || courseData.lessons[0];
-      
+      const firstLesson = courseData.lessons?.find(l => l.order === nextLessonOrder) || courseData.lessons?.[0];
       setActiveLesson(firstLesson ? firstLesson.order : null);
 
     } catch (error) {
@@ -78,9 +75,7 @@ export default function CourseViewer() {
   }, [courseId, navigate]);
 
   useEffect(() => {
-    if (courseId) {
-      loadData();
-    }
+    if (courseId) loadData();
   }, [courseId, loadData]);
 
   const handleLessonSelect = (lesson) => {
@@ -107,7 +102,7 @@ export default function CourseViewer() {
     }
 
     const completedLessons = newProgress.filter(p => p.completed).length;
-    const totalLessons = course.lessons.length;
+    const totalLessons = course.lessons?.length || 0;
     const completionPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
     const updatedEnrollment = await base44.entities.Enrollment.update(enrollment.id, {
@@ -117,31 +112,21 @@ export default function CourseViewer() {
     setEnrollment(updatedEnrollment);
     
     if (passed) {
-      const nextLesson = course.lessons.find(l => l.order === lessonOrder + 1);
+      const nextLesson = course.lessons?.find(l => l.order === lessonOrder + 1);
       if (nextLesson) {
         setActiveLesson(nextLesson.order);
       } else {
         setActiveLesson(null);
-        const allCourses = await base44.entities.Course.filter({ is_published: true });
-        const recommendations = allCourses
-          .filter(c => c.id !== course.id && c.category === course.category)
-          .slice(0, 3);
-        setRecommendedCourses(recommendations);
       }
     }
   };
-  
-  const isCourseCompleted = enrollment?.completion_percentage === 100;
 
   const isLessonLocked = (lesson) => {
     if (lesson.order === 1) return false;
-    const prevLesson = course.lessons.find(l => l.order === lesson.order - 1);
-    if (!prevLesson) return false;
-    if (prevLesson.quiz) {
-      const prevLessonProgress = enrollment.progress.find(p => p.lesson_order === prevLesson.order);
-      return !prevLessonProgress?.quiz_passed;
-    }
-    return false;
+    const prevLesson = course.lessons?.find(l => l.order === lesson.order - 1);
+    if (!prevLesson || !prevLesson.quiz) return false;
+    const prevLessonProgress = enrollment.progress?.find(p => p.lesson_order === prevLesson.order);
+    return !prevLessonProgress?.quiz_passed;
   };
 
   if (isLoading) {
@@ -165,26 +150,52 @@ export default function CourseViewer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-purple-50">
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4 md:p-6 gap-6">
-        <div className="w-full md:w-1/4 h-full md:h-[calc(100vh-8rem)] overflow-y-auto bg-white rounded-lg shadow-md p-4">
-          <LessonSidebar 
-            lessons={course.lessons || []}
-            activeLesson={activeLesson}
-            onLessonClick={handleLessonSelect}
-            progress={enrollment?.progress || []}
-            isLessonLocked={isLessonLocked}
-          />
+        {/* Sidebar */}
+        <div className="w-full md:w-1/4 space-y-4">
+          <div className="bg-white rounded-lg shadow-md p-4 h-[calc(100vh-12rem)] overflow-y-auto">
+            <LessonSidebar 
+              course={course}
+              enrollment={enrollment}
+              activeLesson={course.lessons?.find(l => l.order === activeLesson)}
+              onLessonClick={handleLessonSelect}
+              isLessonLocked={isLessonLocked}
+            />
+          </div>
+          <ProgressTracker enrollment={enrollment} course={course} />
         </div>
 
-        <main className="flex-1 h-full md:h-[calc(100vh-8rem)] overflow-y-auto bg-white rounded-lg shadow-md p-4 sm:p-6 lg:p-8">
-          {activeLesson && currentLessonData ? (
-            <LessonContent 
-              lesson={currentLessonData}
-              onQuizComplete={handleQuizComplete}
-              progress={enrollment?.progress?.find(p => p.lesson_order === activeLesson)}
-            />
-          ) : (
-            <CourseCompletion course={course} enrollment={enrollment} />
-          )}
+        {/* Main Content */}
+        <main className="flex-1 bg-white rounded-lg shadow-md overflow-hidden">
+          <Tabs defaultValue="lesson" className="h-full">
+            <div className="border-b border-slate-200 px-6 pt-4">
+              <TabsList className="bg-slate-100">
+                <TabsTrigger value="lesson" className="flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" />
+                  Lesson
+                </TabsTrigger>
+                <TabsTrigger value="discussions" className="flex items-center gap-2">
+                  <MessageCircle className="h-4 w-4" />
+                  Discussions
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <TabsContent value="lesson" className="p-6 h-[calc(100vh-14rem)] overflow-y-auto">
+              {activeLesson && currentLessonData ? (
+                <LessonContent 
+                  lesson={currentLessonData}
+                  onQuizComplete={handleQuizComplete}
+                  progress={enrollment}
+                />
+              ) : (
+                <CourseCompletion course={course} enrollment={enrollment} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="discussions" className="p-6 h-[calc(100vh-14rem)] overflow-y-auto">
+              <CourseDiscussions courseId={courseId} currentUser={currentUser} />
+            </TabsContent>
+          </Tabs>
         </main>
       </div>
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { Course } from "@/entities/Course";
 import { Enrollment } from "@/entities/Enrollment";
@@ -12,6 +13,7 @@ import { base44 } from "@/api/base44Client";
 import DashboardStats from "../components/dashboard/DashboardStats";
 import RecentCourses from "../components/dashboard/RecentCourses";
 import QuickActions from "../components/dashboard/QuickActions";
+import EnrolledCourses from "../components/dashboard/EnrolledCourses";
 
 function LoggedInDashboard({ user }) {
   const [stats, setStats] = useState({
@@ -19,6 +21,8 @@ function LoggedInDashboard({ user }) {
     avgRating: 0,
   });
   const [recentCourses, setRecentCourses] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadDashboardData = useCallback(async () => {
@@ -29,7 +33,9 @@ function LoggedInDashboard({ user }) {
         setIsLoading(false);
         return;
       }
-      const courses = await Course.filter({ created_by: user.email }, '-created_date', 10);
+      
+      // Load created courses
+      const courses = await base44.entities.Course.filter({ created_by: user.email }, '-created_date', 10);
       setRecentCourses(courses);
 
       const coursesWithRatings = courses.filter(c => (c.rating || 0) > 0);
@@ -41,6 +47,18 @@ function LoggedInDashboard({ user }) {
         totalCourses: courses.length,
         avgRating: avgRating,
       });
+
+      // Load enrollments
+      const userEnrollments = await base44.entities.Enrollment.filter({ student_email: user.email });
+      setEnrollments(userEnrollments);
+
+      // Load enrolled courses
+      if (userEnrollments.length > 0) {
+        const courseIds = userEnrollments.map(e => e.course_id);
+        const allCourses = await base44.entities.Course.list(); // Fetch all courses to find the ones the user is enrolled in
+        const enrolled = allCourses.filter(c => courseIds.includes(c.id));
+        setEnrolledCourses(enrolled);
+      }
     } catch (error) {
       console.error("Error loading dashboard data:", error);
     }
@@ -74,11 +92,13 @@ function LoggedInDashboard({ user }) {
         </div>
       </div>
       <DashboardStats stats={stats} isLoading={isLoading} />
+      
       <div className="grid lg:grid-cols-3 gap-6 mt-6">
-        <div className="lg:col-span-2 order-2 lg:order-1">
+        <div className="lg:col-span-2 space-y-6">
+          <EnrolledCourses enrollments={enrollments} courses={enrolledCourses} />
           <RecentCourses courses={recentCourses} isLoading={isLoading} />
         </div>
-        <div className="order-1 lg:order-2">
+        <div>
           <QuickActions />
         </div>
       </div>
