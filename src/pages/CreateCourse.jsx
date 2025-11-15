@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Save, Sparkles } from "lucide-react";
-import { createPageUrl } from "./utils";
+import { createPageUrl } from "../utils";
 import AIContentGenerator from "../components/course/AIContentGenerator";
 import GeneratedLessonsPreview from "../components/course/GeneratedLessonsPreview";
 import GeneratedQuizPreview from "../components/course/GeneratedQuizPreview";

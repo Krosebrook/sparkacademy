@@ -5,7 +5,7 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, BookOpen, Clock, Sparkles } from "lucide-react";
-import { createPageUrl } from "./utils";
+import { createPageUrl } from "../utils";
 
 export default function MyCourses() {
     const navigate = useNavigate();
