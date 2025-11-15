@@ -10,9 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
-import { GripVertical, Trash2, Plus, Save, ArrowLeft, BrainCircuit } from "lucide-react";
+import { GripVertical, Trash2, Plus, Save, ArrowLeft, BrainCircuit, Image, Video } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import QuizEditor from "../components/course-editor/QuizEditor";
+import AIContentAssistant from "../components/course-editor/AIContentAssistant";
 
 export default function CourseEditor() {
   const navigate = useNavigate();
@@ -57,6 +58,19 @@ export default function CourseEditor() {
   const handleLessonChange = (index, field, value) => {
     const newLessons = [...course.lessons];
     newLessons[index][field] = value;
+    setCourse(prev => ({ ...prev, lessons: newLessons }));
+  };
+
+  const embedMedia = (lessonIndex, type) => {
+    const url = prompt(`Enter ${type} URL:`);
+    if (!url) return;
+
+    const embedCode = type === 'video'
+      ? `<div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; margin: 20px 0;"><iframe src="${url}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" frameborder="0" allowfullscreen></iframe></div>`
+      : `<img src="${url}" alt="Embedded image" style="max-width: 100%; height: auto; margin: 20px 0;" />`;
+
+    const newLessons = [...course.lessons];
+    newLessons[lessonIndex].content += embedCode;
     setCourse(prev => ({ ...prev, lessons: newLessons }));
   };
 
@@ -221,6 +235,33 @@ export default function CourseEditor() {
                                 <Trash2 className="w-4 h-4 text-red-500" />
                               </Button>
                             </div>
+
+                            <div className="flex gap-2 mb-3">
+                              <AIContentAssistant
+                                content={lesson.content}
+                                onAccept={(newContent) => handleLessonChange(index, 'content', newContent)}
+                                type="lesson"
+                              />
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => embedMedia(index, 'video')}
+                              >
+                                <Video className="h-4 w-4 mr-1" />
+                                Video
+                              </Button>
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => embedMedia(index, 'image')}
+                              >
+                                <Image className="h-4 w-4 mr-1" />
+                                Image
+                              </Button>
+                            </div>
+
                             {activeQuizEditor === index && (
                               <QuizEditor
                                 quiz={lesson.quiz}

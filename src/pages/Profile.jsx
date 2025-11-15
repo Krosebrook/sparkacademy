@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { User } from "@/entities/User";
 import { UploadFile } from "@/integrations/Core";
@@ -7,18 +8,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Save, User as UserIcon, Upload } from "lucide-react";
+import { Award, Download } from "lucide-react";
+import { base44 } from "@/api/base44Client";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [profilePictureFile, setProfilePictureFile] = useState(null);
+  const [certificates, setCertificates] = useState([]);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userData = await User.me();
         setUser(userData);
+        
+        // Load certificates
+        const certs = await base44.entities.Certificate.filter({ student_email: userData.email });
+        setCertificates(certs);
       } catch (error) {
         console.error("Failed to fetch user:", error);
       }
@@ -74,7 +82,7 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
-      <div className="p-4 md:p-6 lg:p-8 max-w-2xl mx-auto">
+      <div className="p-4 md:p-6 lg:p-8 max-w-2xl mx-auto space-y-6">
         <header className="mb-6 md:mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-slate-800 flex items-center gap-3">
             <UserIcon className="w-8 h-8 text-blue-500" />
@@ -142,6 +150,42 @@ export default function ProfilePage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* My Certificates Section */}
+        {certificates.length > 0 && (
+          <Card className="border-0 shadow-xl bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="h-5 w-5 text-amber-500" />
+                My Certificates
+              </CardTitle>
+              <CardDescription>Certificates you've earned from completed courses</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {certificates.map((cert) => (
+                <div key={cert.id} className="flex items-center justify-between p-4 rounded-lg border border-slate-200 hover:border-amber-300 hover:shadow-md transition-all">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-slate-900">{cert.course_title}</h4>
+                    <p className="text-sm text-slate-600">
+                      Completed {new Date(cert.completion_date).toLocaleDateString()}
+                    </p>
+                    <p className="text-xs text-slate-500 font-mono mt-1">
+                      {cert.verification_code}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    onClick={() => window.open(cert.certificate_url, '_blank')}
+                    className="bg-gradient-to-r from-amber-500 to-orange-500"
+                  >
+                    <Download className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
   );
