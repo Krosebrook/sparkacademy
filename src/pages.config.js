@@ -18,6 +18,7 @@ import AIDebate from './pages/AIDebate';
 import LandingPage from './pages/LandingPage';
 import Billing from './pages/Billing';
 import StudentAnalytics from './pages/StudentAnalytics';
+import CreateCourse from './pages/CreateCourse';
 import Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "LandingPage": LandingPage,
     "Billing": Billing,
     "StudentAnalytics": StudentAnalytics,
+    "CreateCourse": CreateCourse,
 }
 
 export const pagesConfig = {
