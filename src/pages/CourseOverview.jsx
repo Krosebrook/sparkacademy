@@ -5,11 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, BookOpen, Users, Clock, Star, Edit, BarChart, MessageSquare, Sparkles, Lightbulb, FileText } from "lucide-react";
+import { Loader2, BookOpen, Users, Clock, Star, Edit, BarChart, MessageSquare, Sparkles, Lightbulb, FileText, Shield, HelpCircle } from "lucide-react";
 import FeedbackInsights from "@/components/course/FeedbackInsights";
 import AIAssignmentFeedback from "@/components/instructor/AIAssignmentFeedback";
 import DiscussionSummary from "@/components/instructor/DiscussionSummary";
 import ContentImprovementSuggestions from "@/components/instructor/ContentImprovementSuggestions";
+import AIModeration from "@/components/discussion/AIModeration";
+import FAQAnalyzer from "@/components/discussion/FAQAnalyzer";
 import { createPageUrl } from "@/utils";
 
 export default function CourseOverview() {
@@ -169,6 +171,14 @@ export default function CourseOverview() {
                             <MessageSquare className="h-4 w-4 mr-2" />
                             Discussions
                         </TabsTrigger>
+                        <TabsTrigger value="moderation">
+                            <Shield className="h-4 w-4 mr-2" />
+                            Moderation
+                        </TabsTrigger>
+                        <TabsTrigger value="faq">
+                            <HelpCircle className="h-4 w-4 mr-2" />
+                            FAQs
+                        </TabsTrigger>
                         <TabsTrigger value="improvements">
                             <Lightbulb className="h-4 w-4 mr-2" />
                             Improvements
@@ -189,6 +199,14 @@ export default function CourseOverview() {
 
                     <TabsContent value="discussions">
                         <DiscussionSummary courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="moderation">
+                        <AIModeration courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="faq">
+                        <FAQAnalyzer courseId={courseId} />
                     </TabsContent>
 
                     <TabsContent value="improvements">
