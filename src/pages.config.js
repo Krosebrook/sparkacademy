@@ -28,6 +28,7 @@ import CourseOverview from './pages/CourseOverview';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
+import CareerPathing from './pages/CareerPathing';
 import Layout from './Layout.jsx';
 
 
@@ -62,6 +63,7 @@ export const PAGES = {
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
     "PersonalizedLearningPath": PersonalizedLearningPath,
     "EnhancedCourseCreator": EnhancedCourseCreator,
+    "CareerPathing": CareerPathing,
 }
 
 export const pagesConfig = {
