@@ -27,6 +27,7 @@ import GamificationDashboard from './pages/GamificationDashboard';
 import CourseOverview from './pages/CourseOverview';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
+import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import Layout from './Layout.jsx';
 
 
@@ -60,6 +61,7 @@ export const PAGES = {
     "CourseOverview": CourseOverview,
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
     "PersonalizedLearningPath": PersonalizedLearningPath,
+    "EnhancedCourseCreator": EnhancedCourseCreator,
 }
 
 export const pagesConfig = {
