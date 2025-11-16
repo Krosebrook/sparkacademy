@@ -5,8 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, BookOpen, Users, Clock, Star, Edit, BarChart, MessageSquare } from "lucide-react";
+import { Loader2, BookOpen, Users, Clock, Star, Edit, BarChart, MessageSquare, Sparkles, Lightbulb, FileText } from "lucide-react";
 import FeedbackInsights from "@/components/course/FeedbackInsights";
+import AIAssignmentFeedback from "@/components/instructor/AIAssignmentFeedback";
+import DiscussionSummary from "@/components/instructor/DiscussionSummary";
+import ContentImprovementSuggestions from "@/components/instructor/ContentImprovementSuggestions";
 import { createPageUrl } from "@/utils";
 
 export default function CourseOverview() {
@@ -158,6 +161,18 @@ export default function CourseOverview() {
                             <BarChart className="h-4 w-4 mr-2" />
                             Feedback Insights
                         </TabsTrigger>
+                        <TabsTrigger value="assignments">
+                            <FileText className="h-4 w-4 mr-2" />
+                            Assignment Feedback
+                        </TabsTrigger>
+                        <TabsTrigger value="discussions">
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            Discussions
+                        </TabsTrigger>
+                        <TabsTrigger value="improvements">
+                            <Lightbulb className="h-4 w-4 mr-2" />
+                            Improvements
+                        </TabsTrigger>
                         <TabsTrigger value="details">
                             <BookOpen className="h-4 w-4 mr-2" />
                             Course Details
@@ -166,6 +181,18 @@ export default function CourseOverview() {
 
                     <TabsContent value="insights">
                         <FeedbackInsights courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="assignments">
+                        <AIAssignmentFeedback courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="discussions">
+                        <DiscussionSummary courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="improvements">
+                        <ContentImprovementSuggestions courseId={courseId} />
                     </TabsContent>
 
                     <TabsContent value="details">
