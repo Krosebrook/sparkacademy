@@ -5,6 +5,7 @@ import PointsTracker from "@/components/gamification/PointsTracker";
 import AILeaderboard from "@/components/gamification/AILeaderboard";
 import PersonalizedChallenges from "@/components/gamification/PersonalizedChallenges";
 import BadgeShowcase from "@/components/gamification/BadgeShowcase";
+import SkillGapRemediation from "@/components/learning/SkillGapRemediation";
 
 export default function GamificationDashboard() {
     const [user, setUser] = useState(null);
@@ -44,6 +45,8 @@ export default function GamificationDashboard() {
 
                 <div className="space-y-6">
                     <PointsTracker userEmail={user.email} />
+
+                    <SkillGapRemediation userEmail={user.email} />
 
                     <div className="grid lg:grid-cols-2 gap-6">
                         <PersonalizedChallenges userEmail={user.email} />

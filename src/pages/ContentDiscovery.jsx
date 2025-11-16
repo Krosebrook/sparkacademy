@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Sparkles, Search, Compass } from "lucide-react";
+import { Loader2, Sparkles, Search, Compass, AlertTriangle } from "lucide-react";
 import PersonalizedRecommendations from "@/components/discovery/PersonalizedRecommendations";
 import NaturalLanguageSearch from "@/components/discovery/NaturalLanguageSearch";
+import SkillGapRemediation from "@/components/learning/SkillGapRemediation";
 
 export default function ContentDiscovery() {
     const [user, setUser] = useState(null);
@@ -51,6 +52,10 @@ export default function ContentDiscovery() {
                             <Search className="h-4 w-4 mr-2" />
                             AI Search
                         </TabsTrigger>
+                        <TabsTrigger value="remediation">
+                            <AlertTriangle className="h-4 w-4 mr-2" />
+                            Skill Gaps
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="personalized">
@@ -59,6 +64,10 @@ export default function ContentDiscovery() {
 
                     <TabsContent value="search">
                         <NaturalLanguageSearch />
+                    </TabsContent>
+
+                    <TabsContent value="remediation">
+                        <SkillGapRemediation userEmail={user.email} />
                     </TabsContent>
                 </Tabs>
             </div>
