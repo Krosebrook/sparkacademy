@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle2, XCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { CheckCircle2, XCircle, TrendingUp, TrendingDown, Minus, Loader2 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
 
 export default function QuizView({ quiz, onComplete }) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -13,13 +14,14 @@ export default function QuizView({ quiz, onComplete }) {
   const [showFeedback, setShowFeedback] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
   const [performanceStreak, setPerformanceStreak] = useState(0);
-  const [difficultyLevel, setDifficultyLevel] = useState('normal'); // easy, normal, hard
+  const [difficultyLevel, setDifficultyLevel] = useState('normal');
+  const [aiFeedback, setAiFeedback] = useState(null);
+  const [isGeneratingFeedback, setIsGeneratingFeedback] = useState(false);
 
   const questions = quiz?.questions || [];
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
 
-  // Adaptive difficulty logic
   useEffect(() => {
     if (performanceStreak >= 3) {
       setDifficultyLevel('hard');
@@ -30,22 +32,58 @@ export default function QuizView({ quiz, onComplete }) {
     }
   }, [performanceStreak]);
 
+  const generateAIFeedback = async (question, userAnswer, correctAnswer, isCorrect) => {
+    setIsGeneratingFeedback(true);
+    try {
+      const prompt = `A student answered a quiz question ${isCorrect ? 'correctly' : 'incorrectly'}.
+
+Question: ${question.question_text}
+Student's Answer: ${question.options[userAnswer]}
+Correct Answer: ${question.options[correctAnswer]}
+
+Provide:
+1. A brief explanation of why the answer is ${isCorrect ? 'correct' : 'incorrect'}
+2. Key concept reinforcement
+3. A helpful tip or additional context (2-3 sentences max)
+
+Be encouraging and educational.`;
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            explanation: { type: "string" },
+            key_concept: { type: "string" },
+            tip: { type: "string" }
+          }
+        }
+      });
+
+      setAiFeedback(result);
+    } catch (error) {
+      console.error("Error generating AI feedback:", error);
+    } finally {
+      setIsGeneratingFeedback(false);
+    }
+  };
+
   const handleAnswerSelect = (optionIndex) => {
     if (!showFeedback) {
       setSelectedAnswer(optionIndex);
     }
   };
 
-  const handleSubmitAnswer = () => {
+  const handleSubmitAnswer = async () => {
     const correct = selectedAnswer === currentQuestion.correct_option_index;
     setIsCorrect(correct);
     setShowFeedback(true);
     
-    // Update performance streak for adaptive difficulty
     if (correct) {
       setPerformanceStreak(prev => Math.max(prev + 1, 0));
     } else {
       setPerformanceStreak(prev => Math.min(prev - 1, 0));
+      await generateAIFeedback(currentQuestion, selectedAnswer, currentQuestion.correct_option_index, false);
     }
 
     setAnswers([...answers, { questionIndex: currentQuestionIndex, selectedAnswer, correct }]);
@@ -56,6 +94,7 @@ export default function QuizView({ quiz, onComplete }) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
       setShowFeedback(false);
+      setAiFeedback(null);
     } else {
       const score = (answers.filter(a => a.correct).length / questions.length) * 100;
       const passed = score >= (quiz.passing_score || 70);
@@ -87,7 +126,7 @@ export default function QuizView({ quiz, onComplete }) {
 
   return (
     <Card className="max-w-2xl mx-auto border-0 shadow-xl">
-      <CardHeader className="border-b bg-gradient-to-r from-amber-50 to-orange-50">
+      <CardHeader className="border-b bg-gradient-to-r from-violet-50 to-purple-50">
         <div className="flex items-center justify-between mb-2">
           <CardTitle className="text-xl">{quiz.title}</CardTitle>
           <div className="flex items-center gap-2 text-sm text-slate-600">
@@ -127,14 +166,14 @@ export default function QuizView({ quiz, onComplete }) {
                   bgColor = 'bg-red-50';
                 }
               } else if (isSelected) {
-                borderColor = 'border-amber-500';
-                bgColor = 'bg-amber-50';
+                borderColor = 'border-violet-500';
+                bgColor = 'bg-violet-50';
               }
 
               return (
                 <div
                   key={index}
-                  className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all ${borderColor} ${bgColor} ${!showFeedback && 'hover:border-amber-300 cursor-pointer'}`}
+                  className={`flex items-center space-x-3 p-4 rounded-lg border-2 transition-all ${borderColor} ${bgColor} ${!showFeedback && 'hover:border-violet-300 cursor-pointer'}`}
                   onClick={() => !showFeedback && handleAnswerSelect(index)}
                 >
                   <RadioGroupItem value={index.toString()} id={`option-${index}`} disabled={showFeedback} />
@@ -154,15 +193,41 @@ export default function QuizView({ quiz, onComplete }) {
         </RadioGroup>
 
         {showFeedback && (
-          <div className={`mt-4 p-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
-            <p className={`font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
-              {isCorrect ? '✓ Correct!' : '✗ Not quite right'}
-            </p>
-            <p className="text-sm text-slate-600 mt-1">
-              {isCorrect 
-                ? 'Great job! You\'re mastering this material.' 
-                : `The correct answer is: ${currentQuestion.options[currentQuestion.correct_option_index]}`}
-            </p>
+          <div className="mt-4 space-y-3">
+            <div className={`p-4 rounded-lg ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+              <p className={`font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}`}>
+                {isCorrect ? '✓ Correct!' : '✗ Not quite right'}
+              </p>
+              <p className="text-sm text-slate-600 mt-1">
+                {isCorrect 
+                  ? 'Great job! You\'re mastering this material.' 
+                  : `The correct answer is: ${currentQuestion.options[currentQuestion.correct_option_index]}`}
+              </p>
+            </div>
+
+            {!isCorrect && isGeneratingFeedback && (
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-3">
+                <Loader2 className="w-5 h-5 animate-spin text-blue-600" />
+                <p className="text-sm text-blue-800">Generating personalized feedback...</p>
+              </div>
+            )}
+
+            {!isCorrect && aiFeedback && (
+              <div className="p-4 bg-violet-50 border border-violet-200 rounded-lg space-y-3">
+                <div>
+                  <p className="text-xs font-semibold text-violet-900 mb-1">💡 Explanation</p>
+                  <p className="text-sm text-slate-700">{aiFeedback.explanation}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-violet-900 mb-1">🎯 Key Concept</p>
+                  <p className="text-sm text-slate-700">{aiFeedback.key_concept}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-semibold text-violet-900 mb-1">✨ Helpful Tip</p>
+                  <p className="text-sm text-slate-700">{aiFeedback.tip}</p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -171,12 +236,16 @@ export default function QuizView({ quiz, onComplete }) {
             <Button 
               onClick={handleSubmitAnswer}
               disabled={selectedAnswer === null}
-              className="bg-gradient-to-r from-amber-500 to-orange-500"
+              className="bg-gradient-to-r from-violet-600 to-purple-600"
             >
               Submit Answer
             </Button>
           ) : (
-            <Button onClick={handleNext} className="bg-gradient-to-r from-amber-500 to-orange-500">
+            <Button 
+              onClick={handleNext} 
+              disabled={isGeneratingFeedback}
+              className="bg-gradient-to-r from-violet-600 to-purple-600"
+            >
               {currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
             </Button>
           )}
