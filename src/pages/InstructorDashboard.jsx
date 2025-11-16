@@ -4,11 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Loader2, Users, BookOpen, TrendingUp, MessageCircle, Star, AlertCircle } from "lucide-react";
+import { Loader2, Users, BookOpen, TrendingUp, MessageCircle, Star, AlertCircle, Award, BarChart, Sparkles } from "lucide-react";
+import PerformanceTrendsSummary from "@/components/instructor/PerformanceTrendsSummary";
+import AtRiskStudentIdentifier from "@/components/instructor/AtRiskStudentIdentifier";
+import BulkCertificateGenerator from "@/components/instructor/BulkCertificateGenerator";
 
 export default function InstructorDashboard() {
     const [user, setUser] = useState(null);
     const [courses, setCourses] = useState([]);
+    const [enrollments, setEnrollments] = useState([]);
     const [analytics, setAnalytics] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -29,6 +33,7 @@ export default function InstructorDashboard() {
             const myEnrollments = allEnrollments.filter(e => 
                 myCourses.some(c => c.id === e.course_id)
             );
+            setEnrollments(myEnrollments);
 
             const allDiscussions = await base44.entities.CourseDiscussion.list();
             const myDiscussions = allDiscussions.filter(d =>
@@ -90,8 +95,11 @@ export default function InstructorDashboard() {
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-violet-50 p-6">
             <div className="max-w-7xl mx-auto">
                 <div className="mb-8">
-                    <h1 className="text-4xl font-bold text-slate-900 mb-2">Instructor Performance Dashboard</h1>
-                    <p className="text-slate-600">Track your teaching impact and course engagement</p>
+                    <h1 className="text-4xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                        <Sparkles className="h-8 w-8 text-violet-600" />
+                        AI-Powered Instructor Dashboard
+                    </h1>
+                    <p className="text-slate-600">Advanced insights and automation tools for course management</p>
                 </div>
 
                 <div className="grid md:grid-cols-4 gap-6 mb-8">
@@ -152,12 +160,41 @@ export default function InstructorDashboard() {
                     </Card>
                 </div>
 
-                <Tabs defaultValue="courses" className="space-y-6">
+                <Tabs defaultValue="trends" className="space-y-6">
                     <TabsList className="bg-white border border-slate-200">
+                        <TabsTrigger value="trends">
+                            <BarChart className="h-4 w-4 mr-2" />
+                            AI Trends Analysis
+                        </TabsTrigger>
+                        <TabsTrigger value="at-risk">
+                            <AlertCircle className="h-4 w-4 mr-2" />
+                            At-Risk Students
+                        </TabsTrigger>
+                        <TabsTrigger value="certificates">
+                            <Award className="h-4 w-4 mr-2" />
+                            Certificates
+                        </TabsTrigger>
                         <TabsTrigger value="courses">Course Performance</TabsTrigger>
-                        <TabsTrigger value="engagement">Engagement Insights</TabsTrigger>
-                        <TabsTrigger value="improvements">Areas for Improvement</TabsTrigger>
+                        <TabsTrigger value="engagement">Engagement</TabsTrigger>
                     </TabsList>
+
+                    <TabsContent value="trends">
+                        <PerformanceTrendsSummary 
+                            courses={courses}
+                            enrollments={enrollments}
+                        />
+                    </TabsContent>
+
+                    <TabsContent value="at-risk">
+                        <AtRiskStudentIdentifier 
+                            courses={courses}
+                            enrollments={enrollments}
+                        />
+                    </TabsContent>
+
+                    <TabsContent value="certificates">
+                        <BulkCertificateGenerator courses={courses} />
+                    </TabsContent>
 
                     <TabsContent value="courses" className="space-y-4">
                         {analytics?.courseAnalytics?.map((course) => (
@@ -236,56 +273,6 @@ export default function InstructorDashboard() {
                                         %. Keep engaging students with interactive content!
                                     </p>
                                 </div>
-                            </CardContent>
-                        </Card>
-                    </TabsContent>
-
-                    <TabsContent value="improvements">
-                        <Card className="border-0 shadow-lg">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <AlertCircle className="h-5 w-5 text-amber-600" />
-                                    Suggestions for Improvement
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                {analytics?.courseAnalytics
-                                    ?.filter(c => c.avgCompletion < 50)
-                                    .map(course => (
-                                        <div key={course.courseId} className="p-4 border-l-4 border-amber-500 bg-amber-50">
-                                            <h4 className="font-semibold text-slate-900 mb-2">{course.courseTitle}</h4>
-                                            <p className="text-sm text-slate-700 mb-2">
-                                                Low completion rate ({course.avgCompletion}%)
-                                            </p>
-                                            <ul className="text-sm text-slate-600 space-y-1">
-                                                <li>• Consider breaking down complex lessons into smaller chunks</li>
-                                                <li>• Add more interactive quizzes and projects</li>
-                                                <li>• Engage students in course discussions</li>
-                                            </ul>
-                                        </div>
-                                    ))}
-
-                                {analytics?.courseAnalytics
-                                    ?.filter(c => c.discussionCount === 0)
-                                    .map(course => (
-                                        <div key={course.courseId} className="p-4 border-l-4 border-purple-500 bg-purple-50">
-                                            <h4 className="font-semibold text-slate-900 mb-2">{course.courseTitle}</h4>
-                                            <p className="text-sm text-slate-700 mb-2">No discussion activity</p>
-                                            <ul className="text-sm text-slate-600 space-y-1">
-                                                <li>• Post discussion prompts to encourage engagement</li>
-                                                <li>• Ask open-ended questions at the end of lessons</li>
-                                                <li>• Respond to student questions quickly</li>
-                                            </ul>
-                                        </div>
-                                    ))}
-
-                                {analytics?.courseAnalytics?.every(c => c.avgCompletion >= 50 && c.discussionCount > 0) && (
-                                    <div className="text-center py-8 text-slate-500">
-                                        <TrendingUp className="h-12 w-12 mx-auto mb-4 text-green-500" />
-                                        <p className="font-semibold">Great job! Your courses are performing well.</p>
-                                        <p className="text-sm">Keep up the excellent work!</p>
-                                    </div>
-                                )}
                             </CardContent>
                         </Card>
                     </TabsContent>
