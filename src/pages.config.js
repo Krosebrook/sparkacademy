@@ -19,6 +19,11 @@ import LandingPage from './pages/LandingPage';
 import Billing from './pages/Billing';
 import StudentAnalytics from './pages/StudentAnalytics';
 import CreateCourse from './pages/CreateCourse';
+import DynamicOutline from './pages/DynamicOutline';
+import SkillGapAnalysis from './pages/SkillGapAnalysis';
+import InstructorDashboard from './pages/InstructorDashboard';
+import CourseSummary from './pages/CourseSummary';
+import GamificationDashboard from './pages/GamificationDashboard';
 import Layout from './Layout.jsx';
 
 
@@ -44,6 +49,11 @@ export const PAGES = {
     "Billing": Billing,
     "StudentAnalytics": StudentAnalytics,
     "CreateCourse": CreateCourse,
+    "DynamicOutline": DynamicOutline,
+    "SkillGapAnalysis": SkillGapAnalysis,
+    "InstructorDashboard": InstructorDashboard,
+    "CourseSummary": CourseSummary,
+    "GamificationDashboard": GamificationDashboard,
 }
 
 export const pagesConfig = {
