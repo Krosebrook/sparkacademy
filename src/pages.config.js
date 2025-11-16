@@ -24,6 +24,7 @@ import SkillGapAnalysis from './pages/SkillGapAnalysis';
 import InstructorDashboard from './pages/InstructorDashboard';
 import CourseSummary from './pages/CourseSummary';
 import GamificationDashboard from './pages/GamificationDashboard';
+import CourseOverview from './pages/CourseOverview';
 import Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "InstructorDashboard": InstructorDashboard,
     "CourseSummary": CourseSummary,
     "GamificationDashboard": GamificationDashboard,
+    "CourseOverview": CourseOverview,
 }
 
 export const pagesConfig = {

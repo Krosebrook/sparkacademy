@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Plus, BookOpen, Clock, Sparkles } from "lucide-react";
+import { Plus, BookOpen, Clock, Sparkles, BarChart } from "lucide-react";
 import { createPageUrl } from "../utils";
 
 export default function MyCourses() {
@@ -76,20 +76,19 @@ export default function MyCourses() {
                         {courses.map((course) => (
                             <Card
                                 key={course.id}
-                                className="border-0 shadow-lg hover:shadow-xl transition-all cursor-pointer group"
-                                onClick={() => navigate(createPageUrl("EditCourse") + `?id=${course.id}`)}
+                                className="border-0 shadow-lg hover:shadow-xl transition-all group"
                             >
                                 <CardContent className="p-6">
                                     <div className="h-40 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 mb-4 flex items-center justify-center">
                                         <BookOpen className="h-16 w-16 text-white opacity-50" />
                                     </div>
-                                    <h3 className="text-xl font-semibold text-slate-900 mb-2 group-hover:text-violet-600 transition-colors">
+                                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
                                         {course.title}
                                     </h3>
                                     <p className="text-slate-600 text-sm mb-4 line-clamp-2">
                                         {course.description}
                                     </p>
-                                    <div className="flex items-center gap-4 text-sm text-slate-500">
+                                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
                                         <div className="flex items-center gap-1">
                                             <BookOpen className="h-4 w-4" />
                                             <span>{course.lessons?.length || 0} lessons</span>
@@ -100,6 +99,24 @@ export default function MyCourses() {
                                                 <span>{course.duration_hours}h</span>
                                             </div>
                                         )}
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <Button
+                                            onClick={() => navigate(createPageUrl("CourseOverview") + `?id=${course.id}`)}
+                                            variant="outline"
+                                            size="sm"
+                                            className="flex-1"
+                                        >
+                                            <BarChart className="h-4 w-4 mr-1" />
+                                            Overview
+                                        </Button>
+                                        <Button
+                                            onClick={() => navigate(createPageUrl("EditCourse") + `?id=${course.id}`)}
+                                            size="sm"
+                                            className="flex-1 bg-violet-600 hover:bg-violet-700"
+                                        >
+                                            Edit
+                                        </Button>
                                     </div>
                                 </CardContent>
                             </Card>

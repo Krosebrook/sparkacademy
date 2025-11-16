@@ -3,10 +3,9 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Award, Download, Share2, Linkedin, Trophy, Star, ExternalLink } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
+import { Award, Download, Share2, Linkedin, Trophy, Star } from 'lucide-react';
 import CourseRecommendations from '../dashboard/CourseRecommendations';
+import FeedbackForm from './FeedbackForm';
 
 export default function CourseCompletion({ course, enrollment }) {
   const [certificate, setCertificate] = useState(null);
@@ -83,20 +82,20 @@ export default function CourseCompletion({ course, enrollment }) {
       <Card className="border-0 shadow-2xl">
         <CardContent className="p-8 text-center">
           <div className="mb-6">
-            <div className="w-20 h-20 bg-gradient-to-r from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-20 h-20 bg-gradient-to-r from-violet-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
               <Trophy className="w-10 h-10 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-slate-800 mb-2">Congratulations!</h1>
             <p className="text-lg text-slate-600">You've completed the course</p>
           </div>
 
-          <div className="bg-gradient-to-r from-amber-100 to-orange-100 rounded-xl p-6 mb-6">
+          <div className="bg-gradient-to-r from-violet-100 to-purple-100 rounded-xl p-6 mb-6">
             <h2 className="text-2xl font-bold text-slate-800 mb-2">{course.title}</h2>
             <p className="text-slate-600 mb-4">Completed on {completionDate}</p>
             
             {enrollment.completion_percentage && (
               <div className="flex items-center justify-center gap-2">
-                <Star className="w-5 h-5 text-amber-500 fill-amber-500" />
+                <Star className="w-5 h-5 text-violet-500 fill-violet-500" />
                 <span className="font-semibold text-slate-700">
                   Final Score: {enrollment.completion_percentage}%
                 </span>
@@ -119,7 +118,7 @@ export default function CourseCompletion({ course, enrollment }) {
             {certificate ? (
               <Button
                 onClick={() => window.open(certificate.certificate_url, '_blank')}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:opacity-90"
               >
                 <Download className="w-4 h-4 mr-2" />
                 View Certificate
@@ -128,7 +127,7 @@ export default function CourseCompletion({ course, enrollment }) {
               <Button
                 onClick={generateCertificate}
                 disabled={isGenerating}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:opacity-90"
               >
                 <Award className="w-4 h-4 mr-2" />
                 {isGenerating ? 'Generating...' : 'Generate Certificate'}
@@ -159,6 +158,8 @@ export default function CourseCompletion({ course, enrollment }) {
           )}
         </CardContent>
       </Card>
+
+      <FeedbackForm courseId={course.id} courseTitle={course.title} />
 
       {user && <CourseRecommendations userEmail={user.email} />}
     </div>
