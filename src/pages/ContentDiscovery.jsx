@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Sparkles, Search, Compass, AlertTriangle } from "lucide-react";
+import { Loader2, Sparkles, Search, Compass, AlertTriangle, Library, Route } from "lucide-react";
 import PersonalizedRecommendations from "@/components/discovery/PersonalizedRecommendations";
 import NaturalLanguageSearch from "@/components/discovery/NaturalLanguageSearch";
 import SkillGapRemediation from "@/components/learning/SkillGapRemediation";
+import ExternalContentExplorer from "@/components/discovery/ExternalContentExplorer";
+import SavedResourcesLibrary from "@/components/discovery/SavedResourcesLibrary";
+import HybridLearningPaths from "@/components/discovery/HybridLearningPaths";
 
 export default function ContentDiscovery() {
     const [user, setUser] = useState(null);
@@ -38,7 +41,7 @@ export default function ContentDiscovery() {
                         AI Content Discovery
                     </h1>
                     <p className="text-slate-600">
-                        Discover personalized learning content tailored to your goals, interests, and career aspirations
+                        Discover personalized learning content from internal courses and curated external resources
                     </p>
                 </div>
 
@@ -56,6 +59,18 @@ export default function ContentDiscovery() {
                             <AlertTriangle className="h-4 w-4 mr-2" />
                             Skill Gaps
                         </TabsTrigger>
+                        <TabsTrigger value="external">
+                            <Compass className="h-4 w-4 mr-2" />
+                            External Resources
+                        </TabsTrigger>
+                        <TabsTrigger value="paths">
+                            <Route className="h-4 w-4 mr-2" />
+                            Learning Paths
+                        </TabsTrigger>
+                        <TabsTrigger value="library">
+                            <Library className="h-4 w-4 mr-2" />
+                            My Library
+                        </TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="personalized">
@@ -68,6 +83,18 @@ export default function ContentDiscovery() {
 
                     <TabsContent value="remediation">
                         <SkillGapRemediation userEmail={user.email} />
+                    </TabsContent>
+
+                    <TabsContent value="external">
+                        <ExternalContentExplorer userEmail={user.email} />
+                    </TabsContent>
+
+                    <TabsContent value="paths">
+                        <HybridLearningPaths userEmail={user.email} />
+                    </TabsContent>
+
+                    <TabsContent value="library">
+                        <SavedResourcesLibrary userEmail={user.email} />
                     </TabsContent>
                 </Tabs>
             </div>

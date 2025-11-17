@@ -30,7 +30,7 @@ import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import CareerPathing from './pages/CareerPathing';
 import ContentDiscovery from './pages/ContentDiscovery';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -71,5 +71,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Dashboard",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };
