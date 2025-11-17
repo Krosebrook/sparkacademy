@@ -1,25 +1,25 @@
-
 import React, { useState } from "react";
 import { Course } from "@/entities/Course";
 import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { InvokeLLM, GenerateImage } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Sparkles, Wand2, BookOpen, Users, Clock, DollarSign, Save } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Sparkles, BookOpen, Route } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import CoursePromptForm from "../components/course-creator/CoursePromptForm";
 import GeneratedCoursePreview from "../components/course-creator/GeneratedCoursePreview";
+import LearningPathPromptForm from "../components/course-creator/LearningPathPromptForm";
+import GeneratedPathPreview from "../components/course-creator/GeneratedPathPreview";
 
 export default function CourseCreator() {
   const navigate = useNavigate();
-  const [step, setStep] = useState(1); // 1: prompt, 2: preview, 3: customize
+  const [mode, setMode] = useState("course");
+  const [step, setStep] = useState(1);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedCourse, setGeneratedCourse] = useState(null);
+  const [generatedPath, setGeneratedPath] = useState(null);
   const [user, setUser] = useState(null);
 
   React.useEffect(() => {
@@ -39,7 +39,6 @@ export default function CourseCreator() {
     setIsGenerating(true);
     
     try {
-      // Generate course structure
       const coursePrompt = `Create a comprehensive online course about "${promptData.topic}".
         
         Requirements:
@@ -74,19 +73,16 @@ export default function CourseCreator() {
                 }
               }
             }
-            // Removed estimated_price as courses are now free
           }
         }
       });
 
-      // Generate thumbnail image
       const thumbnailPrompt = `Create a professional, modern course thumbnail for "${courseData.title}". 
         The image should be clean, minimalist, and appealing to online learners. 
         Style: modern, professional, educational, high-quality, no text overlay.`;
       
       const thumbnail = await GenerateImage({ prompt: thumbnailPrompt });
 
-      // Add lessons order and calculate duration
       const lessonsWithOrder = courseData.lessons.map((lesson, index) => ({
         ...lesson,
         order: index + 1
@@ -104,13 +100,119 @@ export default function CourseCreator() {
         instructor_name: user?.full_name || "Course Creator",
         instructor_bio: `Experienced instructor passionate about ${promptData.topic}`,
         instructor_avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.email}`
-        // Removed price as courses are now free
       });
 
       setStep(2);
     } catch (error) {
       console.error("Error generating course:", error);
       alert("Error generating course. Please try again.");
+    }
+    
+    setIsGenerating(false);
+  };
+
+  const generatePath = async (promptData) => {
+    setIsGenerating(true);
+    
+    try {
+      const allCourses = await base44.entities.Course.filter({ is_published: true });
+
+      const pathPrompt = `Create a comprehensive learning path for: "${promptData.goal}"
+
+Requirements:
+- Path Type: ${promptData.type}
+- Current Level: ${promptData.currentLevel}
+- Timeframe: ${promptData.timeframe}
+
+AVAILABLE INTERNAL COURSES:
+${allCourses.map(c => `- ${c.title} (${c.category}, ${c.level}) - Skills: ${c.skills_taught?.join(", ") || "General"}`).join("\n")}
+
+Generate a structured learning path with:
+1. Path name, description, and overview
+2. 4-6 sequential milestones with clear progression
+3. For each milestone include:
+   - Title, description, and duration
+   - 1-3 internal courses (from available courses above)
+   - 3-5 curated external resources (with realistic URLs)
+   - Prerequisites for courses
+   - Skills gained at this stage
+4. Overall skills gained and career outcomes
+5. Estimated weeks for the entire path
+
+Ensure logical progression from basics to advanced concepts.`;
+
+      const pathData = await base44.integrations.Core.InvokeLLM({
+        prompt: pathPrompt,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            path_name: { type: "string" },
+            description: { type: "string" },
+            overview: { type: "string" },
+            difficulty: { type: "string" },
+            estimated_weeks: { type: "number" },
+            milestones: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  title: { type: "string" },
+                  description: { type: "string" },
+                  duration: { type: "string" },
+                  internal_courses: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        reason: { type: "string" },
+                        prerequisites: { type: "array", items: { type: "string" } }
+                      }
+                    }
+                  },
+                  external_resources: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        title: { type: "string" },
+                        type: { type: "string" },
+                        url: { type: "string" },
+                        duration: { type: "string" },
+                        purpose: { type: "string" }
+                      }
+                    }
+                  },
+                  skills_gained: { type: "array", items: { type: "string" } }
+                }
+              }
+            },
+            skills_gained: { type: "array", items: { type: "string" } },
+            career_outcomes: { type: "string" }
+          }
+        }
+      });
+
+      const enrichedPath = {
+        ...pathData,
+        milestones: pathData.milestones.map(milestone => ({
+          ...milestone,
+          internal_courses: milestone.internal_courses.map(ic => {
+            const course = allCourses.find(c => 
+              c.title.toLowerCase().includes(ic.title.toLowerCase()) ||
+              ic.title.toLowerCase().includes(c.title.toLowerCase())
+            );
+            return { ...ic, course_id: course?.id };
+          })
+        }))
+      };
+
+      setGeneratedPath(enrichedPath);
+      setStep(2);
+    } catch (error) {
+      console.error("Error generating path:", error);
+      alert("Error generating learning path. Please try again.");
     }
     
     setIsGenerating(false);
@@ -126,6 +228,29 @@ export default function CourseCreator() {
     }
   };
 
+  const savePath = async () => {
+    try {
+      await base44.entities.LearningPath.create({
+        title: generatedPath.path_name,
+        description: generatedPath.description,
+        category: "generated",
+        course_ids: generatedPath.milestones
+          .flatMap(m => m.internal_courses?.map(c => c.course_id))
+          .filter(Boolean),
+        estimated_duration: generatedPath.estimated_weeks * 7,
+        difficulty_level: generatedPath.difficulty,
+        skills_gained: generatedPath.skills_gained,
+        icon: "🎯",
+        is_published: true,
+        creator_email: user?.email
+      });
+      navigate(createPageUrl("LearningPaths"));
+    } catch (error) {
+      console.error("Error saving path:", error);
+      alert("Error saving learning path. Please try again.");
+    }
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50 flex items-center justify-center">
@@ -136,60 +261,65 @@ export default function CourseCreator() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-amber-50">
-      <div className="p-3 md:p-6 lg:p-8 max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-4 md:mb-6">
+      <div className="p-6 lg:p-8 max-w-5xl mx-auto">
+        <div className="text-center mb-6">
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="p-1.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl shadow-xl">
-              <Sparkles className="w-4 h-4 text-white" />
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-lg md:text-2xl font-bold text-slate-800">AI Course Creator</h1>
+            <h1 className="text-2xl font-bold text-slate-800">AI Course & Path Creator</h1>
           </div>
-          <p className="text-slate-600 text-xs md:text-sm max-w-2xl mx-auto">
-            Describe your course idea and let AI create a comprehensive curriculum for you
+          <p className="text-slate-600 text-sm max-w-2xl mx-auto">
+            Create individual courses or complete learning paths with AI assistance
           </p>
-
-          {/* Progress Steps */}
-          <div className="flex justify-center items-center mt-4 md:mt-6 gap-1.5 md:gap-3">
-            {[
-              { num: 1, label: "Describe", active: step === 1 },
-              { num: 2, label: "Review", active: step === 2 },
-              { num: 3, label: "Publish", active: step === 3 }
-            ].map((s, index) => (
-              <React.Fragment key={s.num}>
-                <div className={`w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center font-semibold text-xs transition-all duration-300 ${
-                  s.active 
-                    ? "bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg" 
-                    : step > s.num 
-                      ? "bg-emerald-500 text-white"
-                      : "bg-slate-200 text-slate-600"
-                }`}>
-                  {s.num}
-                </div>
-                <span className={`hidden sm:inline text-xs font-medium ${s.active ? "text-slate-800" : "text-slate-500"}`}>
-                  {s.label}
-                </span>
-                {index < 2 && <div className="w-3 md:w-6 h-px bg-slate-300" />}
-              </React.Fragment>
-            ))}
-          </div>
         </div>
 
-        {/* Step Content */}
-        {step === 1 && (
-          <CoursePromptForm 
-            onGenerate={generateCourse} 
-            isGenerating={isGenerating}
-          />
-        )}
+        <Tabs value={mode} onValueChange={(v) => { setMode(v); setStep(1); }} className="mb-6">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+            <TabsTrigger value="course">
+              <BookOpen className="w-4 h-4 mr-2" />
+              Single Course
+            </TabsTrigger>
+            <TabsTrigger value="path">
+              <Route className="w-4 h-4 mr-2" />
+              Learning Path
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
-        {step === 2 && generatedCourse && (
-          <GeneratedCoursePreview 
-            course={generatedCourse}
-            onEdit={setGeneratedCourse}
-            onSave={saveCourse}
-            onBack={() => setStep(1)}
-          />
+        {mode === "course" ? (
+          <>
+            {step === 1 && (
+              <CoursePromptForm 
+                onGenerate={generateCourse} 
+                isGenerating={isGenerating}
+              />
+            )}
+            {step === 2 && generatedCourse && (
+              <GeneratedCoursePreview 
+                course={generatedCourse}
+                onEdit={setGeneratedCourse}
+                onSave={saveCourse}
+                onBack={() => setStep(1)}
+              />
+            )}
+          </>
+        ) : (
+          <>
+            {step === 1 && (
+              <LearningPathPromptForm 
+                onGenerate={generatePath} 
+                isGenerating={isGenerating}
+              />
+            )}
+            {step === 2 && generatedPath && (
+              <GeneratedPathPreview 
+                path={generatedPath}
+                onSave={savePath}
+                onBack={() => setStep(1)}
+              />
+            )}
+          </>
         )}
       </div>
     </div>
