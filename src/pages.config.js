@@ -31,6 +31,8 @@ import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import CareerPathing from './pages/CareerPathing';
 import ContentDiscovery from './pages/ContentDiscovery';
 import AIMentor from './pages/AIMentor';
+import StudyGroups from './pages/StudyGroups';
+import DailyChallenges from './pages/DailyChallenges';
 import __Layout from './Layout.jsx';
 
 
@@ -68,6 +70,8 @@ export const PAGES = {
     "CareerPathing": CareerPathing,
     "ContentDiscovery": ContentDiscovery,
     "AIMentor": AIMentor,
+    "StudyGroups": StudyGroups,
+    "DailyChallenges": DailyChallenges,
 }
 
 export const pagesConfig = {
