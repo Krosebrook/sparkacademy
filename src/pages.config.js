@@ -33,6 +33,7 @@ import ContentDiscovery from './pages/ContentDiscovery';
 import AIMentor from './pages/AIMentor';
 import StudyGroups from './pages/StudyGroups';
 import DailyChallenges from './pages/DailyChallenges';
+import SkillGapReport from './pages/SkillGapReport';
 import __Layout from './Layout.jsx';
 
 
@@ -72,6 +73,7 @@ export const PAGES = {
     "AIMentor": AIMentor,
     "StudyGroups": StudyGroups,
     "DailyChallenges": DailyChallenges,
+    "SkillGapReport": SkillGapReport,
 }
 
 export const pagesConfig = {
