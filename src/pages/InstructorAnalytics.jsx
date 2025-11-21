@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, BarChart3, TrendingUp, Brain, Lightbulb, Target } from "lucide-react";
+import { Loader2, BarChart3, TrendingUp, Brain, Lightbulb, Target, MessageSquare } from "lucide-react";
 import EngagementAnalytics from "@/components/instructor/EngagementAnalytics";
 import ContentPerformanceAnalyzer from "@/components/instructor/ContentPerformanceAnalyzer";
 import PredictiveInsights from "@/components/instructor/PredictiveInsights";
 import ActionableRecommendations from "@/components/instructor/ActionableRecommendations";
+import FeedbackInsights from "@/components/course/FeedbackInsights";
 
 export default function InstructorAnalytics() {
     const [user, setUser] = useState(null);
@@ -49,7 +50,7 @@ export default function InstructorAnalytics() {
                 </div>
 
                 <Tabs defaultValue="engagement" className="space-y-6">
-                    <TabsList className="bg-white border border-slate-200 grid grid-cols-2 md:grid-cols-4">
+                    <TabsList className="bg-white border border-slate-200 grid grid-cols-2 md:grid-cols-5">
                         <TabsTrigger value="engagement">
                             <BarChart3 className="h-4 w-4 mr-2" />
                             <span className="hidden sm:inline">Engagement</span>
@@ -65,6 +66,10 @@ export default function InstructorAnalytics() {
                         <TabsTrigger value="recommendations">
                             <Lightbulb className="h-4 w-4 mr-2" />
                             <span className="hidden sm:inline">Actions</span>
+                        </TabsTrigger>
+                        <TabsTrigger value="feedback">
+                            <MessageSquare className="h-4 w-4 mr-2" />
+                            <span className="hidden sm:inline">Reviews</span>
                         </TabsTrigger>
                     </TabsList>
 
@@ -82,6 +87,10 @@ export default function InstructorAnalytics() {
 
                     <TabsContent value="recommendations">
                         <ActionableRecommendations instructorEmail={user?.email} />
+                    </TabsContent>
+
+                    <TabsContent value="feedback">
+                        <FeedbackInsights instructorEmail={user?.email} />
                     </TabsContent>
                 </Tabs>
             </div>

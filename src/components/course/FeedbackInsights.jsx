@@ -1,57 +1,51 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
-import { Loader2, TrendingUp, TrendingDown, Lightbulb, MessageSquare, Star, RefreshCw } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Loader2, TrendingUp, TrendingDown, MessageSquare } from "lucide-react";
 
-export default function FeedbackInsights({ courseId }) {
+export default function FeedbackInsights({ instructorEmail }) {
     const [insights, setInsights] = useState(null);
-    const [isAnalyzing, setIsAnalyzing] = useState(false);
-    const [feedbackCount, setFeedbackCount] = useState(0);
+    const [isAnalyzing, setIsAnalyzing] = useState(true);
 
     useEffect(() => {
-        loadInsights();
-    }, [courseId]);
-
-    const loadInsights = async () => {
-        const course = await base44.entities.Course.get(courseId);
-        if (course.feedback_insights) {
-            setInsights(course.feedback_insights);
-        }
-        
-        const feedback = await base44.entities.CourseFeedback.filter({ course_id: courseId });
-        setFeedbackCount(feedback.length);
-    };
+        analyzeFeedback();
+    }, [instructorEmail]);
 
     const analyzeFeedback = async () => {
         setIsAnalyzing(true);
         try {
-            const allFeedback = await base44.entities.CourseFeedback.filter({ course_id: courseId });
+            const courses = await base44.entities.Course.filter({ created_by: instructorEmail });
+            const courseIds = courses.map(c => c.id);
             
-            if (allFeedback.length === 0) {
-                alert("No feedback to analyze yet.");
+            const allFeedback = await Promise.all(
+                courseIds.map(id => base44.entities.CourseFeedback.filter({ course_id: id }))
+            );
+            const flatFeedback = allFeedback.flat();
+
+            if (flatFeedback.length === 0) {
                 setIsAnalyzing(false);
                 return;
             }
 
-            const feedbackTexts = allFeedback.map(f => 
-                `Rating: ${f.rating}/5\nFeedback: ${f.feedback_text}`
-            ).join("\n\n---\n\n");
+            const prompt = `Analyze these course reviews and identify key themes and sentiment:
 
-            const prompt = `Analyze the following student feedback for a course and provide comprehensive insights:
+REVIEWS (${flatFeedback.length} total):
+${flatFeedback.slice(0, 50).map(f => `
+Rating: ${f.rating}/5
+Feedback: ${f.feedback_text}
+`).join('\n---\n')}
 
-${feedbackTexts}
-
-Analyze and provide:
-1. Overall sentiment distribution (positive, neutral, negative percentages)
-2. Common themes mentioned (list 5-8 key themes with frequency)
-3. Strengths (what students loved - 3-5 points)
-4. Weaknesses (areas needing improvement - 3-5 points)
-5. Actionable suggestions (specific recommendations for the instructor - 5-7 items)
-6. Average sentiment score (1-10)
-7. Key insights summary (2-3 sentences)`;
+Provide comprehensive analysis:
+1. Overall sentiment distribution
+2. Common positive themes
+3. Common negative themes
+4. Specific strengths mentioned
+5. Specific weaknesses/concerns
+6. Actionable suggestions from students
+7. Sentiment score (0-100)
+8. Summary`;
 
             const result = await base44.integrations.Core.InvokeLLM({
                 prompt,
@@ -66,50 +60,19 @@ Analyze and provide:
                                 negative: { type: "number" }
                             }
                         },
-                        common_themes: {
-                            type: "array",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    theme: { type: "string" },
-                                    frequency: { type: "string" }
-                                }
-                            }
-                        },
-                        strengths: {
-                            type: "array",
-                            items: { type: "string" }
-                        },
-                        weaknesses: {
-                            type: "array",
-                            items: { type: "string" }
-                        },
-                        actionable_suggestions: {
-                            type: "array",
-                            items: { type: "string" }
-                        },
+                        common_themes: { type: "array", items: { type: "string" } },
+                        strengths: { type: "array", items: { type: "string" } },
+                        weaknesses: { type: "array", items: { type: "string" } },
+                        actionable_suggestions: { type: "array", items: { type: "string" } },
                         sentiment_score: { type: "number" },
-                        summary: { type: "string" }
+                        summary: { type: "string" },
+                        positive_keywords: { type: "array", items: { type: "string" } },
+                        negative_keywords: { type: "array", items: { type: "string" } }
                     }
                 }
             });
 
-            result.analyzed_date = new Date().toISOString();
-            result.feedback_count = allFeedback.length;
-
-            await base44.entities.Course.update(courseId, {
-                feedback_insights: result
-            });
-
-            for (const feedback of allFeedback) {
-                if (!feedback.is_analyzed) {
-                    await base44.entities.CourseFeedback.update(feedback.id, {
-                        is_analyzed: true
-                    });
-                }
-            }
-
-            setInsights(result);
+            setInsights({ ...result, totalReviews: flatFeedback.length });
         } catch (error) {
             console.error("Error analyzing feedback:", error);
         } finally {
@@ -117,159 +80,156 @@ Analyze and provide:
         }
     };
 
-    const getSentimentColor = (score) => {
-        if (score >= 7) return "text-green-600";
-        if (score >= 4) return "text-amber-600";
-        return "text-red-600";
-    };
-
-    if (!insights && feedbackCount === 0) {
+    if (isAnalyzing) {
         return (
             <Card className="border-0 shadow-lg">
-                <CardContent className="p-12 text-center">
-                    <MessageSquare className="h-16 w-16 mx-auto mb-4 text-slate-300" />
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">No Feedback Yet</h3>
-                    <p className="text-slate-600">Student feedback will appear here once submitted.</p>
+                <CardContent className="p-8 text-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-3" />
+                    <p className="text-sm text-slate-600">Analyzing student feedback...</p>
+                </CardContent>
+            </Card>
+        );
+    }
+
+    if (!insights) {
+        return (
+            <Card className="border-0 shadow-lg">
+                <CardContent className="p-8 text-center">
+                    <MessageSquare className="h-12 w-12 text-slate-400 mx-auto mb-3" />
+                    <p className="text-slate-600">No reviews yet</p>
                 </CardContent>
             </Card>
         );
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4">
             <Card className="border-0 shadow-lg">
                 <CardHeader>
-                    <div className="flex items-center justify-between">
-                        <CardTitle className="flex items-center gap-2">
-                            <MessageSquare className="h-5 w-5 text-violet-600" />
-                            Student Feedback Insights
-                        </CardTitle>
-                        <Button
-                            onClick={analyzeFeedback}
-                            disabled={isAnalyzing}
-                            variant="outline"
-                            size="sm"
-                        >
-                            {isAnalyzing ? (
-                                <>
-                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                    Analyzing...
-                                </>
-                            ) : (
-                                <>
-                                    <RefreshCw className="w-4 h-4 mr-2" />
-                                    {insights ? "Refresh" : "Analyze"} ({feedbackCount} responses)
-                                </>
-                            )}
-                        </Button>
-                    </div>
+                    <CardTitle>Review Insights ({insights.totalReviews} reviews)</CardTitle>
                 </CardHeader>
-                {insights && (
-                    <CardContent className="space-y-6">
-                        <div className="grid md:grid-cols-3 gap-4">
-                            <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <TrendingUp className="h-5 w-5 text-green-600" />
-                                    <span className="text-sm font-semibold text-green-900">Positive</span>
-                                </div>
-                                <p className="text-3xl font-bold text-green-700">
-                                    {insights.sentiment_distribution?.positive || 0}%
-                                </p>
-                            </div>
-
-                            <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-4 rounded-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Star className="h-5 w-5 text-slate-600" />
-                                    <span className="text-sm font-semibold text-slate-900">Neutral</span>
-                                </div>
-                                <p className="text-3xl font-bold text-slate-700">
-                                    {insights.sentiment_distribution?.neutral || 0}%
-                                </p>
-                            </div>
-
-                            <div className="bg-gradient-to-br from-red-50 to-rose-50 p-4 rounded-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <TrendingDown className="h-5 w-5 text-red-600" />
-                                    <span className="text-sm font-semibold text-red-900">Negative</span>
-                                </div>
-                                <p className="text-3xl font-bold text-red-700">
-                                    {insights.sentiment_distribution?.negative || 0}%
-                                </p>
-                            </div>
+                <CardContent className="space-y-4">
+                    <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                            <h4 className="font-semibold">Overall Sentiment</h4>
+                            <Badge className={
+                                insights.sentiment_score >= 70 ? "bg-green-600" :
+                                insights.sentiment_score >= 40 ? "bg-amber-600" : "bg-red-600"
+                            }>
+                                {insights.sentiment_score}/100
+                            </Badge>
                         </div>
+                        <p className="text-sm text-slate-700">{insights.summary}</p>
+                    </div>
 
-                        <div>
-                            <div className="flex items-center justify-between mb-3">
-                                <h4 className="font-semibold text-slate-900">Overall Sentiment</h4>
-                                <span className={`text-2xl font-bold ${getSentimentColor(insights.sentiment_score)}`}>
-                                    {insights.sentiment_score}/10
-                                </span>
-                            </div>
-                            <Progress value={insights.sentiment_score * 10} className="h-3" />
-                            <p className="text-sm text-slate-600 mt-2">{insights.summary}</p>
+                    <div className="grid grid-cols-3 gap-4">
+                        <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-center">
+                            <p className="text-xs text-green-800 mb-1">Positive</p>
+                            <p className="text-2xl font-bold text-green-600">
+                                {insights.sentiment_distribution?.positive}%
+                            </p>
                         </div>
-
-                        <div>
-                            <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <TrendingUp className="h-4 w-4 text-green-600" />
-                                Strengths
-                            </h4>
-                            <ul className="space-y-2">
-                                {insights.strengths?.map((strength, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
-                                        <Badge variant="secondary" className="bg-green-100 text-green-800 mt-0.5">✓</Badge>
-                                        {strength}
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-center">
+                            <p className="text-xs text-slate-800 mb-1">Neutral</p>
+                            <p className="text-2xl font-bold text-slate-600">
+                                {insights.sentiment_distribution?.neutral}%
+                            </p>
                         </div>
-
-                        <div>
-                            <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <TrendingDown className="h-4 w-4 text-amber-600" />
-                                Areas for Improvement
-                            </h4>
-                            <ul className="space-y-2">
-                                {insights.weaknesses?.map((weakness, idx) => (
-                                    <li key={idx} className="flex items-start gap-2 text-sm text-slate-700">
-                                        <Badge variant="secondary" className="bg-amber-100 text-amber-800 mt-0.5">!</Badge>
-                                        {weakness}
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-center">
+                            <p className="text-xs text-red-800 mb-1">Negative</p>
+                            <p className="text-2xl font-bold text-red-600">
+                                {insights.sentiment_distribution?.negative}%
+                            </p>
                         </div>
-
-                        <div>
-                            <h4 className="font-semibold text-slate-900 mb-3 flex items-center gap-2">
-                                <Lightbulb className="h-4 w-4 text-violet-600" />
-                                Actionable Suggestions
-                            </h4>
-                            <div className="space-y-2">
-                                {insights.actionable_suggestions?.map((suggestion, idx) => (
-                                    <div key={idx} className="p-3 bg-violet-50 border border-violet-200 rounded-lg">
-                                        <p className="text-sm text-slate-700">{suggestion}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div>
-                            <h4 className="font-semibold text-slate-900 mb-3">Common Themes</h4>
-                            <div className="flex flex-wrap gap-2">
-                                {insights.common_themes?.map((theme, idx) => (
-                                    <Badge key={idx} variant="outline" className="text-sm">
-                                        {theme.theme} ({theme.frequency})
-                                    </Badge>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="pt-4 border-t text-xs text-slate-500">
-                            Analyzed {insights.feedback_count} responses on {new Date(insights.analyzed_date).toLocaleDateString()}
-                        </div>
-                    </CardContent>
-                )}
+                    </div>
+                </CardContent>
             </Card>
+
+            <div className="grid md:grid-cols-2 gap-4">
+                <Card className="border-0 shadow-lg bg-green-50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-green-700">
+                            <TrendingUp className="h-5 w-5" />
+                            Strengths
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2">
+                            {insights.strengths?.map((strength, idx) => (
+                                <li key={idx} className="text-sm text-green-800 flex items-start gap-2">
+                                    <span className="text-green-600 mt-0.5">✓</span>
+                                    <span>{strength}</span>
+                                </li>
+                            ))}
+                        </ul>
+                        {insights.positive_keywords?.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-green-200">
+                                <p className="text-xs font-semibold text-green-900 mb-1">Keywords:</p>
+                                <div className="flex flex-wrap gap-1">
+                                    {insights.positive_keywords.map((kw, idx) => (
+                                        <Badge key={idx} variant="outline" className="text-xs bg-white">
+                                            {kw}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card className="border-0 shadow-lg bg-red-50">
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-red-700">
+                            <TrendingDown className="h-5 w-5" />
+                            Areas for Improvement
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2">
+                            {insights.weaknesses?.map((weakness, idx) => (
+                                <li key={idx} className="text-sm text-red-800 flex items-start gap-2">
+                                    <span className="text-red-600 mt-0.5">•</span>
+                                    <span>{weakness}</span>
+                                </li>
+                            ))}
+                        </ul>
+                        {insights.negative_keywords?.length > 0 && (
+                            <div className="mt-3 pt-3 border-t border-red-200">
+                                <p className="text-xs font-semibold text-red-900 mb-1">Keywords:</p>
+                                <div className="flex flex-wrap gap-1">
+                                    {insights.negative_keywords.map((kw, idx) => (
+                                        <Badge key={idx} variant="outline" className="text-xs bg-white">
+                                            {kw}
+                                        </Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {insights.actionable_suggestions?.length > 0 && (
+                <Card className="border-0 shadow-lg border-l-4 border-l-blue-500">
+                    <CardHeader>
+                        <CardTitle className="text-blue-700">Student Suggestions</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ul className="space-y-2">
+                            {insights.actionable_suggestions.map((suggestion, idx) => (
+                                <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
+                                    <span className="text-blue-600 mt-0.5">→</span>
+                                    <span>{suggestion}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </CardContent>
+                </Card>
+            )}
+
+            <Button onClick={analyzeFeedback} variant="outline" className="w-full">
+                Refresh Analysis
+            </Button>
         </div>
     );
 }

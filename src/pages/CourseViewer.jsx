@@ -9,7 +9,8 @@ import CourseCompletion from '../components/course-viewer/CourseCompletion';
 import AITutorWidget from '../components/course-viewer/AITutorWidget';
 import ProgressTracker from '../components/course-viewer/ProgressTracker';
 import CourseDiscussions from '../components/course-viewer/CourseDiscussions';
-import { Bot, Loader2, BookOpen, MessageCircle, BarChart } from 'lucide-react';
+import CourseReviewForm from '@/components/reviews/CourseReviewForm';
+import { Bot, Loader2, BookOpen, MessageCircle, BarChart, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CourseViewer() {
@@ -177,6 +178,10 @@ export default function CourseViewer() {
                   <MessageCircle className="h-4 w-4" />
                   Discussions
                 </TabsTrigger>
+                <TabsTrigger value="review" className="flex items-center gap-2">
+                  <Star className="h-4 w-4" />
+                  Review
+                </TabsTrigger>
               </TabsList>
             </div>
 
@@ -194,6 +199,14 @@ export default function CourseViewer() {
 
             <TabsContent value="discussions" className="p-6 h-[calc(100vh-14rem)] overflow-y-auto">
               <CourseDiscussions courseId={courseId} currentUser={currentUser} />
+            </TabsContent>
+
+            <TabsContent value="review" className="p-6 h-[calc(100vh-14rem)] overflow-y-auto">
+              <CourseReviewForm 
+                courseId={courseId} 
+                courseName={course.title}
+                onSubmitted={loadData}
+              />
             </TabsContent>
           </Tabs>
         </main>

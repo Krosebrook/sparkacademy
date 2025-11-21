@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Plus, BookOpen, Clock, Sparkles, BarChart } from "lucide-react";
 import { createPageUrl } from "../utils";
+import CourseRatingDisplay from "@/components/reviews/CourseRatingDisplay";
 
 export default function MyCourses() {
     const navigate = useNavigate();
@@ -88,6 +89,13 @@ export default function MyCourses() {
                                     <p className="text-slate-600 text-sm mb-4 line-clamp-2">
                                         {course.description}
                                     </p>
+                                    <div className="mb-3">
+                                        <CourseRatingDisplay 
+                                            rating={course.rating} 
+                                            reviewsCount={course.reviews_count}
+                                            size="md"
+                                        />
+                                    </div>
                                     <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
                                         <div className="flex items-center gap-1">
                                             <BookOpen className="h-4 w-4" />
