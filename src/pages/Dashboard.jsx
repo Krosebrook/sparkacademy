@@ -1,8 +1,4 @@
-
 import React, { useState, useEffect, useCallback } from "react";
-import { Course } from "@/entities/Course";
-import { Enrollment } from "@/entities/Enrollment";
-import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";

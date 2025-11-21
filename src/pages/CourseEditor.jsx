@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Course } from "@/entities/Course";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -36,7 +35,7 @@ export default function CourseEditor() {
       if (courseId) { // Only fetch if courseId is available
         try {
           setIsLoading(true); // Start loading
-          const courseData = await Course.get(courseId);
+          const courseData = await base44.entities.Course.get(courseId);
           setCourse(courseData);
         } catch (error) {
           console.error("Failed to fetch course:", error);
@@ -95,9 +94,14 @@ export default function CourseEditor() {
   
   const handleSaveCourse = async () => {
     if (!course) return; // Prevent saving if course object is null
-    await Course.update(course.id, course);
-    alert("Course saved successfully!");
-    navigate(createPageUrl('MyCourses'));
+    try {
+      await base44.entities.Course.update(course.id, course);
+      alert("Course saved successfully!");
+      navigate(createPageUrl('MyCourses'));
+    } catch (error) {
+      console.error("Failed to save course:", error);
+      alert("Failed to save course. Please try again.");
+    }
   };
 
   const handleQuizChange = (lessonIndex, updatedQuiz) => {

@@ -70,18 +70,37 @@ Be supportive, specific, and actionable. Format as JSON with: "strengths" (array
 
       // Update enrollment with project submission
       const enrollment = await base44.entities.Enrollment.get(enrollmentId);
-      const updatedProgress = enrollment.progress.map(p => {
-        if (p.lesson_order === lesson.order) {
-          return {
-            ...p,
+      
+      // Check if progress exists for this lesson
+      const lessonProgressExists = enrollment.progress?.some(p => p.lesson_order === lesson.order);
+      let updatedProgress;
+      
+      if (lessonProgressExists) {
+        updatedProgress = enrollment.progress.map(p => {
+          if (p.lesson_order === lesson.order) {
+            return {
+              ...p,
+              project_submitted: true,
+              project_feedback: JSON.stringify(aiFeedback),
+              completed: true,
+              completed_date: new Date().toISOString()
+            };
+          }
+          return p;
+        });
+      } else {
+        // Add new progress entry if it doesn't exist
+        updatedProgress = [
+          ...(enrollment.progress || []),
+          {
+            lesson_order: lesson.order,
             project_submitted: true,
             project_feedback: JSON.stringify(aiFeedback),
             completed: true,
             completed_date: new Date().toISOString()
-          };
-        }
-        return p;
-      });
+          }
+        ];
+      }
 
       await base44.entities.Enrollment.update(enrollmentId, {
         progress: updatedProgress

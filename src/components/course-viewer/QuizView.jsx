@@ -79,14 +79,15 @@ Be encouraging and educational.`;
     setIsCorrect(correct);
     setShowFeedback(true);
     
+    const newAnswers = [...answers, { questionIndex: currentQuestionIndex, selectedAnswer, correct }];
+    setAnswers(newAnswers);
+    
     if (correct) {
-      setPerformanceStreak(prev => Math.max(prev + 1, 0));
+      setPerformanceStreak(prev => prev + 1);
     } else {
-      setPerformanceStreak(prev => Math.min(prev - 1, 0));
+      setPerformanceStreak(prev => prev - 1);
       await generateAIFeedback(currentQuestion, selectedAnswer, currentQuestion.correct_option_index, false);
     }
-
-    setAnswers([...answers, { questionIndex: currentQuestionIndex, selectedAnswer, correct }]);
   };
 
   const handleNext = () => {
@@ -96,7 +97,8 @@ Be encouraging and educational.`;
       setShowFeedback(false);
       setAiFeedback(null);
     } else {
-      const score = (answers.filter(a => a.correct).length / questions.length) * 100;
+      const correctAnswers = answers.filter(a => a.correct).length;
+      const score = Math.round((correctAnswers / questions.length) * 100);
       const passed = score >= (quiz.passing_score || 70);
       onComplete({ score, passed, performanceLevel: difficultyLevel });
     }
