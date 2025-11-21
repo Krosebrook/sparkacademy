@@ -36,6 +36,7 @@ import DailyChallenges from './pages/DailyChallenges';
 import SkillGapReport from './pages/SkillGapReport';
 import AdaptiveLearning from './pages/AdaptiveLearning';
 import InstructorAITools from './pages/InstructorAITools';
+import CommunityHub from './pages/CommunityHub';
 import __Layout from './Layout.jsx';
 
 
@@ -78,6 +79,7 @@ export const PAGES = {
     "SkillGapReport": SkillGapReport,
     "AdaptiveLearning": AdaptiveLearning,
     "InstructorAITools": InstructorAITools,
+    "CommunityHub": CommunityHub,
 }
 
 export const pagesConfig = {
