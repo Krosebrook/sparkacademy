@@ -37,6 +37,7 @@ import SkillGapReport from './pages/SkillGapReport';
 import AdaptiveLearning from './pages/AdaptiveLearning';
 import InstructorAITools from './pages/InstructorAITools';
 import CommunityHub from './pages/CommunityHub';
+import InstructorAnalytics from './pages/InstructorAnalytics';
 import __Layout from './Layout.jsx';
 
 
@@ -80,6 +81,7 @@ export const PAGES = {
     "AdaptiveLearning": AdaptiveLearning,
     "InstructorAITools": InstructorAITools,
     "CommunityHub": CommunityHub,
+    "InstructorAnalytics": InstructorAnalytics,
 }
 
 export const pagesConfig = {
