@@ -34,6 +34,7 @@ import AIMentor from './pages/AIMentor';
 import StudyGroups from './pages/StudyGroups';
 import DailyChallenges from './pages/DailyChallenges';
 import SkillGapReport from './pages/SkillGapReport';
+import AdaptiveLearning from './pages/AdaptiveLearning';
 import __Layout from './Layout.jsx';
 
 
@@ -74,6 +75,7 @@ export const PAGES = {
     "StudyGroups": StudyGroups,
     "DailyChallenges": DailyChallenges,
     "SkillGapReport": SkillGapReport,
+    "AdaptiveLearning": AdaptiveLearning,
 }
 
 export const pagesConfig = {
