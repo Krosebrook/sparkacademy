@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -14,7 +13,8 @@ import {
   Home,
   Wand2,
   CreditCard,
-  BarChart3, // Added BarChart3 icon
+  BarChart3,
+  Download,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -82,6 +82,12 @@ const navigationItems = [
     url: createPageUrl("Storefront"),
     icon: Store,
     description: "Your Shop"
+  },
+  {
+    title: "Offline Learning",
+    url: createPageUrl("OfflineCourses"),
+    icon: Download,
+    description: "Downloaded"
   }
 ];
 

@@ -38,6 +38,8 @@ import AdaptiveLearning from './pages/AdaptiveLearning';
 import InstructorAITools from './pages/InstructorAITools';
 import CommunityHub from './pages/CommunityHub';
 import InstructorAnalytics from './pages/InstructorAnalytics';
+import OfflineCourses from './pages/OfflineCourses';
+import PWASettings from './pages/PWASettings';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +84,8 @@ export const PAGES = {
     "InstructorAITools": InstructorAITools,
     "CommunityHub": CommunityHub,
     "InstructorAnalytics": InstructorAnalytics,
+    "OfflineCourses": OfflineCourses,
+    "PWASettings": PWASettings,
 }
 
 export const pagesConfig = {

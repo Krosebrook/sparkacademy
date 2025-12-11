@@ -10,7 +10,8 @@ import AITutorWidget from '../components/course-viewer/AITutorWidget';
 import ProgressTracker from '../components/course-viewer/ProgressTracker';
 import CourseDiscussions from '../components/course-viewer/CourseDiscussions';
 import CourseReviewForm from '@/components/reviews/CourseReviewForm';
-import { Bot, Loader2, BookOpen, MessageCircle, BarChart, Star } from 'lucide-react';
+import DownloadCourseButton from '@/components/pwa/DownloadCourseButton';
+import { Bot, Loader2, BookOpen, MessageCircle, BarChart, Star, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function CourseViewer() {
@@ -31,6 +32,23 @@ export default function CourseViewer() {
     try {
       const user = await base44.auth.me();
       setCurrentUser(user);
+      
+      // Check if offline data exists
+      const offlineCourse = localStorage.getItem(`course_${courseId}`);
+      if (offlineCourse && !navigator.onLine) {
+        const courseData = JSON.parse(offlineCourse);
+        setCourse(courseData);
+        
+        const offlineProgress = localStorage.getItem(`course_progress_${courseId}`);
+        if (offlineProgress) {
+          setEnrollment(JSON.parse(offlineProgress));
+        }
+        
+        const firstLesson = courseData.lessons?.[0];
+        setActiveLesson(firstLesson ? firstLesson.order : null);
+        setIsLoading(false);
+        return;
+      }
       
       const courseData = await base44.entities.Course.get(courseId);
       if (!courseData) {
@@ -106,11 +124,29 @@ export default function CourseViewer() {
     const totalLessons = course.lessons?.length || 0;
     const completionPercentage = totalLessons > 0 ? (completedLessons / totalLessons) * 100 : 0;
 
-    const updatedEnrollment = await base44.entities.Enrollment.update(enrollment.id, {
-      progress: newProgress,
-      completion_percentage: completionPercentage,
-    });
-    setEnrollment(updatedEnrollment);
+    // If offline, queue the update
+    if (!navigator.onLine) {
+      const pendingSync = JSON.parse(localStorage.getItem('pending_sync') || '[]');
+      pendingSync.push({
+        type: 'quiz_completion',
+        enrollmentId: enrollment.id,
+        data: { progress: newProgress },
+        timestamp: new Date().toISOString(),
+        description: `Quiz completed for lesson ${lessonOrder}`
+      });
+      localStorage.setItem('pending_sync', JSON.stringify(pendingSync));
+      
+      // Update local storage
+      const updatedEnrollment = { ...enrollment, progress: newProgress, completion_percentage: completionPercentage };
+      localStorage.setItem(`course_progress_${courseId}`, JSON.stringify(updatedEnrollment));
+      setEnrollment(updatedEnrollment);
+    } else {
+      const updatedEnrollment = await base44.entities.Enrollment.update(enrollment.id, {
+        progress: newProgress,
+        completion_percentage: completionPercentage,
+      });
+      setEnrollment(updatedEnrollment);
+    }
     
     if (passed) {
       const nextLesson = course.lessons?.find(l => l.order === lessonOrder + 1);
@@ -153,6 +189,7 @@ export default function CourseViewer() {
       <div className="flex flex-col md:flex-row max-w-7xl mx-auto p-4 md:p-6 gap-6">
         {/* Sidebar */}
         <div className="w-full md:w-1/4 space-y-4">
+          <DownloadCourseButton courseId={courseId} courseTitle={course.title} size="sm" />
           <div className="bg-white rounded-lg shadow-md p-4 h-[calc(100vh-12rem)] overflow-y-auto">
             <LessonSidebar 
               course={course}
