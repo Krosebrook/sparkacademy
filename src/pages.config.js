@@ -1,91 +1,95 @@
-import Dashboard from './pages/Dashboard';
-import CourseCreator from './pages/CourseCreator';
-import Storefront from './pages/Storefront';
-import MyCourses from './pages/MyCourses';
-import CourseEditor from './pages/CourseEditor';
-import Profile from './pages/Profile';
-import CourseViewer from './pages/CourseViewer';
-import AITutor from './pages/AITutor';
-import AITools from './pages/AITools';
-import SubscriptionSuccess from './pages/SubscriptionSuccess';
-import CourseDiscussions from './pages/CourseDiscussions';
-import LearningPaths from './pages/LearningPaths';
-import CreatorAnalytics from './pages/CreatorAnalytics';
-import TimeCapsule from './pages/TimeCapsule';
-import LearningWrapped from './pages/LearningWrapped';
-import Whiteboard from './pages/Whiteboard';
 import AIDebate from './pages/AIDebate';
-import LandingPage from './pages/LandingPage';
-import Billing from './pages/Billing';
-import StudentAnalytics from './pages/StudentAnalytics';
-import CreateCourse from './pages/CreateCourse';
-import DynamicOutline from './pages/DynamicOutline';
-import SkillGapAnalysis from './pages/SkillGapAnalysis';
-import InstructorDashboard from './pages/InstructorDashboard';
-import CourseSummary from './pages/CourseSummary';
-import GamificationDashboard from './pages/GamificationDashboard';
-import CourseOverview from './pages/CourseOverview';
-import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
-import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
-import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
-import CareerPathing from './pages/CareerPathing';
-import ContentDiscovery from './pages/ContentDiscovery';
 import AIMentor from './pages/AIMentor';
-import StudyGroups from './pages/StudyGroups';
-import DailyChallenges from './pages/DailyChallenges';
-import SkillGapReport from './pages/SkillGapReport';
+import AITools from './pages/AITools';
+import AITutor from './pages/AITutor';
 import AdaptiveLearning from './pages/AdaptiveLearning';
-import InstructorAITools from './pages/InstructorAITools';
+import Billing from './pages/Billing';
+import CareerPathing from './pages/CareerPathing';
 import CommunityHub from './pages/CommunityHub';
+import ContentDiscovery from './pages/ContentDiscovery';
+import CourseCreator from './pages/CourseCreator';
+import CourseDiscussions from './pages/CourseDiscussions';
+import CourseEditor from './pages/CourseEditor';
+import CourseOverview from './pages/CourseOverview';
+import CourseSummary from './pages/CourseSummary';
+import CourseViewer from './pages/CourseViewer';
+import CreateCourse from './pages/CreateCourse';
+import CreatorAnalytics from './pages/CreatorAnalytics';
+import DailyChallenges from './pages/DailyChallenges';
+import Dashboard from './pages/Dashboard';
+import DynamicOutline from './pages/DynamicOutline';
+import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
+import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
+import GamificationDashboard from './pages/GamificationDashboard';
+import Home from './pages/Home';
+import InstructorAITools from './pages/InstructorAITools';
 import InstructorAnalytics from './pages/InstructorAnalytics';
+import InstructorDashboard from './pages/InstructorDashboard';
+import LandingPage from './pages/LandingPage';
+import LearningPaths from './pages/LearningPaths';
+import LearningWrapped from './pages/LearningWrapped';
+import MyCourses from './pages/MyCourses';
 import OfflineCourses from './pages/OfflineCourses';
 import PWASettings from './pages/PWASettings';
+import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
+import Profile from './pages/Profile';
+import SkillGapAnalysis from './pages/SkillGapAnalysis';
+import SkillGapReport from './pages/SkillGapReport';
+import Storefront from './pages/Storefront';
+import StudentAnalytics from './pages/StudentAnalytics';
+import StudyGroups from './pages/StudyGroups';
+import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import TimeCapsule from './pages/TimeCapsule';
+import Whiteboard from './pages/Whiteboard';
+import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "CourseCreator": CourseCreator,
-    "Storefront": Storefront,
-    "MyCourses": MyCourses,
-    "CourseEditor": CourseEditor,
-    "Profile": Profile,
-    "CourseViewer": CourseViewer,
-    "AITutor": AITutor,
-    "AITools": AITools,
-    "SubscriptionSuccess": SubscriptionSuccess,
-    "CourseDiscussions": CourseDiscussions,
-    "LearningPaths": LearningPaths,
-    "CreatorAnalytics": CreatorAnalytics,
-    "TimeCapsule": TimeCapsule,
-    "LearningWrapped": LearningWrapped,
-    "Whiteboard": Whiteboard,
     "AIDebate": AIDebate,
-    "LandingPage": LandingPage,
-    "Billing": Billing,
-    "StudentAnalytics": StudentAnalytics,
-    "CreateCourse": CreateCourse,
-    "DynamicOutline": DynamicOutline,
-    "SkillGapAnalysis": SkillGapAnalysis,
-    "InstructorDashboard": InstructorDashboard,
-    "CourseSummary": CourseSummary,
-    "GamificationDashboard": GamificationDashboard,
-    "CourseOverview": CourseOverview,
-    "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
-    "PersonalizedLearningPath": PersonalizedLearningPath,
-    "EnhancedCourseCreator": EnhancedCourseCreator,
-    "CareerPathing": CareerPathing,
-    "ContentDiscovery": ContentDiscovery,
     "AIMentor": AIMentor,
-    "StudyGroups": StudyGroups,
-    "DailyChallenges": DailyChallenges,
-    "SkillGapReport": SkillGapReport,
+    "AITools": AITools,
+    "AITutor": AITutor,
     "AdaptiveLearning": AdaptiveLearning,
-    "InstructorAITools": InstructorAITools,
+    "Billing": Billing,
+    "CareerPathing": CareerPathing,
     "CommunityHub": CommunityHub,
+    "ContentDiscovery": ContentDiscovery,
+    "CourseCreator": CourseCreator,
+    "CourseDiscussions": CourseDiscussions,
+    "CourseEditor": CourseEditor,
+    "CourseOverview": CourseOverview,
+    "CourseSummary": CourseSummary,
+    "CourseViewer": CourseViewer,
+    "CreateCourse": CreateCourse,
+    "CreatorAnalytics": CreatorAnalytics,
+    "DailyChallenges": DailyChallenges,
+    "Dashboard": Dashboard,
+    "DynamicOutline": DynamicOutline,
+    "EnhancedCourseCreator": EnhancedCourseCreator,
+    "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
+    "GamificationDashboard": GamificationDashboard,
+    "Home": Home,
+    "InstructorAITools": InstructorAITools,
     "InstructorAnalytics": InstructorAnalytics,
+    "InstructorDashboard": InstructorDashboard,
+    "LandingPage": LandingPage,
+    "LearningPaths": LearningPaths,
+    "LearningWrapped": LearningWrapped,
+    "MyCourses": MyCourses,
     "OfflineCourses": OfflineCourses,
     "PWASettings": PWASettings,
+    "PersonalizedLearningPath": PersonalizedLearningPath,
+    "Profile": Profile,
+    "SkillGapAnalysis": SkillGapAnalysis,
+    "SkillGapReport": SkillGapReport,
+    "Storefront": Storefront,
+    "StudentAnalytics": StudentAnalytics,
+    "StudyGroups": StudyGroups,
+    "SubscriptionSuccess": SubscriptionSuccess,
+    "TimeCapsule": TimeCapsule,
+    "Whiteboard": Whiteboard,
+    "EnterpriseDashboard": EnterpriseDashboard,
 }
 
 export const pagesConfig = {
