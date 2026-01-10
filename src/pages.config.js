@@ -20,6 +20,7 @@ import Dashboard from './pages/Dashboard';
 import DynamicOutline from './pages/DynamicOutline';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
+import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import GamificationDashboard from './pages/GamificationDashboard';
 import Home from './pages/Home';
 import InstructorAITools from './pages/InstructorAITools';
@@ -41,7 +42,6 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -68,6 +68,7 @@ export const PAGES = {
     "DynamicOutline": DynamicOutline,
     "EnhancedCourseCreator": EnhancedCourseCreator,
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
+    "EnterpriseDashboard": EnterpriseDashboard,
     "GamificationDashboard": GamificationDashboard,
     "Home": Home,
     "InstructorAITools": InstructorAITools,
@@ -89,7 +90,6 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "EnterpriseDashboard": EnterpriseDashboard,
 }
 
 export const pagesConfig = {

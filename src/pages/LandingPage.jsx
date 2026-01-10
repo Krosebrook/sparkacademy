@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -61,13 +60,32 @@ export default function LandingPage() {
         cancelUrlBase: currentUrl
       });
       
-      if (response.data.url) {
+      if (response?.data?.url) {
         window.location.href = response.data.url;
+      } else {
+        throw new Error('No checkout URL received');
       }
     } catch (error) {
       console.error('Error creating checkout:', error);
-      alert('Failed to start checkout. Please try again.');
+      alert('Failed to start checkout. Please contact support or try again later.');
       setIsProcessing(false);
+    }
+  };
+
+  const handleFreeTrial = async () => {
+    try {
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      
+      if (!isAuthenticated) {
+        base44.auth.redirectToLogin();
+        return;
+      }
+
+      // Navigate to dashboard - user can explore without payment
+      window.location.href = '/dashboard';
+    } catch (error) {
+      console.error('Error:', error);
+      base44.auth.redirectToLogin();
     }
   };
 
@@ -118,9 +136,18 @@ export default function LandingPage() {
               ) : (
                 <>
                   <Lock className="w-5 h-5 mr-2" />
-                  Access Now - $9.99/month
+                  Subscribe - $9.99/month
                 </>
               )}
+            </Button>
+            <Button 
+              size="lg" 
+              onClick={handleFreeTrial}
+              variant="outline"
+              className="font-bold text-lg py-6 px-8 border-2 border-purple-500 text-purple-600 hover:bg-purple-50"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Try Free Access
             </Button>
           </div>
 
@@ -271,24 +298,35 @@ export default function LandingPage() {
             <p className="text-purple-100 text-lg mb-6">
               Cancel anytime • No hidden fees • Instant access
             </p>
-            <Button
-              size="lg"
-              onClick={handleAccessNow}
-              disabled={isProcessing}
-              className="bg-white text-purple-600 hover:bg-purple-50 font-bold text-lg py-6 px-8 shadow-xl"
-            >
-              {isProcessing ? (
-                <>
-                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : (
-                <>
-                  <Lock className="w-5 h-5 mr-2" />
-                  Get Instant Access Now
-                </>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                size="lg"
+                onClick={handleAccessNow}
+                disabled={isProcessing}
+                className="bg-white text-purple-600 hover:bg-purple-50 font-bold text-lg py-6 px-8 shadow-xl"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Lock className="w-5 h-5 mr-2" />
+                    Subscribe Now
+                  </>
+                )}
+              </Button>
+              <Button
+                size="lg"
+                onClick={handleFreeTrial}
+                variant="outline"
+                className="bg-white/20 border-2 border-white text-white hover:bg-white/30 font-bold text-lg py-6 px-8"
+              >
+                <Sparkles className="w-5 h-5 mr-2" />
+                Try Free
+              </Button>
+            </div>
           </div>
           
           <div className="grid md:grid-cols-4 gap-4 text-white/90">
@@ -321,24 +359,35 @@ export default function LandingPage() {
           <p className="text-lg text-slate-600 mb-8">
             Join thousands of creators and learners already using CourseSpark to achieve their goals
           </p>
-          <Button
-            size="lg"
-            onClick={handleAccessNow}
-            disabled={isProcessing}
-            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6 px-8 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all"
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                Processing...
-              </>
-            ) : (
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              onClick={handleAccessNow}
+              disabled={isProcessing}
+              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold text-lg py-6 px-8 shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all"
+            >
+              {isProcessing ? (
                 <>
-                  <Lock className="w-5 h-5 mr-2" />
-                  Access Now - Start Learning Today
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Processing...
                 </>
-              )}
-          </Button>
+              ) : (
+                  <>
+                    <Lock className="w-5 h-5 mr-2" />
+                    Subscribe Now
+                  </>
+                )}
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleFreeTrial}
+              variant="outline"
+              className="font-bold text-lg py-6 px-8 border-2 border-purple-500 text-purple-600 hover:bg-purple-50"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Try Free Access
+            </Button>
+          </div>
         </div>
       </section>
 
