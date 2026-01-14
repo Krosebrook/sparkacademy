@@ -171,11 +171,11 @@ export default function Layout({ children, currentPageName }) {
     <SidebarProvider>
       <style>{`
         :root {
-          --sidebar-background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-          --accent-gold: #8b5cf6;
-          --accent-gold-hover: #7c3aed;
-          --text-primary: #f8fafc;
-          --text-secondary: #cbd5e1;
+          --sidebar-background: linear-gradient(135deg, #0f0618 0%, #1a0a2e 50%, #0d0515 100%);
+          --accent-gold: #00d9ff;
+          --accent-gold-hover: #00ffff;
+          --text-primary: #ffffff;
+          --text-secondary: #a0aec0;
         }
         .mobile-nav {
           @media (max-width: 768px) {

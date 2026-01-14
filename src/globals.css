@@ -1,0 +1,248 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  /* FlashFusion Brand Colors */
+  --primary: #1c6fd6;
+  --primary-dark: #0f4a99;
+  --primary-light: #3b82f6;
+  
+  --secondary: #f0ab65;
+  --secondary-dark: #d48a3f;
+  --secondary-light: #f5c88f;
+  
+  /* Accent Colors */
+  --accent-cyan: #00d9ff;
+  --accent-magenta: #e535ab;
+  --accent-pink: #ff006e;
+  --accent-purple: #8b5cf6;
+  
+  /* Backgrounds */
+  --bg-dark: #0f0618;
+  --bg-darker: #080210;
+  --bg-card: #1a0a2e;
+  --bg-card-hover: #2d1b4e;
+  
+  /* Text */
+  --text-primary: #ffffff;
+  --text-secondary: #a0aec0;
+  --text-tertiary: #718096;
+  
+  /* Borders */
+  --border-color: #2d1b4e;
+  --border-neon: #00d9ff;
+  
+  /* Shadows & Glows */
+  --glow-cyan: 0 0 20px rgba(0, 217, 255, 0.3);
+  --glow-magenta: 0 0 20px rgba(229, 53, 171, 0.3);
+  --glow-pink: 0 0 20px rgba(255, 0, 110, 0.3);
+  --glow-purple: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+* {
+  @apply transition-colors duration-300;
+}
+
+html, body {
+  @apply bg-[#0f0618] text-white font-['Inter'];
+  background: linear-gradient(135deg, #0f0618 0%, #1a0a2e 50%, #0f0618 100%);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#1a0a2e];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-[#2d1b4e] rounded-full hover:bg-[#00d9ff];
+}
+
+/* Button Animations */
+@keyframes glow-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 217, 255, 0.5), 0 0 20px rgba(0, 217, 255, 0.3);
+    box-shadow: 0 0 10px rgba(0, 217, 255, 0.3), inset 0 0 10px rgba(0, 217, 255, 0.1);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 217, 255, 0.8), 0 0 40px rgba(0, 217, 255, 0.5);
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.5), inset 0 0 20px rgba(0, 217, 255, 0.2);
+  }
+}
+
+@keyframes float-up {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Gradient Animations */
+.gradient-text {
+  @apply bg-clip-text text-transparent;
+  background-image: linear-gradient(90deg, #e535ab, #00d9ff, #f0ab65, #e535ab);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+.gradient-border {
+  position: relative;
+  background: linear-gradient(#0f0618, #0f0618) padding-box;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+  border-image: linear-gradient(90deg, #8b5cf6, #00d9ff, #e535ab, #f0ab65) 1;
+}
+
+/* Neon Glow Effects */
+.glow-cyan {
+  box-shadow: var(--glow-cyan);
+}
+
+.glow-magenta {
+  box-shadow: var(--glow-magenta);
+}
+
+.glow-pink {
+  box-shadow: var(--glow-pink);
+}
+
+.glow-purple {
+  box-shadow: var(--glow-purple);
+}
+
+.neon-border {
+  border: 1px solid var(--accent-cyan);
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.2), 0 0 10px rgba(0, 217, 255, 0.3);
+}
+
+/* Primary Button */
+.btn-primary {
+  @apply px-6 py-2 rounded-lg font-semibold text-white;
+  background: linear-gradient(135deg, #1c6fd6 0%, #8b5cf6 100%);
+  box-shadow: 0 0 20px rgba(28, 111, 214, 0.4), 0 0 40px rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(0, 217, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #a78bfa 100%);
+  box-shadow: 0 0 30px rgba(28, 111, 214, 0.6), 0 0 60px rgba(139, 92, 246, 0.4);
+  border-color: rgba(0, 217, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  @apply px-6 py-2 rounded-lg font-semibold text-white;
+  background: linear-gradient(135deg, #f0ab65 0%, #ff006e 100%);
+  box-shadow: 0 0 20px rgba(240, 171, 101, 0.3), 0 0 40px rgba(255, 0, 110, 0.2);
+  border: 1px solid rgba(255, 0, 110, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #f5c88f 0%, #ff2e7e 100%);
+  box-shadow: 0 0 30px rgba(240, 171, 101, 0.5), 0 0 60px rgba(255, 0, 110, 0.4);
+  border-color: rgba(255, 0, 110, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Card Styles */
+.card-glow {
+  @apply rounded-xl border backdrop-blur-sm;
+  background: rgba(26, 10, 46, 0.6);
+  border-color: rgba(0, 217, 255, 0.2);
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1), inset 0 0 20px rgba(139, 92, 246, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card-glow:hover {
+  border-color: rgba(0, 217, 255, 0.5);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.2), inset 0 0 20px rgba(139, 92, 246, 0.1);
+}
+
+/* Loading Animation */
+@keyframes spin-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(229, 53, 171, 0.5);
+  }
+}
+
+.spinner {
+  animation: spin 1s linear infinite, spin-glow 2s ease-in-out infinite;
+}
+
+/* Input Styles */
+input, textarea, select {
+  @apply bg-[#1a0a2e] text-white border border-[#2d1b4e] rounded-lg px-4 py-2;
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  @apply border-[#00d9ff] outline-none;
+  box-shadow: inset 0 0 10px rgba(0, 217, 255, 0.2), 0 0 20px rgba(0, 217, 255, 0.2);
+}
+
+/* Badge Styles */
+.badge-primary {
+  @apply bg-blue-900 text-cyan-300 px-2 py-1 rounded text-xs font-semibold;
+  border: 1px solid rgba(0, 217, 255, 0.3);
+}
+
+.badge-success {
+  @apply bg-emerald-900 text-emerald-300 px-2 py-1 rounded text-xs font-semibold;
+}
+
+.badge-warning {
+  @apply bg-orange-900 text-orange-300 px-2 py-1 rounded text-xs font-semibold;
+}
+
+.badge-error {
+  @apply bg-red-900 text-red-300 px-2 py-1 rounded text-xs font-semibold;
+}
+
+/* Gradient Background Patterns */
+.pattern-grid {
+  background-image: 
+    linear-gradient(rgba(0, 217, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Utility Classes */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-magenta-400 to-orange-400;
+}
+
+.border-gradient {
+  @apply relative;
+  border: 1px solid transparent;
+  background: linear-gradient(#0f0618, #0f0618) padding-box;
+  border-image: linear-gradient(135deg, #00d9ff, #e535ab, #f0ab65) 1;
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
