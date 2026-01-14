@@ -1,29 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Zap, TrendingUp, Gift } from "lucide-react";
+import { Zap } from "lucide-react";
+import { useCreatorPoints } from "./useCreatorPoints";
 
 export default function CreatorPointsBalance({ creatorEmail }) {
-  const [pointsData, setPointsData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    loadPointsData();
-  }, [creatorEmail]);
-
-  const loadPointsData = async () => {
-    try {
-      const data = await base44.entities.CreatorPoints.filter({ creator_email: creatorEmail });
-      if (data.length > 0) {
-        setPointsData(data[0]);
-      }
-    } catch (error) {
-      console.error("Error loading points data:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { pointsData, isLoading } = useCreatorPoints(creatorEmail);
 
   if (isLoading || !pointsData) {
     return (

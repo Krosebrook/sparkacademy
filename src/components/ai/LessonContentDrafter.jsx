@@ -5,77 +5,63 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Wand2 } from "lucide-react";
+import { useAIGeneration, copyToClipboard } from "./AIGeneratorBase";
+
+const CONTENT_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    introduction: { type: "string" },
+    concepts: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          explanation: { type: "string" },
+          example: { type: "string" }
+        }
+      }
+    },
+    exercises: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string" },
+          solution: { type: "string" }
+        }
+      }
+    },
+    key_takeaways: { type: "array", items: { type: "string" } },
+    misconceptions: { type: "array", items: { type: "string" } }
+  }
+};
 
 export default function LessonContentDrafter({ onContentGenerated }) {
   const [lessonTitle, setLessonTitle] = useState("");
   const [lessonTopic, setLessonTopic] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [content, setContent] = useState(null);
+  const { isGenerating, result: content, generateContent } = useAIGeneration();
 
-  const generateContent = async () => {
+  const handleGenerateContent = async () => {
     if (!lessonTitle.trim() || !lessonTopic.trim()) {
       alert("Please fill in both lesson title and topic");
       return;
     }
 
-    setIsGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Create comprehensive lesson content for:
-        
-        Lesson Title: "${lessonTitle}"
-        Topic: "${lessonTopic}"
-        
-        Generate detailed educational content including:
-        1. Lesson introduction (2-3 paragraphs)
-        2. 3-4 main concepts with detailed explanations
-        3. Real-world examples for each concept
-        4. 3-4 practice exercises with solutions
-        5. Key takeaways
-        6. Common misconceptions to avoid
-        
-        Format the response as structured JSON with clear sections and markdown formatting for readability.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            introduction: { type: "string" },
-            concepts: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  name: { type: "string" },
-                  explanation: { type: "string" },
-                  example: { type: "string" }
-                }
-              }
-            },
-            exercises: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  question: { type: "string" },
-                  solution: { type: "string" }
-                }
-              }
-            },
-            key_takeaways: { type: "array", items: { type: "string" } },
-            misconceptions: { type: "array", items: { type: "string" } }
-          }
-        }
+      const result = await generateContent(async () => {
+        return await base44.integrations.Core.InvokeLLM({
+        prompt: `Create comprehensive lesson content for: Lesson Title: "${lessonTitle}", Topic: "${lessonTopic}". Include: 1. Lesson introduction (2-3 paragraphs), 2. 3-4 main concepts with detailed explanations, 3. Real-world examples for each concept, 4. 3-4 practice exercises with solutions, 5. Key takeaways, 6. Common misconceptions to avoid`,
+          response_json_schema: CONTENT_JSON_SCHEMA
+        });
       });
-
-      setContent(result);
+      
       if (onContentGenerated) {
-        onContentGenerated(result);
+        onContentGenerated(content);
       }
     } catch (error) {
-      console.error("Error generating content:", error);
       alert("Failed to generate lesson content. Please try again.");
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -111,7 +97,7 @@ export default function LessonContentDrafter({ onContentGenerated }) {
           </div>
 
           <Button
-            onClick={generateContent}
+            onClick={handleGenerateContent}
             disabled={isGenerating || !lessonTitle.trim() || !lessonTopic.trim()}
             className="w-full bg-blue-600 hover:bg-blue-700"
           >
@@ -206,10 +192,7 @@ export default function LessonContentDrafter({ onContentGenerated }) {
             )}
 
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(content, null, 2));
-                alert("Content copied to clipboard!");
-              }}
+              onClick={() => copyToClipboard(content) && alert("Content copied!")}
               variant="outline"
               className="w-full"
             >

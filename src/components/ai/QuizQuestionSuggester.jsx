@@ -4,11 +4,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, HelpCircle } from "lucide-react";
+import { useAIGeneration, copyToClipboard } from "./AIGeneratorBase";
+
+const QUESTIONS_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    questions: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          question: { type: "string" },
+          type: { type: "string" },
+          options: { type: "array", items: { type: "string" } },
+          correct_answer: { type: "string" },
+          explanation: { type: "string" },
+          difficulty: { type: "string" },
+          concept: { type: "string" }
+        }
+      }
+    },
+    suggested_passing_score: { type: "number" }
+  }
+};
 
 export default function QuizQuestionSuggester({ onQuestionsGenerated }) {
   const [lessonContent, setLessonContent] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [questions, setQuestions] = useState(null);
+  const { isGenerating, result: questions, generateContent } = useAIGeneration();
 
   const generateQuestions = async () => {
     if (!lessonContent.trim()) {
@@ -16,62 +38,19 @@ export default function QuizQuestionSuggester({ onQuestionsGenerated }) {
       return;
     }
 
-    setIsGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Based on this lesson content, generate 5-7 diverse and effective quiz questions:
-
-LESSON CONTENT:
-${lessonContent}
-
-Create a mix of question types:
-1. Multiple choice questions (3-4 options, 1 correct)
-2. True/False questions with explanations
-3. Short answer/fill-in-the-blank questions
-4. Application-based questions testing understanding
-
-For each question include:
-- The question text
-- Question type
-- All options/answers (if multiple choice)
-- Correct answer
-- Explanation of why it's correct
-- Difficulty level (easy, medium, hard)
-- Learning concept it tests
-
-Format as structured JSON.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            questions: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  question: { type: "string" },
-                  type: { type: "string" },
-                  options: { type: "array", items: { type: "string" } },
-                  correct_answer: { type: "string" },
-                  explanation: { type: "string" },
-                  difficulty: { type: "string" },
-                  concept: { type: "string" }
-                }
-              }
-            },
-            suggested_passing_score: { type: "number" }
-          }
-        }
+      const result = await generateContent(async () => {
+        return await base44.integrations.Core.InvokeLLM({
+        prompt: `Based on this lesson content, generate 5-7 diverse quiz questions: ${lessonContent}. Create: 1. Multiple choice questions (3-4 options), 2. True/False questions, 3. Short answer questions, 4. Application-based questions. For each include: question text, type, options/answers, correct answer, explanation, difficulty level (easy/medium/hard), and learning concept tested.`,
+          response_json_schema: QUESTIONS_JSON_SCHEMA
+        });
       });
-
-      setQuestions(result);
+      
       if (onQuestionsGenerated) {
-        onQuestionsGenerated(result);
+        onQuestionsGenerated(questions);
       }
     } catch (error) {
-      console.error("Error generating questions:", error);
       alert("Failed to generate quiz questions. Please try again.");
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -185,10 +164,7 @@ Format as structured JSON.`,
             ))}
 
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(questions, null, 2));
-                alert("Questions copied to clipboard!");
-              }}
+              onClick={() => copyToClipboard(questions) && alert("Questions copied!")}
               variant="outline"
               className="w-full"
             >

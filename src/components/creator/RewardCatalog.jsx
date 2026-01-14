@@ -34,17 +34,18 @@ export default function RewardCatalog({ creatorEmail, availablePoints }) {
 
     setRedeeming(reward.id);
     try {
-      // Create transaction
-      await base44.entities.PointsTransaction.create({
-        creator_email: creatorEmail,
-        transaction_type: "redemption",
-        points_amount: -reward.points_required,
-        related_reward_id: reward.id,
-        description: `Redeemed: ${reward.name}`
-      });
+      // Create transaction and update points in parallel
+      const [, pointsData] = await Promise.all([
+        base44.entities.PointsTransaction.create({
+          creator_email: creatorEmail,
+          transaction_type: "redemption",
+          points_amount: -reward.points_required,
+          related_reward_id: reward.id,
+          description: `Redeemed: ${reward.name}`
+        }),
+        base44.entities.CreatorPoints.filter({ creator_email: creatorEmail })
+      ]);
 
-      // Update creator points
-      const pointsData = await base44.entities.CreatorPoints.filter({ creator_email: creatorEmail });
       if (pointsData.length > 0) {
         const updated = pointsData[0];
         await base44.entities.CreatorPoints.update(updated.id, {

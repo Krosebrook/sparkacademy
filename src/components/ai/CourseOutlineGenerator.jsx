@@ -4,11 +4,34 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles } from "lucide-react";
+import { useAIGeneration, copyToClipboard } from "./AIGeneratorBase";
+
+const OUTLINE_JSON_SCHEMA = {
+  type: "object",
+  properties: {
+    title: { type: "string" },
+    description: { type: "string" },
+    objectives: { type: "array", items: { type: "string" } },
+    target_audience: { type: "string" },
+    duration_hours: { type: "number" },
+    lessons: {
+      type: "array",
+      items: {
+        type: "object",
+        properties: {
+          title: { type: "string" },
+          description: { type: "string" },
+          duration_minutes: { type: "number" },
+          key_concepts: { type: "array", items: { type: "string" } }
+        }
+      }
+    }
+  }
+};
 
 export default function CourseOutlineGenerator({ onOutlineGenerated }) {
   const [topic, setTopic] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [outline, setOutline] = useState(null);
+  const { isGenerating, result: outline, generateContent } = useAIGeneration();
 
   const generateOutline = async () => {
     if (!topic.trim()) {
@@ -16,67 +39,19 @@ export default function CourseOutlineGenerator({ onOutlineGenerated }) {
       return;
     }
 
-    setIsGenerating(true);
     try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Create a detailed course outline for the topic: "${topic}"
-        
-        Include:
-        1. Course overview and learning objectives
-        2. 8-12 lesson titles with descriptions
-        3. Key concepts covered in each lesson
-        4. Estimated time per lesson
-        5. Prerequisites if any
-        6. Target audience
-        
-        Format as JSON with structure: {
-          "title": "Course Title",
-          "description": "Overview",
-          "objectives": ["obj1", "obj2", ...],
-          "target_audience": "description",
-          "duration_hours": number,
-          "lessons": [
-            {
-              "title": "Lesson 1",
-              "description": "Description",
-              "duration_minutes": 30,
-              "key_concepts": ["concept1", "concept2"]
-            }
-          ]
-        }`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            title: { type: "string" },
-            description: { type: "string" },
-            objectives: { type: "array", items: { type: "string" } },
-            target_audience: { type: "string" },
-            duration_hours: { type: "number" },
-            lessons: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  title: { type: "string" },
-                  description: { type: "string" },
-                  duration_minutes: { type: "number" },
-                  key_concepts: { type: "array", items: { type: "string" } }
-                }
-              }
-            }
-          }
-        }
+      const result = await generateContent(async () => {
+        return await base44.integrations.Core.InvokeLLM({
+        prompt: `Create a detailed course outline for the topic: "${topic}". Include: 1. Course overview and learning objectives, 2. 8-12 lesson titles with descriptions, 3. Key concepts covered in each lesson, 4. Estimated time per lesson, 5. Prerequisites if any, 6. Target audience`,
+          response_json_schema: OUTLINE_JSON_SCHEMA
+        });
       });
-
-      setOutline(result);
+      
       if (onOutlineGenerated) {
-        onOutlineGenerated(result);
+        onOutlineGenerated(outline);
       }
     } catch (error) {
-      console.error("Error generating outline:", error);
       alert("Failed to generate outline. Please try again.");
-    } finally {
-      setIsGenerating(false);
     }
   };
 
@@ -178,10 +153,7 @@ export default function CourseOutlineGenerator({ onOutlineGenerated }) {
             </div>
 
             <Button
-              onClick={() => {
-                navigator.clipboard.writeText(JSON.stringify(outline, null, 2));
-                alert("Outline copied to clipboard!");
-              }}
+              onClick={() => copyToClipboard(outline) && alert("Outline copied!")}
               variant="outline"
               className="w-full"
             >
