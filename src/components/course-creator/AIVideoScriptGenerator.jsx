@@ -19,51 +19,26 @@ export default function AIVideoScriptGenerator() {
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Create an engaging video script for this lesson:
 
-${lessonInfo}
+      ${lessonInfo}
 
-Generate a professional video script with:
+      Generate a professional video script with:
 
-1. Opening Hook (10-15 seconds) - Capture attention, preview what viewers will learn
-2. Learning Objectives (20 seconds) - State what viewers will know after watching
-3. Main Content (structured in sections):
-   - Clear topic introduction
-   - 2-3 key concepts/sections with explanations
-   - Real-world examples or demonstrations
-   - Visual cues for graphics/animations/demos
-4. Practice/Example (optional)
-5. Summary & Takeaways (15-20 seconds)
-6. Call to Action (5-10 seconds) - Next steps, quiz, etc.
+      1. Opening Hook (10-15 seconds) - Capture attention, preview what viewers will learn
+      2. Learning Objectives (20 seconds) - State what viewers will know after watching
+      3. Main Content (structured in sections):
+      - Clear topic introduction
+      - 2-3 key concepts/sections with explanations
+      - Real-world examples or demonstrations
+      - Visual cues for graphics/animations/demos
+      4. Practice/Example (optional)
+      5. Summary & Takeaways (15-20 seconds)
+      6. Call to Action (5-10 seconds) - Next steps, quiz, etc.
 
-Include:
-- [VISUAL: description] for graphics/animations/demos
-- [PAUSE: X seconds] for thinking/note-taking
-- Timing estimate in minutes
-- Tone: conversational, engaging, clear
-- Approximate total length`;
-
-      const result2 = await base44.integrations.Core.InvokeLLM({
-        prompt: `Create an engaging video script for this lesson:
-
-${lessonInfo}
-
-Generate a professional video script with:
-
-1. Opening Hook (10-15 seconds) - Capture attention, preview what viewers will learn
-2. Learning Objectives (20 seconds) - State what viewers will know after watching
-3. Main Content (structured in sections):
-   - Clear topic introduction
-   - 2-3 key concepts/sections with explanations
-   - Real-world examples or demonstrations
-   - Visual cues for graphics/animations/demos
-4. Practice/Example (optional)
-5. Summary & Takeaways (15-20 seconds)
-6. Call to Action (5-10 seconds) - Next steps, quiz, etc.
-
-Include:
-- [VISUAL: description] for graphics/animations/demos
-- [PAUSE: X seconds] for thinking/note-taking
-- Tone: conversational, engaging, clear
-- Approximate total length`,
+      Include:
+      - [VISUAL: description] for graphics/animations/demos
+      - [PAUSE: X seconds] for thinking/note-taking
+      - Tone: conversational, engaging, clear
+      - Approximate total length`,
         response_json_schema: {
           type: "object",
           properties: {
