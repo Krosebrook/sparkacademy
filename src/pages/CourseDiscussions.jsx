@@ -90,7 +90,9 @@ Format as a JSON array of objects with "prompt" and "category" fields.`;
     setIsGeneratingPrompts(false);
   };
 
-  const useAIPrompt = (prompt) => {
+  // Safe refactor: Renamed from useAIPrompt to avoid React Hook naming convention
+  // This is a regular callback function, not a React Hook
+  const applyAIPrompt = (prompt) => {
     setNewMessage(prompt);
     setAiPrompts([]);
   };
@@ -212,7 +214,7 @@ Format as a JSON array of objects with "prompt" and "category" fields.`;
                       <p className="text-slate-700">{item.prompt}</p>
                     </div>
                     <Button
-                      onClick={() => useAIPrompt(item.prompt)}
+                      onClick={() => applyAIPrompt(item.prompt)}
                       size="sm"
                       variant="outline"
                     >
