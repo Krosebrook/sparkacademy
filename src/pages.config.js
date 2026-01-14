@@ -50,6 +50,7 @@ import EnhancedCreatorAnalytics from './pages/EnhancedCreatorAnalytics';
 import CompetitiveLeaderboards from './pages/CompetitiveLeaderboards';
 import AICreatorAssistant from './pages/AICreatorAssistant';
 import AdvancedCreatorTools from './pages/AdvancedCreatorTools';
+import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import __Layout from './Layout.jsx';
 
 
@@ -106,6 +107,7 @@ export const PAGES = {
     "CompetitiveLeaderboards": CompetitiveLeaderboards,
     "AICreatorAssistant": AICreatorAssistant,
     "AdvancedCreatorTools": AdvancedCreatorTools,
+    "EnhancedContentCreator": EnhancedContentCreator,
 }
 
 export const pagesConfig = {
