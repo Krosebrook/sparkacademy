@@ -12,7 +12,7 @@ import DiscussionSummary from "@/components/instructor/DiscussionSummary";
 import ContentImprovementSuggestions from "@/components/instructor/ContentImprovementSuggestions";
 import AIModeration from "@/components/discussion/AIModeration";
 import FAQAnalyzer from "@/components/discussion/FAQAnalyzer";
-import LmsExportPanel from "@/components/enterprise/LmsExportPanel";
+
 import { createPageUrl } from "@/utils";
 
 export default function CourseOverview() {
@@ -184,10 +184,7 @@ export default function CourseOverview() {
                             <Lightbulb className="h-4 w-4 mr-2" />
                             Improvements
                         </TabsTrigger>
-                        <TabsTrigger value="lms">
-                            <Download className="h-4 w-4 mr-2" />
-                            LMS Export
-                        </TabsTrigger>
+
                         <TabsTrigger value="details">
                             <BookOpen className="h-4 w-4 mr-2" />
                             Course Details
@@ -216,10 +213,6 @@ export default function CourseOverview() {
 
                     <TabsContent value="improvements">
                         <ContentImprovementSuggestions courseId={courseId} />
-                    </TabsContent>
-
-                    <TabsContent value="lms">
-                        <LmsExportPanel course={course} />
                     </TabsContent>
 
                     <TabsContent value="details">
