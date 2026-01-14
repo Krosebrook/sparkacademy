@@ -44,6 +44,8 @@ import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import CreatorAnalyticsAdvanced from './pages/CreatorAnalyticsAdvanced';
 import StudentLearningPath from './pages/StudentLearningPath';
+import CourseDiscovery from './pages/CourseDiscovery';
+import StudentGamification from './pages/StudentGamification';
 import __Layout from './Layout.jsx';
 
 
@@ -94,6 +96,8 @@ export const PAGES = {
     "Whiteboard": Whiteboard,
     "CreatorAnalyticsAdvanced": CreatorAnalyticsAdvanced,
     "StudentLearningPath": StudentLearningPath,
+    "CourseDiscovery": CourseDiscovery,
+    "StudentGamification": StudentGamification,
 }
 
 export const pagesConfig = {
