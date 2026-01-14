@@ -2,20 +2,21 @@ import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
-  BookOpen,
-  LayoutDashboard,
-  PlusCircle,
-  Library,
-  Store,
-  User,
-  LogOut,
-  Bot,
-  Home,
-  Wand2,
-  CreditCard,
-  BarChart3,
-  Download,
-} from "lucide-react";
+        BookOpen,
+        LayoutDashboard,
+        PlusCircle,
+        Library,
+        Store,
+        User,
+        LogOut,
+        Bot,
+        Home,
+        Wand2,
+        CreditCard,
+        BarChart3,
+        Download,
+        Gift,
+      } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,6 +77,12 @@ const navigationItems = [
     url: createPageUrl("AITools"),
     icon: Wand2,
     description: "Notes & Resume"
+  },
+  {
+    title: "Earnings & Rewards",
+    url: createPageUrl("CreatorEarnings"),
+    icon: Gift,
+    description: "Points & Catalog"
   },
   {
     title: "My Storefront",
