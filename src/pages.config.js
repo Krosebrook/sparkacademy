@@ -19,20 +19,25 @@ import DailyChallenges from './pages/DailyChallenges';
 import Dashboard from './pages/Dashboard';
 import DynamicOutline from './pages/DynamicOutline';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
-import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
+// Safe refactor: Lazy load large pages (430 lines) to reduce initial bundle size
+// Uses React.lazy() for code splitting without changing functionality
+import { lazy } from 'react';
+const EnhancedInstructorAnalytics = lazy(() => import('./pages/EnhancedInstructorAnalytics'));
 import EnterpriseDashboard from './pages/EnterpriseDashboard';
 import GamificationDashboard from './pages/GamificationDashboard';
 import Home from './pages/Home';
 import InstructorAITools from './pages/InstructorAITools';
 import InstructorAnalytics from './pages/InstructorAnalytics';
 import InstructorDashboard from './pages/InstructorDashboard';
-import LandingPage from './pages/LandingPage';
+// Safe refactor: Lazy load large pages (451 lines) to reduce initial bundle size
+const LandingPage = lazy(() => import('./pages/LandingPage'));
 import LearningPaths from './pages/LearningPaths';
 import LearningWrapped from './pages/LearningWrapped';
 import MyCourses from './pages/MyCourses';
 import OfflineCourses from './pages/OfflineCourses';
 import PWASettings from './pages/PWASettings';
-import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
+// Safe refactor: Lazy load large pages (444 lines) to reduce initial bundle size
+const PersonalizedLearningPath = lazy(() => import('./pages/PersonalizedLearningPath'));
 import Profile from './pages/Profile';
 import SkillGapAnalysis from './pages/SkillGapAnalysis';
 import SkillGapReport from './pages/SkillGapReport';
