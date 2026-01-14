@@ -48,6 +48,7 @@ import CourseDiscovery from './pages/CourseDiscovery';
 import StudentGamification from './pages/StudentGamification';
 import EnhancedCreatorAnalytics from './pages/EnhancedCreatorAnalytics';
 import CompetitiveLeaderboards from './pages/CompetitiveLeaderboards';
+import AICreatorAssistant from './pages/AICreatorAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -102,6 +103,7 @@ export const PAGES = {
     "StudentGamification": StudentGamification,
     "EnhancedCreatorAnalytics": EnhancedCreatorAnalytics,
     "CompetitiveLeaderboards": CompetitiveLeaderboards,
+    "AICreatorAssistant": AICreatorAssistant,
 }
 
 export const pagesConfig = {
