@@ -15,6 +15,7 @@ import CourseSummary from './pages/CourseSummary';
 import CourseViewer from './pages/CourseViewer';
 import CreateCourse from './pages/CreateCourse';
 import CreatorAnalytics from './pages/CreatorAnalytics';
+import CreatorEarnings from './pages/CreatorEarnings';
 import DailyChallenges from './pages/DailyChallenges';
 import Dashboard from './pages/Dashboard';
 import DynamicOutline from './pages/DynamicOutline';
@@ -41,7 +42,8 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import CreatorEarnings from './pages/CreatorEarnings';
+import CreatorAnalyticsAdvanced from './pages/CreatorAnalyticsAdvanced';
+import StudentLearningPath from './pages/StudentLearningPath';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +65,7 @@ export const PAGES = {
     "CourseViewer": CourseViewer,
     "CreateCourse": CreateCourse,
     "CreatorAnalytics": CreatorAnalytics,
+    "CreatorEarnings": CreatorEarnings,
     "DailyChallenges": DailyChallenges,
     "Dashboard": Dashboard,
     "DynamicOutline": DynamicOutline,
@@ -89,7 +92,8 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "CreatorEarnings": CreatorEarnings,
+    "CreatorAnalyticsAdvanced": CreatorAnalyticsAdvanced,
+    "StudentLearningPath": StudentLearningPath,
 }
 
 export const pagesConfig = {
