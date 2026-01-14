@@ -1,0 +1,57 @@
+name: CI - Pull Request Checks
+
+# Safe addition: Basic CI workflow that runs only on pull requests
+# Does not interfere with development workflow or main branch
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+
+jobs:
+  ci-checks:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run ESLint
+        run: npm run lint
+        continue-on-error: false
+      
+      - name: Run Tests
+        run: npm test
+        continue-on-error: false
+        env:
+          # Enable legacy SDK imports for tests if needed
+          BASE44_LEGACY_SDK_IMPORTS: true
+      
+      - name: Security Audit
+        run: npm audit --audit-level=moderate
+        continue-on-error: true
+        # Note: Set to true to not block PRs on audit findings
+        # Review findings manually and address as needed
+      
+      - name: Build Check
+        run: npm run build
+        continue-on-error: false
+        env:
+          # Enable legacy SDK imports for build
+          BASE44_LEGACY_SDK_IMPORTS: true
+      
+      - name: Summary
+        if: always()
+        run: |
+          echo "✅ CI Checks Complete"
+          echo "- Linting: Completed"
+          echo "- Tests: Completed"
+          echo "- Security Audit: Completed"
+          echo "- Build: Completed"
