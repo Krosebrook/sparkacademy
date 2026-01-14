@@ -10,6 +10,11 @@ jobs:
   ci-checks:
     runs-on: ubuntu-latest
     
+    # Safe addition: Explicit permissions for GITHUB_TOKEN security best practice
+    permissions:
+      contents: read
+      pull-requests: read
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
