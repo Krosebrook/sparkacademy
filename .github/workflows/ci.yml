@@ -35,10 +35,10 @@ jobs:
           BASE44_LEGACY_SDK_IMPORTS: true
       
       - name: Security Audit
-        run: npm audit --audit-level=moderate
+        run: npm audit --audit-level=high
         continue-on-error: true
-        # Note: Set to true to not block PRs on audit findings
-        # Review findings manually and address as needed
+        # Note: Set to true to not block PRs on high/critical findings
+        # Review findings manually and address critical/high issues promptly
       
       - name: Build Check
         run: npm run build

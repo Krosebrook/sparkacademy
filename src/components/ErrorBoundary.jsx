@@ -37,7 +37,8 @@ class ErrorBoundary extends React.Component {
     });
 
     // Placeholder for future Sentry integration
-    // if (window.Sentry) {
+    // Safe check: Verify Sentry is available and has the captureException method
+    // if (window.Sentry && typeof window.Sentry.captureException === 'function') {
     //   window.Sentry.captureException(error, { extra: errorInfo });
     // }
   }
