@@ -9,14 +9,39 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import RouteErrorBoundary from '@/components/RouteErrorBoundary';
+// Safe addition: Import Suspense for lazy-loaded pages
+import { Suspense } from 'react';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
 const MainPage = mainPageKey ? Pages[mainPageKey] : <></>;
 
+// Safe addition: Loading spinner component for Suspense fallback
+const PageLoader = () => (
+  <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="text-center">
+      <div className="w-12 h-12 border-4 border-slate-200 border-t-purple-600 rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-slate-600 font-medium">Loading...</p>
+    </div>
+  </div>
+);
+
+// Safe addition: Wrap layout with route error boundary to isolate page errors
 const LayoutWrapper = ({ children, currentPageName }) => Layout ?
-  <Layout currentPageName={currentPageName}>{children}</Layout>
-  : <>{children}</>;
+  <Layout currentPageName={currentPageName}>
+    <RouteErrorBoundary routeName={currentPageName}>
+      <Suspense fallback={<PageLoader />}>
+        {children}
+      </Suspense>
+    </RouteErrorBoundary>
+  </Layout>
+  : 
+  <RouteErrorBoundary routeName={currentPageName}>
+    <Suspense fallback={<PageLoader />}>
+      {children}
+    </Suspense>
+  </RouteErrorBoundary>;
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, isAuthenticated, navigateToLogin } = useAuth();
