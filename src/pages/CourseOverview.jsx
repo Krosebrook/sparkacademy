@@ -12,6 +12,7 @@ import DiscussionSummary from "@/components/instructor/DiscussionSummary";
 import ContentImprovementSuggestions from "@/components/instructor/ContentImprovementSuggestions";
 import AIModeration from "@/components/discussion/AIModeration";
 import FAQAnalyzer from "@/components/discussion/FAQAnalyzer";
+import CourseCompletionAnalytics from "@/components/analytics/CourseCompletionAnalytics";
 
 import { createPageUrl } from "@/utils";
 
@@ -184,7 +185,10 @@ export default function CourseOverview() {
                             <Lightbulb className="h-4 w-4 mr-2" />
                             Improvements
                         </TabsTrigger>
-
+                        <TabsTrigger value="analytics">
+                            <BarChart className="h-4 w-4 mr-2" />
+                            Completion Analytics
+                        </TabsTrigger>
                         <TabsTrigger value="details">
                             <BookOpen className="h-4 w-4 mr-2" />
                             Course Details
@@ -213,6 +217,10 @@ export default function CourseOverview() {
 
                     <TabsContent value="improvements">
                         <ContentImprovementSuggestions courseId={courseId} />
+                    </TabsContent>
+
+                    <TabsContent value="analytics">
+                        <CourseCompletionAnalytics courseId={courseId} courseTitle={course.title} />
                     </TabsContent>
 
                     <TabsContent value="details">
