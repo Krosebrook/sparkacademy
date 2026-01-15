@@ -1,48 +1,16 @@
-import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
-import { Loader2 } from "lucide-react";
-import PersonalizedLearningPath from "@/components/recommendations/PersonalizedLearningPath";
+import React from "react";
+import PersonalizedPathGenerator from "@/components/learning/PersonalizedPathGenerator";
 
-export default function StudentLearningPathPage() {
-  const location = useLocation();
-  const courseId = new URLSearchParams(location.search).get("id");
-  const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  React.useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await base44.auth.me();
-        setUser(userData);
-      } catch (error) {
-        console.error("Error loading user:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadUser();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin" />
-      </div>
-    );
-  }
-
+export default function StudentLearningPath() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 p-6">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f0618] via-[#1a0a2e] to-[#0f0618] p-6">
+      <div className="max-w-5xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">Your Learning Path</h1>
-          <p className="text-slate-600">AI-personalized lessons based on your progress and style</p>
+          <h1 className="text-4xl font-bold mb-2 gradient-text">Your Personalized Learning Path</h1>
+          <p className="text-gray-400">AI-powered course recommendations based on your goals and current knowledge</p>
         </div>
 
-        {courseId && user && (
-          <PersonalizedLearningPath studentEmail={user.email} courseId={courseId} />
-        )}
+        <PersonalizedPathGenerator />
       </div>
     </div>
   );
