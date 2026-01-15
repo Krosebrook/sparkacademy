@@ -804,11 +804,11 @@ GUIDELINES:
                     <h4 className="font-semibold text-blue-300 mb-2">🎯 Target Metrics</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs text-center">
                       <div>
-                        <div className="text-2xl font-bold text-cyan-400">< $0.05</div>
+                        <div className="text-2xl font-bold text-cyan-400">{'<'} $0.05</div>
                         <div className="text-gray-400">per user/day</div>
                       </div>
                       <div>
-                        <div className="text-2xl font-bold text-green-400">< 2%</div>
+                        <div className="text-2xl font-bold text-green-400">{'<'} 2%</div>
                         <div className="text-gray-400">hallucination rate</div>
                       </div>
                       <div>
