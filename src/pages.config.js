@@ -56,6 +56,7 @@ import Whiteboard from './pages/Whiteboard';
 import EnterpriseAdmin from './pages/EnterpriseAdmin';
 import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import CourseVersioning from './pages/CourseVersioning';
+import AICreatorStudio from './pages/AICreatorStudio';
 import __Layout from './Layout.jsx';
 
 
@@ -118,6 +119,7 @@ export const PAGES = {
     "EnterpriseAdmin": EnterpriseAdmin,
     "OrganizationAnalytics": OrganizationAnalytics,
     "CourseVersioning": CourseVersioning,
+    "AICreatorStudio": AICreatorStudio,
 }
 
 export const pagesConfig = {
