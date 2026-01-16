@@ -58,6 +58,7 @@ import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import CourseVersioning from './pages/CourseVersioning';
 import AICreatorStudio from './pages/AICreatorStudio';
 import CollaborationHub from './pages/CollaborationHub';
+import LiveVideoSessions from './pages/LiveVideoSessions';
 import __Layout from './Layout.jsx';
 
 
@@ -122,6 +123,7 @@ export const PAGES = {
     "CourseVersioning": CourseVersioning,
     "AICreatorStudio": AICreatorStudio,
     "CollaborationHub": CollaborationHub,
+    "LiveVideoSessions": LiveVideoSessions,
 }
 
 export const pagesConfig = {
