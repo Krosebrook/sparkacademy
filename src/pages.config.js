@@ -57,6 +57,7 @@ import EnterpriseAdmin from './pages/EnterpriseAdmin';
 import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import CourseVersioning from './pages/CourseVersioning';
 import AICreatorStudio from './pages/AICreatorStudio';
+import CollaborationHub from './pages/CollaborationHub';
 import __Layout from './Layout.jsx';
 
 
@@ -120,6 +121,7 @@ export const PAGES = {
     "OrganizationAnalytics": OrganizationAnalytics,
     "CourseVersioning": CourseVersioning,
     "AICreatorStudio": AICreatorStudio,
+    "CollaborationHub": CollaborationHub,
 }
 
 export const pagesConfig = {
