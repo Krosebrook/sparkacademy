@@ -4,6 +4,7 @@ import { Wand2, BookOpen, FileText, CheckCircle, Sparkles } from "lucide-react";
 import AISyllabusGenerator from "@/components/ai-creator/AISyllabusGenerator";
 import AILessonDrafter from "@/components/ai-creator/AILessonDrafter";
 import AIQuizBuilder from "@/components/ai-creator/AIQuizBuilder";
+import AIContentAnalyzer from "@/components/ai-creator/AIContentAnalyzer";
 
 export default function AICreatorStudio() {
   return (
@@ -31,6 +32,10 @@ export default function AICreatorStudio() {
               <CheckCircle className="w-4 h-4 mr-2" />
               Quiz Builder
             </TabsTrigger>
+            <TabsTrigger value="analyzer">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Content Analyzer
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="syllabus">
@@ -43,6 +48,10 @@ export default function AICreatorStudio() {
 
           <TabsContent value="quiz">
             <AIQuizBuilder />
+          </TabsContent>
+
+          <TabsContent value="analyzer">
+            <AIContentAnalyzer />
           </TabsContent>
         </Tabs>
       </div>
