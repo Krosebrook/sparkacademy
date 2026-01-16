@@ -52,11 +52,7 @@ export default function VideoConferencing({ roomToken, roomName, isOwner = false
           border: 'none'
         },
         showLeaveButton: isOwner,
-        showFullscreenButton: true,
-        iframeStyle: {
-          width: '100%',
-          height: '100%'
-        }
+        showFullscreenButton: true
       });
 
       // Join room

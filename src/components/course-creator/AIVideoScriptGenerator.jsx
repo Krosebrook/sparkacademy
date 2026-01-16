@@ -57,7 +57,7 @@ export default function AIVideoScriptGenerator() {
         }
       });
 
-      setScript(result2);
+      setScript(result);
     } catch (error) {
       console.error("Error generating script:", error);
     } finally {

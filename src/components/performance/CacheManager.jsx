@@ -4,6 +4,8 @@
  * Implements LRU cache with TTL support
  */
 
+import React from 'react';
+
 class CacheManager {
   constructor(maxSize = 100, defaultTTL = 5 * 60 * 1000) { // 5 min default
     this.cache = new Map();
