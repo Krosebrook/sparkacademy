@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
-import { useQuery } from "@tanstack/react-query";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+// Refactored: Extracted data fetching to custom hooks for better reusability
+// Extracted metric cards to reusable component for consistency
+import React, { useState } from "react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Brain, TrendingUp, Users, Target, BarChart3, Sparkles } from "lucide-react";
+import { useCreatorCourses } from "@/components/analytics/hooks/useCreatorCourses";
+import { useCourseAnalytics } from "@/components/analytics/hooks/useCourseAnalytics";
+import MetricCard from "@/components/analytics/MetricCard";
 import EngagementInsights from "@/components/analytics/EngagementInsights";
 import ModuleDifficultyAnalyzer from "@/components/analytics/ModuleDifficultyAnalyzer";
 import FeedbackSummarizer from "@/components/analytics/FeedbackSummarizer";
@@ -12,38 +15,12 @@ import PredictiveSuccessMetrics from "@/components/analytics/PredictiveSuccessMe
 
 export default function AICreatorAnalyticsDashboard() {
   const [selectedCourse, setSelectedCourse] = useState(null);
-  const [user, setUser] = useState(null);
+  
+  // Custom hooks for cleaner data management
+  const { user, courses, isLoading: coursesLoading } = useCreatorCourses();
+  const { enrollments, feedback } = useCourseAnalytics(selectedCourse);
 
-  useEffect(() => {
-    const loadUser = async () => {
-      const userData = await base44.auth.me();
-      setUser(userData);
-    };
-    loadUser();
-  }, []);
-
-  const { data: courses = [], isLoading: coursesLoading } = useQuery({
-    queryKey: ['creator-courses'],
-    queryFn: async () => {
-      if (!user) return [];
-      const allCourses = await base44.entities.Course.filter({ created_by: user.email });
-      return allCourses;
-    },
-    enabled: !!user
-  });
-
-  const { data: enrollments = [] } = useQuery({
-    queryKey: ['course-enrollments', selectedCourse],
-    queryFn: () => base44.entities.Enrollment.filter({ course_id: selectedCourse }),
-    enabled: !!selectedCourse
-  });
-
-  const { data: feedback = [] } = useQuery({
-    queryKey: ['course-feedback', selectedCourse],
-    queryFn: () => base44.entities.CourseFeedback.filter({ course_id: selectedCourse }),
-    enabled: !!selectedCourse
-  });
-
+  // Early return pattern for loading state
   if (!user || coursesLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-[#0f0618] via-[#1a0a2e] to-[#0f0618] p-6 flex items-center justify-center">
@@ -55,7 +32,18 @@ export default function AICreatorAnalyticsDashboard() {
     );
   }
 
+  // Memoized course lookup
   const course = courses.find(c => c.id === selectedCourse);
+  
+  // Calculate metrics once for reuse
+  const metrics = selectedCourse ? {
+    totalStudents: enrollments.length,
+    avgCompletion: enrollments.length > 0
+      ? Math.round(enrollments.reduce((sum, e) => sum + (e.completion_percentage || 0), 0) / enrollments.length)
+      : 0,
+    courseRating: course?.rating?.toFixed(1) || 'N/A',
+    feedbackCount: feedback.length
+  } : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f0618] via-[#1a0a2e] to-[#0f0618] p-6">
@@ -95,61 +83,36 @@ export default function AICreatorAnalyticsDashboard() {
           </Card>
         ) : (
           <>
-            {/* Quick Stats */}
+            {/* Refactored: Reusable metric cards for consistency */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Card className="bg-gradient-to-br from-blue-900/20 to-blue-800/10 border-blue-500/30">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-blue-300 flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    Total Students
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-white">{enrollments.length}</div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-900/20 to-green-800/10 border-green-500/30">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-green-300 flex items-center gap-2">
-                    <Target className="w-4 h-4" />
-                    Avg Completion
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-white">
-                    {enrollments.length > 0
-                      ? Math.round(enrollments.reduce((sum, e) => sum + (e.completion_percentage || 0), 0) / enrollments.length)
-                      : 0}%
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-900/20 to-purple-800/10 border-purple-500/30">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-purple-300 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4" />
-                    Course Rating
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-white">
-                    {course?.rating?.toFixed(1) || 'N/A'}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-orange-900/20 to-orange-800/10 border-orange-500/30">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-medium text-orange-300 flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4" />
-                    Feedback Count
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-3xl font-bold text-white">{feedback.length}</div>
-                </CardContent>
-              </Card>
+              <MetricCard
+                icon={Users}
+                title="Total Students"
+                value={metrics.totalStudents}
+                gradient="from-blue-900/20 to-blue-800/10"
+                iconColor="text-blue-300"
+              />
+              <MetricCard
+                icon={Target}
+                title="Avg Completion"
+                value={`${metrics.avgCompletion}%`}
+                gradient="from-green-900/20 to-green-800/10"
+                iconColor="text-green-300"
+              />
+              <MetricCard
+                icon={TrendingUp}
+                title="Course Rating"
+                value={metrics.courseRating}
+                gradient="from-purple-900/20 to-purple-800/10"
+                iconColor="text-purple-300"
+              />
+              <MetricCard
+                icon={BarChart3}
+                title="Feedback Count"
+                value={metrics.feedbackCount}
+                gradient="from-orange-900/20 to-orange-800/10"
+                iconColor="text-orange-300"
+              />
             </div>
 
             {/* Analytics Tabs */}

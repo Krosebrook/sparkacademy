@@ -1,3 +1,4 @@
+import AICreatorAnalyticsDashboard from './pages/AICreatorAnalyticsDashboard';
 import AICreatorAssistant from './pages/AICreatorAssistant';
 import AIDebate from './pages/AIDebate';
 import AIMentor from './pages/AIMentor';
@@ -23,6 +24,7 @@ import CreatorAnalyticsAdvanced from './pages/CreatorAnalyticsAdvanced';
 import CreatorEarnings from './pages/CreatorEarnings';
 import DailyChallenges from './pages/DailyChallenges';
 import Dashboard from './pages/Dashboard';
+import Documentation from './pages/Documentation';
 import DynamicOutline from './pages/DynamicOutline';
 import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
@@ -51,12 +53,11 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import Documentation from './pages/Documentation';
-import AICreatorAnalyticsDashboard from './pages/AICreatorAnalyticsDashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AICreatorAnalyticsDashboard": AICreatorAnalyticsDashboard,
     "AICreatorAssistant": AICreatorAssistant,
     "AIDebate": AIDebate,
     "AIMentor": AIMentor,
@@ -82,6 +83,7 @@ export const PAGES = {
     "CreatorEarnings": CreatorEarnings,
     "DailyChallenges": DailyChallenges,
     "Dashboard": Dashboard,
+    "Documentation": Documentation,
     "DynamicOutline": DynamicOutline,
     "EnhancedContentCreator": EnhancedContentCreator,
     "EnhancedCourseCreator": EnhancedCourseCreator,
@@ -110,8 +112,6 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "Documentation": Documentation,
-    "AICreatorAnalyticsDashboard": AICreatorAnalyticsDashboard,
 }
 
 export const pagesConfig = {

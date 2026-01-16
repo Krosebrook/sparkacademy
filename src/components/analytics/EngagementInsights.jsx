@@ -1,49 +1,59 @@
-import React, { useState } from "react";
+// Refactored: Uses AnalyticsShell for consistent UI pattern
+// Extracted metric calculations to separate function for better readability
+import React, { useState, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Brain, Clock, AlertTriangle, TrendingUp, Loader2 } from "lucide-react";
+import { Brain, AlertTriangle, TrendingUp } from "lucide-react";
+import AnalyticsShell from "@/components/analytics/AnalyticsShell";
+
+// Pure function for calculating engagement metrics
+function calculateEngagementMetrics(course, enrollments) {
+  const lessonProgress = {};
+  course.lessons?.forEach(lesson => {
+    lessonProgress[lesson.order] = {
+      title: lesson.title,
+      started: 0,
+      completed: 0
+    };
+  });
+
+  enrollments.forEach(enrollment => {
+    enrollment.progress?.forEach(lessonOrder => {
+      if (lessonProgress[lessonOrder]) {
+        lessonProgress[lessonOrder].started++;
+      }
+    });
+    
+    enrollment.completed_lessons?.forEach(lessonOrder => {
+      if (lessonProgress[lessonOrder]) {
+        lessonProgress[lessonOrder].completed++;
+      }
+    });
+  });
+
+  return Object.entries(lessonProgress).map(([order, data]) => ({
+    lesson: order,
+    title: data.title,
+    startRate: enrollments.length > 0 ? (data.started / enrollments.length * 100).toFixed(1) : 0,
+    completionRate: data.started > 0 ? (data.completed / data.started * 100).toFixed(1) : 0,
+    dropoff: data.started > 0 ? ((data.started - data.completed) / data.started * 100).toFixed(1) : 0
+  }));
+}
 
 export default function EngagementInsights({ course, enrollments }) {
   const [insights, setInsights] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
+  // Memoize metrics calculation to avoid recalculating on every render
+  const engagementData = useMemo(
+    () => calculateEngagementMetrics(course, enrollments),
+    [course, enrollments]
+  );
+
+  // Refactored: Simplified analysis function by using pre-calculated metrics
   const analyzeEngagement = async () => {
     setIsAnalyzing(true);
     try {
-      // Calculate engagement metrics
-      const lessonProgress = {};
-      course.lessons?.forEach(lesson => {
-        lessonProgress[lesson.order] = {
-          title: lesson.title,
-          started: 0,
-          completed: 0,
-          avgTimeSpent: 0
-        };
-      });
-
-      enrollments.forEach(enrollment => {
-        enrollment.progress?.forEach(lessonOrder => {
-          if (lessonProgress[lessonOrder]) {
-            lessonProgress[lessonOrder].started++;
-          }
-        });
-        
-        enrollment.completed_lessons?.forEach(lessonOrder => {
-          if (lessonProgress[lessonOrder]) {
-            lessonProgress[lessonOrder].completed++;
-          }
-        });
-      });
-
-      const engagementData = Object.entries(lessonProgress).map(([order, data]) => ({
-        lesson: order,
-        title: data.title,
-        startRate: enrollments.length > 0 ? (data.started / enrollments.length * 100).toFixed(1) : 0,
-        completionRate: data.started > 0 ? (data.completed / data.started * 100).toFixed(1) : 0,
-        dropoff: data.started > 0 ? ((data.started - data.completed) / data.started * 100).toFixed(1) : 0
-      }));
 
       // Use AI to generate insights
       const prompt = `Analyze student engagement data for course "${course.title}":
@@ -106,34 +116,24 @@ Provide:
     }
   };
 
+  // Refactored: Uses AnalyticsShell wrapper for consistent UI
   return (
-    <div className="space-y-6">
-      <Card className="card-glow">
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <Brain className="w-6 h-6 text-cyan-400" />
-              Deep Engagement Analysis
-            </span>
-            <Button onClick={analyzeEngagement} disabled={isAnalyzing} className="btn-primary">
-              {isAnalyzing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyzing...
-                </>
-              ) : (
-                'Analyze with AI'
-              )}
-            </Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {!insights ? (
-            <div className="text-center py-12">
-              <Brain className="w-16 h-16 text-cyan-400/30 mx-auto mb-4" />
-              <p className="text-gray-400">Click "Analyze with AI" to generate deep engagement insights</p>
-            </div>
-          ) : (
+    <AnalyticsShell
+      icon={Brain}
+      title="Deep Engagement Analysis"
+      iconColor="text-cyan-400"
+      buttonText="Analyze with AI"
+      onAnalyze={analyzeEngagement}
+      isAnalyzing={isAnalyzing}
+      hasData={!!insights}
+      emptyState={
+        <div className="text-center py-12">
+          <Brain className="w-16 h-16 text-cyan-400/30 mx-auto mb-4" />
+          <p className="text-gray-400">Click "Analyze with AI" to generate deep engagement insights</p>
+        </div>
+      }
+    >
+      {insights && (
             <div className="space-y-6">
               {/* Overall Assessment */}
               <div className="p-4 bg-gradient-to-r from-cyan-900/20 to-blue-900/20 border border-cyan-500/30 rounded-lg">
@@ -229,9 +229,7 @@ Provide:
                 </div>
               </div>
             </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+      )}
+    </AnalyticsShell>
   );
 }
