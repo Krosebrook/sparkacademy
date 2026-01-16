@@ -16,6 +16,7 @@ import {
         BarChart3,
         Download,
         Gift,
+        Video,
       } from "lucide-react";
 import {
   DropdownMenu,
@@ -59,6 +60,12 @@ const navigationItems = [
     url: createPageUrl("MyCourses"),
     icon: Library,
     description: "Manage"
+  },
+  {
+    title: "Live Sessions",
+    url: createPageUrl("LiveVideoSessions"),
+    icon: Video,
+    description: "Video & Q&A"
   },
   {
     title: "Student Analytics",
