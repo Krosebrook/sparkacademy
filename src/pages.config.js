@@ -53,6 +53,9 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
+import EnterpriseAdmin from './pages/EnterpriseAdmin';
+import OrganizationAnalytics from './pages/OrganizationAnalytics';
+import CourseVersioning from './pages/CourseVersioning';
 import __Layout from './Layout.jsx';
 
 
@@ -112,6 +115,9 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
+    "EnterpriseAdmin": EnterpriseAdmin,
+    "OrganizationAnalytics": OrganizationAnalytics,
+    "CourseVersioning": CourseVersioning,
 }
 
 export const pagesConfig = {
