@@ -65,7 +65,7 @@ class ErrorBoundary extends React.Component {
                 Please try refreshing the page or returning to the home screen.
               </p>
 
-              {process.env.NODE_ENV === 'development' && this.state.error && (
+              {import.meta.env.DEV && this.state.error && (
                 <details className="mt-4 p-4 bg-red-900/20 border border-red-500/30 rounded-lg">
                   <summary className="cursor-pointer text-sm font-semibold text-red-300 mb-2">
                     Error Details (Development Only)

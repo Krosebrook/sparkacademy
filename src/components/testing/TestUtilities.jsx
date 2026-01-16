@@ -4,6 +4,8 @@
  */
 
 import React from "react";
+import { render } from "@testing-library/react";
+import { vi } from "vitest";
 
 /**
  * Mock Data Generators
@@ -87,12 +89,12 @@ export class MockBase44Client {
 
     entityTypes.forEach(entityType => {
       mockEntities[entityType] = {
-        list: jest.fn().mockResolvedValue(this.data[entityType] || []),
-        filter: jest.fn().mockResolvedValue(this.data[entityType] || []),
-        get: jest.fn().mockResolvedValue(this.data[entityType]?.[0] || null),
-        create: jest.fn().mockResolvedValue({ id: 'new_id', ...this.data[entityType]?.[0] }),
-        update: jest.fn().mockResolvedValue({ id: 'updated_id' }),
-        delete: jest.fn().mockResolvedValue({ success: true })
+        list: vi.fn().mockResolvedValue(this.data[entityType] || []),
+        filter: vi.fn().mockResolvedValue(this.data[entityType] || []),
+        get: vi.fn().mockResolvedValue(this.data[entityType]?.[0] || null),
+        create: vi.fn().mockResolvedValue({ id: 'new_id', ...this.data[entityType]?.[0] }),
+        update: vi.fn().mockResolvedValue({ id: 'updated_id' }),
+        delete: vi.fn().mockResolvedValue({ success: true })
       };
     });
 
