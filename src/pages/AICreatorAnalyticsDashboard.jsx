@@ -12,6 +12,7 @@ import EngagementInsights from "@/components/analytics/EngagementInsights";
 import ModuleDifficultyAnalyzer from "@/components/analytics/ModuleDifficultyAnalyzer";
 import FeedbackSummarizer from "@/components/analytics/FeedbackSummarizer";
 import PredictiveSuccessMetrics from "@/components/analytics/PredictiveSuccessMetrics";
+import PredictiveInsights from "@/components/analytics/PredictiveInsights";
 
 export default function AICreatorAnalyticsDashboard() {
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -134,6 +135,10 @@ export default function AICreatorAnalyticsDashboard() {
                   <TrendingUp className="w-4 h-4 mr-2" />
                   Predictions
                 </TabsTrigger>
+                <TabsTrigger value="insights">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  AI Insights
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="engagement">
@@ -163,6 +168,10 @@ export default function AICreatorAnalyticsDashboard() {
                   enrollments={enrollments}
                   feedback={feedback}
                 />
+              </TabsContent>
+
+              <TabsContent value="insights">
+                <PredictiveInsights courseId={selectedCourse} />
               </TabsContent>
             </Tabs>
           </>

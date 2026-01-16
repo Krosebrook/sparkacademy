@@ -5,6 +5,7 @@ import AISyllabusGenerator from "@/components/ai-creator/AISyllabusGenerator";
 import AILessonDrafter from "@/components/ai-creator/AILessonDrafter";
 import AIQuizBuilder from "@/components/ai-creator/AIQuizBuilder";
 import AIContentAnalyzer from "@/components/ai-creator/AIContentAnalyzer";
+import InteractiveElementsSuggester from "@/components/ai-creator/InteractiveElementsSuggester";
 
 export default function AICreatorStudio() {
   return (
@@ -36,6 +37,10 @@ export default function AICreatorStudio() {
               <Sparkles className="w-4 h-4 mr-2" />
               Content Analyzer
             </TabsTrigger>
+            <TabsTrigger value="interactive">
+              <Wand2 className="w-4 h-4 mr-2" />
+              Interactive Elements
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="syllabus">
@@ -52,6 +57,10 @@ export default function AICreatorStudio() {
 
           <TabsContent value="analyzer">
             <AIContentAnalyzer />
+          </TabsContent>
+
+          <TabsContent value="interactive">
+            <InteractiveElementsSuggester />
           </TabsContent>
         </Tabs>
       </div>
