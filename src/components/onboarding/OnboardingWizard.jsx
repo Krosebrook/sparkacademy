@@ -230,14 +230,13 @@ export default function OnboardingWizard() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-// Quick start component wrapper
-if (onboardingPath === 'quick_start') {
-  return <QuickStartMode onComplete={() => window.location.href = '/dashboard'} />;
-}
+  // Quick start component wrapper
+  if (onboardingPath === 'quick_start') {
+    return <QuickStartMode onComplete={() => window.location.href = '/dashboard'} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex items-center justify-center">
