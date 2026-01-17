@@ -11,6 +11,7 @@ import RecentCourses from "../components/dashboard/RecentCourses";
 import QuickActions from "../components/dashboard/QuickActions";
 import EnrolledCourses from "../components/dashboard/EnrolledCourses";
 import CourseRecommendations from "../components/dashboard/CourseRecommendations";
+import PersonalizedRecommendations from "@/components/recommendations/PersonalizedRecommendations";
 
 function LoggedInDashboard({ user }) {
   const [stats, setStats] = useState({
@@ -89,6 +90,10 @@ function LoggedInDashboard({ user }) {
         </div>
       </div>
       <DashboardStats stats={stats} isLoading={isLoading} />
+      
+      <div className="mb-6">
+        <PersonalizedRecommendations />
+      </div>
       
       <div className="grid lg:grid-cols-3 gap-6 mt-6">
         <div className="lg:col-span-2 space-y-6">

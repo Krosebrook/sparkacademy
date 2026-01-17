@@ -1,5 +1,6 @@
 import AICreatorAnalyticsDashboard from './pages/AICreatorAnalyticsDashboard';
 import AICreatorAssistant from './pages/AICreatorAssistant';
+import AICreatorStudio from './pages/AICreatorStudio';
 import AIDebate from './pages/AIDebate';
 import AIMentor from './pages/AIMentor';
 import AITools from './pages/AITools';
@@ -8,6 +9,7 @@ import AdaptiveLearning from './pages/AdaptiveLearning';
 import AdvancedCreatorTools from './pages/AdvancedCreatorTools';
 import Billing from './pages/Billing';
 import CareerPathing from './pages/CareerPathing';
+import CollaborationHub from './pages/CollaborationHub';
 import CommunityHub from './pages/CommunityHub';
 import CompetitiveLeaderboards from './pages/CompetitiveLeaderboards';
 import ContentDiscovery from './pages/ContentDiscovery';
@@ -17,6 +19,7 @@ import CourseDiscussions from './pages/CourseDiscussions';
 import CourseEditor from './pages/CourseEditor';
 import CourseOverview from './pages/CourseOverview';
 import CourseSummary from './pages/CourseSummary';
+import CourseVersioning from './pages/CourseVersioning';
 import CourseViewer from './pages/CourseViewer';
 import CreateCourse from './pages/CreateCourse';
 import CreatorAnalytics from './pages/CreatorAnalytics';
@@ -30,6 +33,7 @@ import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import EnhancedCreatorAnalytics from './pages/EnhancedCreatorAnalytics';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
+import EnterpriseAdmin from './pages/EnterpriseAdmin';
 import GamificationDashboard from './pages/GamificationDashboard';
 import Home from './pages/Home';
 import InstructorAITools from './pages/InstructorAITools';
@@ -38,8 +42,10 @@ import InstructorDashboard from './pages/InstructorDashboard';
 import LandingPage from './pages/LandingPage';
 import LearningPaths from './pages/LearningPaths';
 import LearningWrapped from './pages/LearningWrapped';
+import LiveVideoSessions from './pages/LiveVideoSessions';
 import MyCourses from './pages/MyCourses';
 import OfflineCourses from './pages/OfflineCourses';
+import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import PWASettings from './pages/PWASettings';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
 import Profile from './pages/Profile';
@@ -53,18 +59,13 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import EnterpriseAdmin from './pages/EnterpriseAdmin';
-import OrganizationAnalytics from './pages/OrganizationAnalytics';
-import CourseVersioning from './pages/CourseVersioning';
-import AICreatorStudio from './pages/AICreatorStudio';
-import CollaborationHub from './pages/CollaborationHub';
-import LiveVideoSessions from './pages/LiveVideoSessions';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AICreatorAnalyticsDashboard": AICreatorAnalyticsDashboard,
     "AICreatorAssistant": AICreatorAssistant,
+    "AICreatorStudio": AICreatorStudio,
     "AIDebate": AIDebate,
     "AIMentor": AIMentor,
     "AITools": AITools,
@@ -73,6 +74,7 @@ export const PAGES = {
     "AdvancedCreatorTools": AdvancedCreatorTools,
     "Billing": Billing,
     "CareerPathing": CareerPathing,
+    "CollaborationHub": CollaborationHub,
     "CommunityHub": CommunityHub,
     "CompetitiveLeaderboards": CompetitiveLeaderboards,
     "ContentDiscovery": ContentDiscovery,
@@ -82,6 +84,7 @@ export const PAGES = {
     "CourseEditor": CourseEditor,
     "CourseOverview": CourseOverview,
     "CourseSummary": CourseSummary,
+    "CourseVersioning": CourseVersioning,
     "CourseViewer": CourseViewer,
     "CreateCourse": CreateCourse,
     "CreatorAnalytics": CreatorAnalytics,
@@ -95,6 +98,7 @@ export const PAGES = {
     "EnhancedCourseCreator": EnhancedCourseCreator,
     "EnhancedCreatorAnalytics": EnhancedCreatorAnalytics,
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
+    "EnterpriseAdmin": EnterpriseAdmin,
     "GamificationDashboard": GamificationDashboard,
     "Home": Home,
     "InstructorAITools": InstructorAITools,
@@ -103,8 +107,10 @@ export const PAGES = {
     "LandingPage": LandingPage,
     "LearningPaths": LearningPaths,
     "LearningWrapped": LearningWrapped,
+    "LiveVideoSessions": LiveVideoSessions,
     "MyCourses": MyCourses,
     "OfflineCourses": OfflineCourses,
+    "OrganizationAnalytics": OrganizationAnalytics,
     "PWASettings": PWASettings,
     "PersonalizedLearningPath": PersonalizedLearningPath,
     "Profile": Profile,
@@ -118,12 +124,6 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "EnterpriseAdmin": EnterpriseAdmin,
-    "OrganizationAnalytics": OrganizationAnalytics,
-    "CourseVersioning": CourseVersioning,
-    "AICreatorStudio": AICreatorStudio,
-    "CollaborationHub": CollaborationHub,
-    "LiveVideoSessions": LiveVideoSessions,
 }
 
 export const pagesConfig = {
