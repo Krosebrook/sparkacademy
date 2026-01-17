@@ -33,6 +33,7 @@ import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import EnhancedCreatorAnalytics from './pages/EnhancedCreatorAnalytics';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
+import EnhancedInstructorDashboard from './pages/EnhancedInstructorDashboard';
 import EnterpriseAdmin from './pages/EnterpriseAdmin';
 import GamificationDashboard from './pages/GamificationDashboard';
 import Home from './pages/Home';
@@ -59,7 +60,7 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import EnhancedInstructorDashboard from './pages/EnhancedInstructorDashboard';
+import Onboarding from './pages/Onboarding';
 import __Layout from './Layout.jsx';
 
 
@@ -99,6 +100,7 @@ export const PAGES = {
     "EnhancedCourseCreator": EnhancedCourseCreator,
     "EnhancedCreatorAnalytics": EnhancedCreatorAnalytics,
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
+    "EnhancedInstructorDashboard": EnhancedInstructorDashboard,
     "EnterpriseAdmin": EnterpriseAdmin,
     "GamificationDashboard": GamificationDashboard,
     "Home": Home,
@@ -125,7 +127,7 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "EnhancedInstructorDashboard": EnhancedInstructorDashboard,
+    "Onboarding": Onboarding,
 }
 
 export const pagesConfig = {
