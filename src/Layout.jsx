@@ -102,6 +102,12 @@ const navigationItems = [
     url: createPageUrl("OfflineCourses"),
     icon: Download,
     description: "Downloaded"
+  },
+  {
+    title: "Instructor Tools",
+    url: createPageUrl("EnhancedInstructorDashboard"),
+    icon: BarChart3,
+    description: "Analytics"
   }
 ];
 
