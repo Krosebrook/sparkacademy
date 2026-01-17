@@ -46,6 +46,7 @@ import LearningWrapped from './pages/LearningWrapped';
 import LiveVideoSessions from './pages/LiveVideoSessions';
 import MyCourses from './pages/MyCourses';
 import OfflineCourses from './pages/OfflineCourses';
+import Onboarding from './pages/Onboarding';
 import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import PWASettings from './pages/PWASettings';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
@@ -60,7 +61,7 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import Onboarding from './pages/Onboarding';
+import OnboardingFlow from './pages/OnboardingFlow';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "LiveVideoSessions": LiveVideoSessions,
     "MyCourses": MyCourses,
     "OfflineCourses": OfflineCourses,
+    "Onboarding": Onboarding,
     "OrganizationAnalytics": OrganizationAnalytics,
     "PWASettings": PWASettings,
     "PersonalizedLearningPath": PersonalizedLearningPath,
@@ -127,7 +129,7 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "Onboarding": Onboarding,
+    "OnboardingFlow": OnboardingFlow,
 }
 
 export const pagesConfig = {
