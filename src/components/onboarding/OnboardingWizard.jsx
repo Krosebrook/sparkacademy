@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import { ChevronRight, ChevronLeft, CheckCircle2 } from 'lucide-react';
+import { ChevronRight, ChevronLeft, CheckCircle2, Zap } from 'lucide-react';
 
 // Step components
 import WelcomeStep from './steps/WelcomeStep';
@@ -19,6 +19,7 @@ import InvestorProfileStep from './steps/InvestorProfileStep';
 import PortfolioGoalsStep from './steps/PortfolioGoalsStep';
 import CommunityPreferencesStep from './steps/CommunityPreferencesStep';
 import ReviewSummaryStep from './steps/ReviewSummaryStep';
+import QuickStartMode from './QuickStartMode';
 
 const STEPS = [
   { id: 'welcome', label: 'Welcome', component: WelcomeStep, skippable: false },
@@ -30,6 +31,7 @@ const STEPS = [
 ];
 
 export default function OnboardingWizard() {
+  const [onboardingPath, setOnboardingPath] = useState(null); // 'full' or 'quick_start'
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState({
     investor_type: null,
@@ -129,7 +131,8 @@ export default function OnboardingWizard() {
     try {
       const profileData = {
         user_email: user.email,
-        onboarding_status: 'completed',
+        onboarding_mode: 'full',
+        onboarding_status: 'fully_completed',
         deal_sourcing_criteria: {
           target_industries: formData.target_industries,
           investment_size_min: formData.investment_size_min,
@@ -171,6 +174,70 @@ export default function OnboardingWizard() {
       setIsSubmitting(false);
     }
   };
+
+  // Show path selection screen
+  if (!onboardingPath) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex items-center justify-center">
+        <div className="w-full max-w-2xl">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-3">Welcome!</h1>
+            <p className="text-gray-400 text-lg">Choose how you'd like to get started</p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Full Onboarding */}
+            <Card className="card-glow border cursor-pointer hover:border-purple-500/70 transition-all" onClick={() => setOnboardingPath('full')}>
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="text-4xl mb-4">📋</div>
+                  <h2 className="text-xl font-bold text-white mb-2">Full Setup</h2>
+                  <p className="text-gray-400 text-sm mb-6">
+                    Complete your profile for personalized recommendations
+                  </p>
+                  <div className="space-y-2 text-xs text-gray-300 text-left mb-6">
+                    <p className="flex items-center gap-2">✓ Deal sourcing criteria</p>
+                    <p className="flex items-center gap-2">✓ Portfolio goals</p>
+                    <p className="flex items-center gap-2">✓ Community preferences</p>
+                    <p className="flex items-center gap-2">✓ Full customization</p>
+                  </div>
+                  <p className="text-xs text-gray-500">~10 minutes</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Start */}
+            <Card className="card-glow border border-purple-500/50 cursor-pointer hover:border-purple-500/70 transition-all" onClick={() => setOnboardingPath('quick_start')}>
+              <CardContent className="p-8">
+                <div className="text-center">
+                  <div className="inline-block p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mb-4">
+                    <Zap className="w-5 h-5 text-white" />
+                  </div>
+                  <h2 className="text-xl font-bold text-white mb-2">Quick Start</h2>
+                  <p className="text-gray-400 text-sm mb-6">
+                    Get instant access, complete setup anytime
+                  </p>
+                  <div className="space-y-2 text-xs text-gray-300 text-left mb-6">
+                    <p className="flex items-center gap-2">⚡ 5 essential questions</p>
+                    <p className="flex items-center gap-2">⚡ Immediate access</p>
+                    <p className="flex items-center gap-2">⚡ Guided prompts later</p>
+                    <p className="flex items-center gap-2">⚡ Complete anytime</p>
+                  </div>
+                  <p className="text-xs text-gray-500">~1 minute</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Quick start component wrapper
+if (onboardingPath === 'quick_start') {
+  return <QuickStartMode onComplete={() => window.location.href = '/dashboard'} />;
+}
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-6 flex items-center justify-center">
