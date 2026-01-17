@@ -43,7 +43,7 @@
 /__________________\
 ```
 
-###Goals
+### Goals
 
 **Short-term** (MVP):
 - 40%+ coverage on critical paths
