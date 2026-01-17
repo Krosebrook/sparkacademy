@@ -12,6 +12,7 @@ import QuickActions from "../components/dashboard/QuickActions";
 import EnrolledCourses from "../components/dashboard/EnrolledCourses";
 import CourseRecommendations from "../components/dashboard/CourseRecommendations";
 import PersonalizedRecommendations from "@/components/recommendations/PersonalizedRecommendations";
+import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 
 function LoggedInDashboard({ user }) {
   const [stats, setStats] = useState({
@@ -91,7 +92,8 @@ function LoggedInDashboard({ user }) {
       </div>
       <DashboardStats stats={stats} isLoading={isLoading} />
       
-      <div className="mb-6">
+      <div className="mb-6 space-y-6">
+        <GamificationDashboard />
         <PersonalizedRecommendations />
       </div>
       
