@@ -1,6 +1,6 @@
 /**
  * Unlock Capabilities
- * Determines and unlocks capability tiers based on power-user signals
+ * Determines and unlocks capability tiers based on learning signals
  */
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
@@ -24,53 +24,54 @@ Deno.serve(async (req) => {
     }
 
     const powerUser = powerUserStates[0];
-    const signals = powerUser.power_user_signals?.signal_scores || {};
+    const signals = powerUser.power_user_signals || {};
     const currentCapabilities = powerUser.unlocked_capabilities || {};
     const newUnlocks = [];
 
-    // TIER 1: Advanced Discovery (Deal Comparisons)
-    // Threshold: Saved 5+ deals OR compared 3+ deals
-    const tier1Eligible = (powerUser.power_user_signals?.saved_deals_count >= 5 || 
-                          powerUser.power_user_signals?.compared_deals_count >= 3) &&
-                         !currentCapabilities.tier_1_advanced_discovery;
+    // TIER 1: Advanced Learning Tools (AI Tutor, Personalized Paths)
+    // Threshold: Completed 2+ courses OR 3+ active enrollments
+    const tier1Eligible = (signals.courses_completed_count >= 2 || 
+                          signals.active_enrollments_count >= 3) &&
+                         !currentCapabilities.tier_1_advanced_learning;
 
     if (tier1Eligible) {
       newUnlocks.push({
-        tier: 'tier_1_advanced_discovery',
-        trigger: 'discovery_momentum'
+        tier: 'tier_1_advanced_learning',
+        trigger: 'learning_momentum'
       });
     }
 
-    // TIER 2: Portfolio Intelligence (Scenario Modeling)
-    // Threshold: Portfolio goals viewed 2+ times OR adjusted goals AND portfolio interactions 5+
-    const tier2Eligible = (powerUser.power_user_signals?.portfolio_adjustments_count >= 1 &&
-                          powerUser.power_user_signals?.portfolio_interactions_count >= 5) &&
-                         !currentCapabilities.tier_2_portfolio_intelligence;
+    // TIER 2: Mastery Tools (Custom Quizzes, Skill Gap Analysis)
+    // Threshold: 10+ study sessions AND 1+ course completed
+    const tier2Eligible = (signals.study_sessions_count >= 10 &&
+                          signals.courses_completed_count >= 1) &&
+                         !currentCapabilities.tier_2_mastery_tools;
 
     if (tier2Eligible) {
       newUnlocks.push({
-        tier: 'tier_2_portfolio_intelligence',
-        trigger: 'portfolio_engagement'
+        tier: 'tier_2_mastery_tools',
+        trigger: 'mastery_engagement'
       });
     }
 
-    // TIER 3: Network & Signal Amplification (Community)
-    // Threshold: 3+ community interactions (follow, bookmark, react)
-    const tier3Eligible = powerUser.power_user_signals?.community_interactions_count >= 3 &&
-                         !currentCapabilities.tier_3_network_amplification;
+    // TIER 3: Creator Features (Course Creation, Monetization)
+    // Threshold: 5+ community interactions OR 1+ content created
+    const tier3Eligible = (signals.community_interactions_count >= 5 ||
+                          signals.content_created_count >= 1) &&
+                         !currentCapabilities.tier_3_creator_features;
 
     if (tier3Eligible) {
       newUnlocks.push({
-        tier: 'tier_3_network_amplification',
-        trigger: 'community_engagement'
+        tier: 'tier_3_creator_features',
+        trigger: 'creator_engagement'
       });
     }
 
     // Build updated capabilities
     const updatedCapabilities = {
-      tier_1_advanced_discovery: currentCapabilities.tier_1_advanced_discovery || tier1Eligible,
-      tier_2_portfolio_intelligence: currentCapabilities.tier_2_portfolio_intelligence || tier2Eligible,
-      tier_3_network_amplification: currentCapabilities.tier_3_network_amplification || tier3Eligible
+      tier_1_advanced_learning: currentCapabilities.tier_1_advanced_learning || tier1Eligible,
+      tier_2_mastery_tools: currentCapabilities.tier_2_mastery_tools || tier2Eligible,
+      tier_3_creator_features: currentCapabilities.tier_3_creator_features || tier3Eligible
     };
 
     // Build unlock history entry

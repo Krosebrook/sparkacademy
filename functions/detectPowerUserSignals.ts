@@ -1,6 +1,6 @@
 /**
  * Detect Power-User Signals
- * Analyzes behavior to identify power-user readiness
+ * Analyzes learning behavior to identify power-user readiness
  */
 
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
@@ -15,9 +15,10 @@ Deno.serve(async (req) => {
     }
 
     // Fetch retention and power user states
-    const [retentionStates, powerUserStates] = await Promise.all([
+    const [retentionStates, powerUserStates, enrollments] = await Promise.all([
       base44.entities.RetentionState?.filter({ user_email: user.email }).catch(() => []),
-      base44.entities.PowerUserState?.filter({ user_email: user.email }).catch(() => [])
+      base44.entities.PowerUserState?.filter({ user_email: user.email }).catch(() => []),
+      base44.entities.Enrollment?.filter({ student_email: user.email }).catch(() => [])
     ]);
 
     if (!retentionStates?.length) {
@@ -27,25 +28,36 @@ Deno.serve(async (req) => {
     const retention = retentionStates[0];
     let powerUser = powerUserStates?.[0];
 
-    // Calculate signal scores
-    const compoundingActions = retention.compounding_actions || {};
+    // Calculate learning signals
+    const coursesCompleted = enrollments.filter(e => e.status === 'completed').length;
+    const activeEnrollments = enrollments.filter(e => e.status === 'in_progress').length;
+    const studySessionsCount = enrollments.reduce((sum, e) => sum + (e.lessons_completed || 0), 0);
+    const communityInteractions = retention.compounding_actions?.community_posts_count || 0;
+    const contentCreated = 0; // Would track from course creation
+    const consecutiveWeeks = retention.engagement_metrics?.consecutive_weeks_active || 0;
+
     const signals = {
-      saved_deals_count: compoundingActions.saved_deals_count || 0,
-      compared_deals_count: 0, // Would track from deal comparison API
-      portfolio_interactions_count: retention.engagement_metrics?.weekly_actions || 0,
-      portfolio_adjustments_count: compoundingActions.portfolio_adjustments_count || 0,
-      community_interactions_count: compoundingActions.community_follows_count || 0,
-      consecutive_weeks_active: retention.engagement_metrics?.consecutive_weeks_active || 0
+      courses_completed_count: coursesCompleted,
+      active_enrollments_count: activeEnrollments,
+      study_sessions_count: studySessionsCount,
+      community_interactions_count: communityInteractions,
+      content_created_count: contentCreated,
+      consecutive_weeks_active: consecutiveWeeks
     };
 
     // Compute individual signal scores (0-100)
-    const discoveryScore = Math.min(100, (signals.saved_deals_count * 15) + (signals.compared_deals_count * 10));
-    const portfolioScore = Math.min(100, (signals.portfolio_interactions_count * 10) + (signals.portfolio_adjustments_count * 20));
-    const communityScore = Math.min(100, (signals.community_interactions_count * 20));
-    const consistencyScore = Math.min(100, signals.consecutive_weeks_active * 15);
+    const learningScore = Math.min(100, (coursesCompleted * 20) + (activeEnrollments * 10));
+    const masteryScore = Math.min(100, studySessionsCount * 5);
+    const communityScore = Math.min(100, communityInteractions * 15);
+    const consistencyScore = Math.min(100, consecutiveWeeks * 25);
 
     // Composite power-user score (weighted average)
-    const overallScore = (discoveryScore * 0.35) + (portfolioScore * 0.35) + (communityScore * 0.20) + (consistencyScore * 0.10);
+    const overallScore = Math.round(
+      (learningScore * 0.35) + 
+      (masteryScore * 0.35) + 
+      (communityScore * 0.20) + 
+      (consistencyScore * 0.10)
+    );
 
     // Determine power-user status
     let powerUserStatus = 'emerging';
@@ -60,8 +72,8 @@ Deno.serve(async (req) => {
         power_user_signals: {
           ...signals,
           signal_scores: {
-            discovery_momentum_score: discoveryScore,
-            portfolio_engagement_score: portfolioScore,
+            learning_momentum_score: learningScore,
+            mastery_engagement_score: masteryScore,
             community_engagement_score: communityScore,
             overall_power_user_score: overallScore
           },
@@ -75,8 +87,8 @@ Deno.serve(async (req) => {
         power_user_signals: {
           ...signals,
           signal_scores: {
-            discovery_momentum_score: discoveryScore,
-            portfolio_engagement_score: portfolioScore,
+            learning_momentum_score: learningScore,
+            mastery_engagement_score: masteryScore,
             community_engagement_score: communityScore,
             overall_power_user_score: overallScore
           },
@@ -90,14 +102,14 @@ Deno.serve(async (req) => {
       success: true,
       power_user_status: powerUserStatus,
       signals: {
-        discovery_score: discoveryScore,
-        portfolio_score: portfolioScore,
+        learning_score: learningScore,
+        mastery_score: masteryScore,
         community_score: communityScore,
         overall_score: overallScore
       },
       thresholds: {
-        tier_1_ready: discoveryScore >= 40,
-        tier_2_ready: portfolioScore >= 40,
+        tier_1_ready: learningScore >= 40,
+        tier_2_ready: masteryScore >= 40,
         tier_3_ready: communityScore >= 40,
         premium_ready: overallScore >= 70
       }
