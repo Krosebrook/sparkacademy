@@ -4,9 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Search, Sparkles, Loader2, TrendingUp, BookOpen, ChevronRight } from 'lucide-react';
+import { Search, Sparkles, Loader2, TrendingUp, BookOpen, ChevronRight, Map } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import LearningJourneyCard from './LearningJourneyCard';
 
 export default function AICourseDiscovery({ userEmail }) {
   const [loading, setLoading] = useState(false);
@@ -86,13 +87,26 @@ export default function AICourseDiscovery({ userEmail }) {
 
       {recommendations && (
         <>
+          {/* Learning Journeys */}
+          {recommendations.learning_journeys?.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Map className="w-5 h-5 text-purple-400" />
+                <h3 className="text-xl font-bold text-white">Personalized Learning Journeys</h3>
+              </div>
+              {recommendations.learning_journeys.map((journey, idx) => (
+                <LearningJourneyCard key={idx} journey={journey} />
+              ))}
+            </div>
+          )}
+
           {/* Individual Courses */}
           {recommendations.courses?.length > 0 && (
             <Card className="card-glow">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <BookOpen className="w-5 h-5" />
-                  Recommended Courses
+                  Individual Courses
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -112,39 +126,6 @@ export default function AICourseDiscovery({ userEmail }) {
                         View
                         <ChevronRight className="w-4 h-4 ml-1" />
                       </Button>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Learning Tracks */}
-          {recommendations.learning_tracks?.length > 0 && (
-            <Card className="card-glow">
-              <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Personalized Learning Tracks
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {recommendations.learning_tracks.map((track, idx) => (
-                  <div key={idx} className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h4 className="font-semibold text-white mb-1">{track.title}</h4>
-                        <p className="text-sm text-gray-300 mb-2">{track.description}</p>
-                        <Badge className="text-xs bg-purple-600">{track.courses?.length} courses</Badge>
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      {track.courses?.map((course, i) => (
-                        <div key={i} className="flex items-center gap-2 text-sm text-gray-300">
-                          <span className="text-purple-400">{i + 1}.</span>
-                          <span>{course}</span>
-                        </div>
-                      ))}
                     </div>
                   </div>
                 ))}

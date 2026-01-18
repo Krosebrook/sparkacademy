@@ -17,21 +17,60 @@ Deno.serve(async (req) => {
 
     const allCourses = await base44.asServiceRole.entities.Course?.list(null, 100).catch(() => []);
 
+    const userProfile = await base44.asServiceRole.entities.UserProfile?.filter({ user_email }).catch(() => []);
+    const learningPath = await base44.asServiceRole.entities.LearningPathProgress?.filter({ user_email }).catch(() => []);
+
     const basePrompt = query 
       ? `User wants to learn: "${query}"\n\n`
-      : `Based on user's current learning:\n${enrollments.map(e => e.course_id).join(', ')}\n\n`;
+      : `Based on user's profile:\nCourses completed: ${enrollments.filter(e => e.status === 'completed').length}\nCurrent enrollments: ${enrollments.length}\nKnowledge gaps: ${learningPath[0]?.knowledge_gaps?.map(g => g.topic).join(', ') || 'None identified'}\n\n`;
 
-    const prompt = `${basePrompt}Recommend courses and learning tracks.
+    const prompt = `${basePrompt}Create personalized learning journeys.
 
 Available courses: ${allCourses.length}
+User aspirations: ${userProfile[0]?.portfolio_goals?.sector_priorities || 'Career advancement'}
+Skill gaps: ${learningPath[0]?.knowledge_gaps?.map(g => g.topic).join(', ') || 'General skill building'}
 
-Provide:
-- 3-5 recommended courses with title, description, match score, level, and reason
-- 2-3 learning tracks (bundles of related courses)
-- Trending topics in their field
+Create 3-5 comprehensive LEARNING JOURNEYS (not just course lists):
+Each journey should:
+- Target a specific career outcome or skill mastery
+- Include 3-6 courses in logical progression
+- Show skill progression (beginner → intermediate → advanced)
+- Indicate estimated completion time
+- List tangible outcomes/career benefits
+- Include milestone checkpoints
+- Reference current industry trends
+
+Also suggest 3-5 individual courses and trending topics.
 
 Format as JSON:
 {
+  "learning_journeys": [
+    {
+      "journey_id": "unique_id",
+      "title": "Descriptive title with outcome",
+      "description": "What learner will achieve",
+      "target_outcome": "Specific career goal or skill level",
+      "difficulty_progression": "beginner-to-advanced/intermediate-to-expert",
+      "estimated_weeks": 0,
+      "career_boost": "Career benefit description",
+      "industry_relevance": "Why this matters now",
+      "courses": [
+        {
+          "order": 1,
+          "title": "...",
+          "duration_weeks": 0,
+          "skills_gained": ["..."]
+        }
+      ],
+      "milestones": [
+        {
+          "checkpoint": "After course 2",
+          "achievement": "What you can do"
+        }
+      ],
+      "final_project": "Capstone project idea"
+    }
+  ],
   "courses": [
     {
       "title": "...",
@@ -39,13 +78,6 @@ Format as JSON:
       "match_score": 0-100,
       "level": "beginner/intermediate/advanced",
       "reason": "..."
-    }
-  ],
-  "learning_tracks": [
-    {
-      "title": "...",
-      "description": "...",
-      "courses": ["..."]
     }
   ],
   "trending_topics": ["..."]
@@ -56,6 +88,48 @@ Format as JSON:
       response_json_schema: {
         type: "object",
         properties: {
+          learning_journeys: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                journey_id: { type: "string" },
+                title: { type: "string" },
+                description: { type: "string" },
+                target_outcome: { type: "string" },
+                difficulty_progression: { type: "string" },
+                estimated_weeks: { type: "number" },
+                career_boost: { type: "string" },
+                industry_relevance: { type: "string" },
+                courses: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      order: { type: "number" },
+                      title: { type: "string" },
+                      duration_weeks: { type: "number" },
+                      skills_gained: {
+                        type: "array",
+                        items: { type: "string" }
+                      }
+                    }
+                  }
+                },
+                milestones: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      checkpoint: { type: "string" },
+                      achievement: { type: "string" }
+                    }
+                  }
+                },
+                final_project: { type: "string" }
+              }
+            }
+          },
           courses: {
             type: "array",
             items: {
@@ -66,20 +140,6 @@ Format as JSON:
                 match_score: { type: "number" },
                 level: { type: "string" },
                 reason: { type: "string" }
-              }
-            }
-          },
-          learning_tracks: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                title: { type: "string" },
-                description: { type: "string" },
-                courses: {
-                  type: "array",
-                  items: { type: "string" }
-                }
               }
             }
           },
