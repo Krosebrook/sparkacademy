@@ -1,0 +1,40 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
+Deno.serve(async (req) => {
+  try {
+    const base44 = createClientFromRequest(req);
+    const user = await base44.auth.me();
+    
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { prompt } = await req.json();
+
+    const fullPrompt = `Create detailed lesson content for:
+${prompt}
+
+Include:
+- Clear explanations with examples
+- Step-by-step instructions
+- Practical applications
+- Key takeaways
+
+Write in an engaging, educational style.`;
+
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt: fullPrompt,
+      response_json_schema: {
+        type: "object",
+        properties: {
+          content: { type: "string" }
+        }
+      }
+    });
+
+    return Response.json(result);
+  } catch (error) {
+    console.error('Lesson generation error:', error);
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});
