@@ -8,6 +8,9 @@ import { useQuery } from '@tanstack/react-query';
 import { Target, TrendingUp, BookOpen, Zap, ChevronRight, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import BadgeDisplay from './BadgeDisplay';
+import PointsTracker from './PointsTracker';
+import MiniLeaderboard from './MiniLeaderboard';
 
 export default function PersonalizedLearningPath() {
   const [analyzing, setAnalyzing] = useState(false);
@@ -71,6 +74,13 @@ export default function PersonalizedLearningPath() {
 
   return (
     <div className="space-y-6">
+      {/* Gamification Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <PointsTracker userEmail={user?.email} />
+        <BadgeDisplay userEmail={user?.email} />
+        <MiniLeaderboard userEmail={user?.email} />
+      </div>
+
       {/* Skill Analysis */}
       <Card className="card-glow">
         <CardHeader>
