@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     const unlockedTiers = powerUser?.unlocked_capabilities ? Object.values(powerUser.unlocked_capabilities).filter(Boolean).length : 0;
     const consecutiveWeeks = retention?.engagement_metrics?.consecutive_weeks_active || 0;
 
-    // SEGMENT 1: Emerging Power Users
+    // SEGMENT 1: Emerging Power Learners
     // Criteria: 40-69 power-user score, engaged/activated state, free tier, 1+ capability unlocked
     if (
       overallScore >= 40 && overallScore < 70 &&
@@ -50,8 +50,8 @@ Deno.serve(async (req) => {
       subscriptionTier === 'free' &&
       unlockedTiers >= 1
     ) {
-      segments.push('emerging_power_users');
-      segmentMetadata.emerging_power_users = {
+      segments.push('emerging_power_learners');
+      segmentMetadata.emerging_power_learners = {
         score: overallScore,
         unlocked_tiers: unlockedTiers,
         weeks_active: consecutiveWeeks,
@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
       };
     }
 
-    // SEGMENT 4: High-Intent Free Users
+    // SEGMENT 4: High-Intent Free Learners
     // Criteria: Power user status, free tier, 70+ score, multiple capabilities unlocked
     if (
       powerUserStatus === 'power_user' &&
@@ -98,8 +98,8 @@ Deno.serve(async (req) => {
       overallScore >= 70 &&
       unlockedTiers >= 2
     ) {
-      segments.push('high_intent_free_users');
-      segmentMetadata.high_intent_free_users = {
+      segments.push('high_intent_free_learners');
+      segmentMetadata.high_intent_free_learners = {
         score: overallScore,
         unlocked_tiers: unlockedTiers,
         conversion_readiness: 'critical',
@@ -152,7 +152,7 @@ Deno.serve(async (req) => {
       };
     }
 
-    // SEGMENT 8: Passive Browsers
+    // SEGMENT 8: Casual Learners
     // Criteria: Engaged state, low power-user score (<30), no capabilities unlocked, free tier
     if (
       currentState === 'engaged' &&
@@ -160,8 +160,8 @@ Deno.serve(async (req) => {
       unlockedTiers === 0 &&
       subscriptionTier === 'free'
     ) {
-      segments.push('passive_browsers');
-      segmentMetadata.passive_browsers = {
+      segments.push('casual_learners');
+      segmentMetadata.casual_learners = {
         score: overallScore,
         engagement_depth: 'shallow',
         activation_strategy: 'capability_unlock_nudge'

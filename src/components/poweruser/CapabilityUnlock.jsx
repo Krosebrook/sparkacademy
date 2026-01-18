@@ -13,41 +13,41 @@ export default function CapabilityUnlock({ tier, onDismiss, onExplore }) {
   const [dismissing, setDismissing] = useState(false);
 
   const tierConfig = {
-    tier_1_advanced_discovery: {
+    tier_1_advanced_learning: {
       icon: Zap,
-      title: 'Advanced Deal Analysis Unlocked',
+      title: 'Advanced Learning Tools Unlocked',
       color: 'from-blue-600 to-cyan-600',
-      description: 'Based on how actively you save and compare deals, you\'ve unlocked deeper analysis tools.',
+      description: 'Based on your progress, you\'ve unlocked AI-powered learning features.',
       features: [
-        'Compare deals side-by-side with full details',
-        'Save and organize deal collections',
-        'See exactly why each deal matches your strategy'
+        'Access AI tutor for personalized help',
+        'Get custom learning path recommendations',
+        'View detailed progress analytics'
       ],
-      cta: 'Try Deal Comparison'
+      cta: 'Try AI Tutor'
     },
-    tier_2_portfolio_intelligence: {
+    tier_2_mastery_tools: {
       icon: Target,
-      title: 'Portfolio Intelligence Unlocked',
+      title: 'Mastery Tools Unlocked',
       color: 'from-purple-600 to-pink-600',
-      description: 'Your portfolio activity has unlocked advanced forecasting tools.',
+      description: 'Your dedication has unlocked advanced tracking and assessment tools.',
       features: [
-        'Run scenario modeling to test strategies',
-        'See what-if projections automatically',
-        'Map deals directly to your goals'
+        'Create custom practice quizzes',
+        'Track skill gap progression',
+        'Get mastery-level certifications'
       ],
-      cta: 'Explore Scenarios'
+      cta: 'Explore Tools'
     },
-    tier_3_network_amplification: {
+    tier_3_creator_features: {
       icon: Users,
-      title: 'Premium Network Access Unlocked',
+      title: 'Creator Features Unlocked',
       color: 'from-green-600 to-emerald-600',
-      description: 'Your community engagement unlocked access to higher-signal conversations.',
+      description: 'Your engagement unlocked course creation and monetization tools.',
       features: [
-        'Follow verified investment experts',
-        'Access highlight-boosted insights',
-        'Join premium community discussions'
+        'Create and publish your own courses',
+        'Use AI to generate course content',
+        'Monetize your expertise'
       ],
-      cta: 'Connect with Experts'
+      cta: 'Start Creating'
     }
   };
 

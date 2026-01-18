@@ -41,10 +41,10 @@ export default function SegmentedContent() {
   };
 
   const segmentConfig = {
-    emerging_power_users: {
+    emerging_power_learners: {
       icon: TrendingUp,
       color: 'bg-blue-100 text-blue-800',
-      label: 'Emerging Power User'
+      label: 'Fast Learner'
     },
     active_pro_subscribers: {
       icon: Crown,
@@ -56,10 +56,10 @@ export default function SegmentedContent() {
       color: 'bg-red-100 text-red-800',
       label: 'Needs Attention'
     },
-    high_intent_free_users: {
+    high_intent_free_learners: {
       icon: Zap,
       color: 'bg-amber-100 text-amber-800',
-      label: 'High Intent'
+      label: 'High Intent Learner'
     },
     dormant_premium_users: {
       icon: AlertCircle,
@@ -76,10 +76,10 @@ export default function SegmentedContent() {
       color: 'bg-cyan-100 text-cyan-800',
       label: 'Fast Starter'
     },
-    passive_browsers: {
+    casual_learners: {
       icon: Zap,
       color: 'bg-gray-100 text-gray-800',
-      label: 'Browser'
+      label: 'Casual Learner'
     },
     subscription_churn_risk: {
       icon: AlertCircle,

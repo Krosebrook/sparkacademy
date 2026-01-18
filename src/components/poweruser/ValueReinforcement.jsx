@@ -59,42 +59,42 @@ export default function ValueReinforcement({ metrics }) {
               </motion.div>
             )}
 
-            {/* Deals Compared */}
-            {metrics.deals_compared_count !== undefined && (
+            {/* Courses Completed */}
+            {metrics.courses_completed_count !== undefined && (
               <motion.div variants={itemVariants} className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
                 </div>
                 <div className="text-3xl font-bold text-cyan-400 mb-1">
-                  {metrics.deals_compared_count}
+                  {metrics.courses_completed_count}
                 </div>
-                <div className="text-xs text-gray-400">Deals analyzed</div>
+                <div className="text-xs text-gray-400">Courses completed</div>
               </motion.div>
             )}
 
-            {/* Scenarios Created */}
-            {metrics.scenario_models_created !== undefined && (
+            {/* Skills Mastered */}
+            {metrics.skills_mastered_count !== undefined && (
               <motion.div variants={itemVariants} className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Target className="w-4 h-4 text-purple-400" />
                 </div>
                 <div className="text-3xl font-bold text-purple-400 mb-1">
-                  {metrics.scenario_models_created}
+                  {metrics.skills_mastered_count}
                 </div>
-                <div className="text-xs text-gray-400">Scenarios tested</div>
+                <div className="text-xs text-gray-400">Skills mastered</div>
               </motion.div>
             )}
 
-            {/* Strategy Improvement */}
-            {metrics.portfolio_precision_improvement_percent !== undefined && (
+            {/* Knowledge Growth */}
+            {metrics.knowledge_growth_percent !== undefined && (
               <motion.div variants={itemVariants} className="text-center">
                 <div className="flex items-center justify-center gap-2 mb-2">
                   <Zap className="w-4 h-4 text-amber-400" />
                 </div>
                 <div className="text-3xl font-bold text-amber-400 mb-1">
-                  +{metrics.portfolio_precision_improvement_percent}%
+                  +{metrics.knowledge_growth_percent}%
                 </div>
-                <div className="text-xs text-gray-400">Match accuracy</div>
+                <div className="text-xs text-gray-400">Quiz improvement</div>
               </motion.div>
             )}
           </motion.div>
@@ -103,9 +103,9 @@ export default function ValueReinforcement({ metrics }) {
 
       {/* Insight Card */}
       <motion.div variants={itemVariants} className="p-4 bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-500/30 rounded-lg">
-        <h4 className="font-semibold text-white mb-2">Why you're seeing value</h4>
+        <h4 className="font-semibold text-white mb-2">Your Learning Impact</h4>
         <p className="text-sm text-gray-300">
-          With deal comparisons and scenario modeling, you're making faster, more confident investment decisions. Your deals saved have grown {metrics.saved_deals_growth_7days || 0} this week.
+          With AI-powered tools and personalized paths, you're mastering skills faster. Your learning streak is {metrics.learning_streak_days || 0} days.
         </p>
       </motion.div>
     </motion.div>
