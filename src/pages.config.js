@@ -6,10 +6,12 @@ import AIMentor from './pages/AIMentor';
 import AITools from './pages/AITools';
 import AITutor from './pages/AITutor';
 import AdaptiveLearning from './pages/AdaptiveLearning';
+import AdvancedAITutor from './pages/AdvancedAITutor';
 import AdvancedCreatorTools from './pages/AdvancedCreatorTools';
 import Billing from './pages/Billing';
 import CareerPathing from './pages/CareerPathing';
 import CollaborationHub from './pages/CollaborationHub';
+import CommunityAIHub from './pages/CommunityAIHub';
 import CommunityHub from './pages/CommunityHub';
 import CompetitiveLeaderboards from './pages/CompetitiveLeaderboards';
 import ContentDiscovery from './pages/ContentDiscovery';
@@ -62,8 +64,7 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import CommunityAIHub from './pages/CommunityAIHub';
-import AdvancedAITutor from './pages/AdvancedAITutor';
+import CreatorAIAssistant from './pages/CreatorAIAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -76,10 +77,12 @@ export const PAGES = {
     "AITools": AITools,
     "AITutor": AITutor,
     "AdaptiveLearning": AdaptiveLearning,
+    "AdvancedAITutor": AdvancedAITutor,
     "AdvancedCreatorTools": AdvancedCreatorTools,
     "Billing": Billing,
     "CareerPathing": CareerPathing,
     "CollaborationHub": CollaborationHub,
+    "CommunityAIHub": CommunityAIHub,
     "CommunityHub": CommunityHub,
     "CompetitiveLeaderboards": CompetitiveLeaderboards,
     "ContentDiscovery": ContentDiscovery,
@@ -132,8 +135,7 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "CommunityAIHub": CommunityAIHub,
-    "AdvancedAITutor": AdvancedAITutor,
+    "CreatorAIAssistant": CreatorAIAssistant,
 }
 
 export const pagesConfig = {
