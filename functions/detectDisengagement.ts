@@ -19,72 +19,57 @@ Deno.serve(async (req) => {
 
     const disengagementAnalysis = [];
 
+    const calculateDisengagement = (enrollment, daysSinceActivity, completionRate) => {
+      const scoringRules = [
+        { condition: daysSinceActivity > 14, points: 40, trigger: 'inactivity' },
+        { condition: daysSinceActivity > 7, points: 25, trigger: 'declining_engagement' },
+        { condition: daysSinceActivity > 3, points: 10 },
+        { condition: completionRate < 20 && daysSinceActivity > 7, points: 30, trigger: 'incomplete_lessons' },
+        { condition: completionRate < 50 && daysSinceActivity > 14, points: 20, trigger: 'incomplete_lessons' },
+        { condition: enrollment.missed_deadlines > 0, points: 20, trigger: 'missed_deadlines' }
+      ];
+
+      let score = 0;
+      const triggers = [];
+
+      scoringRules.forEach(rule => {
+        if (rule.condition) {
+          score += rule.points;
+          if (rule.trigger) triggers.push(rule.trigger);
+        }
+      });
+
+      // Quiz scoring
+      if (enrollment.quiz_scores?.length > 0) {
+        const avgScore = enrollment.quiz_scores.reduce((a, b) => a + b, 0) / enrollment.quiz_scores.length;
+        if (avgScore < 60) {
+          score += 30;
+          triggers.push('low_quiz_scores');
+        } else if (avgScore < 75) score += 15;
+      }
+
+      return { score, triggers: [...new Set(triggers)] };
+    };
+
     for (const enrollment of enrollments) {
-      // Calculate days since last activity
       const lastActivity = enrollment.last_activity_date 
         ? new Date(enrollment.last_activity_date) 
         : new Date(enrollment.created_date);
-      const daysSinceActivity = Math.floor(
-        (Date.now() - lastActivity.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      // Get course details
-      const course = await base44.asServiceRole.entities.Course.get(enrollment.course_id);
-      
-      // Calculate completion rate
+      const daysSinceActivity = Math.floor((Date.now() - lastActivity) / 86400000);
       const completionRate = enrollment.progress_percentage || 0;
-      
-      // Calculate disengagement score
-      let disengagementScore = 0;
-      let triggerReasons = [];
 
-      // Inactivity scoring (0-40 points)
-      if (daysSinceActivity > 14) {
-        disengagementScore += 40;
-        triggerReasons.push('inactivity');
-      } else if (daysSinceActivity > 7) {
-        disengagementScore += 25;
-        triggerReasons.push('declining_engagement');
-      } else if (daysSinceActivity > 3) {
-        disengagementScore += 10;
-      }
+      const { score, triggers } = calculateDisengagement(enrollment, daysSinceActivity, completionRate);
 
-      // Low progress scoring (0-30 points)
-      if (completionRate < 20 && daysSinceActivity > 7) {
-        disengagementScore += 30;
-        triggerReasons.push('incomplete_lessons');
-      } else if (completionRate < 50 && daysSinceActivity > 14) {
-        disengagementScore += 20;
-        triggerReasons.push('incomplete_lessons');
-      }
-
-      // Quiz performance (0-30 points)
-      if (enrollment.quiz_scores && enrollment.quiz_scores.length > 0) {
-        const avgScore = enrollment.quiz_scores.reduce((a, b) => a + b, 0) / enrollment.quiz_scores.length;
-        if (avgScore < 60) {
-          disengagementScore += 30;
-          triggerReasons.push('low_quiz_scores');
-        } else if (avgScore < 75) {
-          disengagementScore += 15;
-        }
-      }
-
-      // Missed deadlines (if applicable)
-      if (enrollment.missed_deadlines && enrollment.missed_deadlines > 0) {
-        disengagementScore += 20;
-        triggerReasons.push('missed_deadlines');
-      }
-
-      // Only add if disengagement is significant
-      if (disengagementScore >= 30) {
+      if (score >= 30) {
+        const course = await base44.asServiceRole.entities.Course.get(enrollment.course_id);
         disengagementAnalysis.push({
           course_id: enrollment.course_id,
           course_title: course?.title || 'Course',
-          disengagement_score: disengagementScore,
+          disengagement_score: score,
           days_since_activity: daysSinceActivity,
           completion_rate: completionRate,
-          trigger_reasons: triggerReasons,
-          primary_trigger: triggerReasons[0] || 'inactivity'
+          trigger_reasons: triggers,
+          primary_trigger: triggers[0] || 'inactivity'
         });
       }
     }

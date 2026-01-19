@@ -25,35 +25,24 @@ Deno.serve(async (req) => {
     const userProfile = await base44.asServiceRole.entities.User.get(user_email);
     const learningGoal = userProfile?.learning_goal || '';
 
-    // Generate personalized check-in using AI
-    const prompt = `You are an empathetic AI tutor conducting a proactive check-in with a learner who shows signs of disengagement.
+    const contextInfo = {
+      course: course?.title || 'their course',
+      inactiveDays: days_since_activity,
+      progress: completion_rate,
+      trigger: trigger_reason,
+      riskLevel: disengagement_score,
+      goal: learningGoal || 'Not specified'
+    };
 
-Context:
-- Course: ${course?.title || 'their course'}
-- Days since last activity: ${days_since_activity}
-- Course completion: ${completion_rate}%
-- Trigger reason: ${trigger_reason}
-- Disengagement score: ${disengagement_score}/100
-- Learning goal: ${learningGoal || 'Not specified'}
+    const prompt = `You are an empathetic AI tutor conducting a proactive check-in with a learner showing disengagement signs.
 
-Create a warm, encouraging check-in message (2-3 sentences) that:
-1. Acknowledges their situation without being judgmental
-2. Offers specific, actionable help
-3. Motivates them to re-engage
+Context: ${JSON.stringify(contextInfo)}
 
-Also provide 3-4 personalized suggestions with types (resource/tip/encouragement/goal_adjustment).
+Create a warm, encouraging check-in message (2-3 sentences) that acknowledges their situation, offers actionable help, and motivates re-engagement.
 
-Format as JSON:
-{
-  "message": "Personalized check-in message",
-  "suggestions": [
-    {
-      "type": "resource|tip|encouragement|goal_adjustment",
-      "content": "Specific suggestion",
-      "action_url": "Optional URL to resource"
-    }
-  ]
-}`;
+Provide 3-4 personalized suggestions (types: resource, tip, encouragement, goal_adjustment).
+
+Return JSON: {"message": "...", "suggestions": [{"type": "...", "content": "...", "action_url": "..."}]}`;
 
     const aiResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
       prompt,

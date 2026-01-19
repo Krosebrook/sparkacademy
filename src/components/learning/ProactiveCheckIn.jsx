@@ -31,18 +31,10 @@ export default function ProactiveCheckIn() {
       status,
       [`${status}_date`]: new Date().toISOString()
     }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['check-ins'] });
-    }
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['check-ins'] })
   });
 
-  const handleDismiss = (checkIn) => {
-    updateCheckInMutation.mutate({ id: checkIn.id, status: 'dismissed' });
-  };
-
-  const handleActOn = (checkIn) => {
-    updateCheckInMutation.mutate({ id: checkIn.id, status: 'acted_on' });
-  };
+  const updateCheckIn = (id, status) => updateCheckInMutation.mutate({ id, status });
 
   const getSuggestionIcon = (type) => {
     switch (type) {
@@ -94,7 +86,7 @@ export default function ProactiveCheckIn() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={() => handleDismiss(checkIn)}
+                  onClick={() => updateCheckIn(checkIn.id, 'dismissed')}
                   className="text-gray-400 hover:text-gray-600"
                 >
                   <X className="w-4 h-4" />
@@ -131,7 +123,7 @@ export default function ProactiveCheckIn() {
                             className="text-purple-600 p-0 h-auto mt-1"
                             onClick={() => {
                               window.open(suggestion.action_url, '_blank');
-                              handleActOn(checkIn);
+                              updateCheckIn(checkIn.id, 'acted_on');
                             }}
                           >
                             Learn more <ExternalLink className="w-3 h-3 ml-1" />
@@ -147,7 +139,7 @@ export default function ProactiveCheckIn() {
               <div className="flex gap-2 pt-2">
                 <Button 
                   className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  onClick={() => handleActOn(checkIn)}
+                  onClick={() => updateCheckIn(checkIn.id, 'acted_on')}
                 >
                   <CheckCircle className="w-4 h-4 mr-2" />
                   Thanks, I'll get back on track!

@@ -21,7 +21,7 @@ export default function AdvancedAITutor() {
     queryFn: () => base44.auth.me()
   });
 
-  const { data: enrollments } = useQuery({
+  const { data: enrollments = [] } = useQuery({
     queryKey: ['enrollments', user?.email],
     queryFn: () => base44.entities.Enrollment.filter({ student_email: user?.email }),
     enabled: !!user?.email
@@ -30,14 +30,9 @@ export default function AdvancedAITutor() {
   const handleSaveGoal = async () => {
     if (!learningGoal.trim()) return;
     
-    try {
-      // Save goal to user profile or learning path
-      await base44.auth.updateMe({ learning_goal: learningGoal });
-      setGoalSaved(true);
-      setTimeout(() => setGoalSaved(false), 3000);
-    } catch (error) {
-      console.error('Failed to save goal:', error);
-    }
+    await base44.auth.updateMe({ learning_goal: learningGoal });
+    setGoalSaved(true);
+    setTimeout(() => setGoalSaved(false), 3000);
   };
 
   return (
@@ -113,7 +108,7 @@ export default function AdvancedAITutor() {
           </TabsContent>
 
           <TabsContent value="study-plan" className="space-y-4">
-            {enrollments?.length > 0 ? (
+            {enrollments.length > 0 ? (
               enrollments.map((enrollment) => (
                 <StudyPlanGenerator key={enrollment.id} courseId={enrollment.course_id} />
               ))

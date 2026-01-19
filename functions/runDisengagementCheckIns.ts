@@ -40,27 +40,27 @@ Deno.serve(async (req) => {
         user_email: userEmail
       });
 
-      if (disengagement.needs_intervention && disengagement.at_risk_courses.length > 0) {
-        // Create check-in for the most at-risk course
-        const topRisk = disengagement.at_risk_courses[0];
-        
-        const { data: checkInResult } = await base44.asServiceRole.functions.invoke('generateCheckIn', {
-          user_email: userEmail,
-          course_id: topRisk.course_id,
-          trigger_reason: topRisk.primary_trigger,
-          disengagement_score: topRisk.disengagement_score,
-          days_since_activity: topRisk.days_since_activity,
-          completion_rate: topRisk.completion_rate
-        });
+      if (!disengagement.needs_intervention || disengagement.at_risk_courses.length === 0) {
+        continue;
+      }
 
-        if (checkInResult.success) {
-          results.check_ins_created++;
-          results.users_at_risk.push({
-            user_email: userEmail,
-            course: topRisk.course_title,
-            risk_score: topRisk.disengagement_score
-          });
-        }
+      const topRisk = disengagement.at_risk_courses[0];
+      const { data: checkInResult } = await base44.asServiceRole.functions.invoke('generateCheckIn', {
+        user_email: userEmail,
+        course_id: topRisk.course_id,
+        trigger_reason: topRisk.primary_trigger,
+        disengagement_score: topRisk.disengagement_score,
+        days_since_activity: topRisk.days_since_activity,
+        completion_rate: topRisk.completion_rate
+      });
+
+      if (checkInResult.success) {
+        results.check_ins_created++;
+        results.users_at_risk.push({
+          user_email: userEmail,
+          course: topRisk.course_title,
+          risk_score: topRisk.disengagement_score
+        });
       }
     }
 
