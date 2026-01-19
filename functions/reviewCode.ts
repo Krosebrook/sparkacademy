@@ -6,7 +6,7 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { code } = await req.json();
+    const { code, learning_goal } = await req.json();
 
     const prompt = `Review this code and provide feedback:
 

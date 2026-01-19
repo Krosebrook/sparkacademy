@@ -6,7 +6,7 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { user_email, course_id, goal } = await req.json();
+    const { course_id } = await req.json();
 
     const prompt = `Create a personalized study plan with spaced repetition:
 

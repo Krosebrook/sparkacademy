@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Code, Loader2, CheckCircle2, AlertTriangle, Lightbulb } from 'lucide-react';
+import { Code, Loader2, CheckCircle2, AlertTriangle, Lightbulb, Target } from 'lucide-react';
 
 export default function AICodeReviewer() {
   const [loading, setLoading] = useState(false);
   const [code, setCode] = useState('');
   const [feedback, setFeedback] = useState(null);
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => base44.auth.me()
+  });
 
   const reviewCode = async () => {
     if (!code.trim()) return;
@@ -17,7 +23,8 @@ export default function AICodeReviewer() {
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('reviewCode', {
-        code: code.trim()
+        code: code.trim(),
+        learning_goal: user?.learning_goal || null
       });
       setFeedback(data);
     } catch (error) {
@@ -36,6 +43,16 @@ export default function AICodeReviewer() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        {user?.learning_goal && (
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Target className="w-4 h-4 text-purple-400" />
+              <span className="font-semibold text-white text-sm">Reviewing for your goal:</span>
+            </div>
+            <p className="text-sm text-gray-300">{user.learning_goal}</p>
+          </div>
+        )}
+        
         <Textarea
           value={code}
           onChange={(e) => setCode(e.target.value)}

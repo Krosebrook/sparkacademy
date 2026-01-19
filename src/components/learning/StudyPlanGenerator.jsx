@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Calendar, Loader2, Target, CheckCircle2 } from 'lucide-react';
+import { Calendar, Loader2, Target, CheckCircle2, Sparkles } from 'lucide-react';
 
-export default function StudyPlanGenerator({ userEmail, courseId }) {
+export default function StudyPlanGenerator({ courseId }) {
   const [loading, setLoading] = useState(false);
-  const [goal, setGoal] = useState('');
   const [studyPlan, setStudyPlan] = useState(null);
+
+  const { data: user } = useQuery({
+    queryKey: ['user'],
+    queryFn: () => base44.auth.me()
+  });
 
   const generatePlan = async () => {
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('generateStudyPlan', {
-        user_email: userEmail,
-        course_id: courseId,
-        goal: goal || null
+        course_id: courseId
       });
       setStudyPlan(data);
     } catch (error) {
@@ -26,6 +28,12 @@ export default function StudyPlanGenerator({ userEmail, courseId }) {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user?.learning_goal && courseId && !studyPlan) {
+      generatePlan();
+    }
+  }, [user?.learning_goal, courseId]);
 
   return (
     <Card className="card-glow">
@@ -36,16 +44,22 @@ export default function StudyPlanGenerator({ userEmail, courseId }) {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex gap-2">
-          <Input
-            value={goal}
-            onChange={(e) => setGoal(e.target.value)}
-            placeholder="Learning goal (optional, e.g., 'master React in 30 days')"
-          />
-          <Button onClick={generatePlan} disabled={loading}>
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Generate'}
+        {user?.learning_goal && (
+          <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-4 h-4 text-purple-400" />
+              <span className="font-semibold text-white text-sm">Your Learning Goal</span>
+            </div>
+            <p className="text-sm text-gray-300">{user.learning_goal}</p>
+          </div>
+        )}
+
+        {!studyPlan && (
+          <Button onClick={generatePlan} disabled={loading} className="w-full">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Calendar className="w-4 h-4 mr-2" />}
+            Generate Personalized Study Plan
           </Button>
-        </div>
+        )}
 
         {studyPlan && (
           <div className="space-y-4">

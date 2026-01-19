@@ -95,15 +95,18 @@ Identify:
   const generateStudyPlan = async () => {
     setIsTyping(true);
     try {
+      const learningGoal = user?.learning_goal || '';
+      
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Create a personalized study plan for this student:
 
 Course: ${course?.title}
 Current Progress: ${enrollment?.completion_percentage || 0}%
 Completed Lessons: ${enrollment?.completed_lessons?.length || 0}
+Learning Goal: ${learningGoal || 'Complete the course'}
 Recent Confusion Points: ${confusionPoints.map(c => c.topic).join(', ')}
 
-Generate a 7-day study plan with:
+Generate a 7-day study plan aligned with their learning goal, including:
 1. Daily focus topics
 2. Recommended exercises
 3. Review sessions
@@ -152,10 +155,13 @@ Generate a 7-day study plan with:
     setIsTyping(true);
 
     try {
+      const learningGoal = user?.learning_goal || '';
+      
       const context = `
 Course: ${course?.title}
 Current Lesson: ${currentLesson?.title || 'N/A'}
 Student Progress: ${enrollment?.completion_percentage || 0}%
+Learning Goal: ${learningGoal || 'Not specified'}
 Recent Confusion: ${confusionPoints.map(c => c.topic).join(', ')}
 `;
 
@@ -164,7 +170,7 @@ Recent Confusion: ${confusionPoints.map(c => c.topic).join(', ')}
       ).join('\n');
 
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an AI tutor helping a student. Provide helpful, encouraging responses.
+        prompt: `You are an AI tutor helping a student. Provide helpful, encouraging responses tailored to their learning goal.
 
 Context:
 ${context}
@@ -173,11 +179,11 @@ Conversation:
 ${conversationHistory}
 Student: ${input}
 
-Provide a helpful response with:
-1. Clear explanation
-2. Examples if relevant
-3. Guided problem-solving steps if it's a problem
-4. Encouragement
+Adapt your response to align with their learning goal. Provide:
+1. Clear explanation relevant to their goal
+2. Examples that connect to their goal
+3. Guided steps if it's a problem
+4. Encouragement that reinforces their goal
 
 Keep responses concise and student-friendly.`
       });
