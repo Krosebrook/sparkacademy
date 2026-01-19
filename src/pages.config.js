@@ -47,6 +47,7 @@ import LiveVideoSessions from './pages/LiveVideoSessions';
 import MyCourses from './pages/MyCourses';
 import OfflineCourses from './pages/OfflineCourses';
 import Onboarding from './pages/Onboarding';
+import OnboardingFlow from './pages/OnboardingFlow';
 import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import PWASettings from './pages/PWASettings';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
@@ -61,7 +62,8 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import OnboardingFlow from './pages/OnboardingFlow';
+import CommunityAIHub from './pages/CommunityAIHub';
+import AdvancedAITutor from './pages/AdvancedAITutor';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +117,7 @@ export const PAGES = {
     "MyCourses": MyCourses,
     "OfflineCourses": OfflineCourses,
     "Onboarding": Onboarding,
+    "OnboardingFlow": OnboardingFlow,
     "OrganizationAnalytics": OrganizationAnalytics,
     "PWASettings": PWASettings,
     "PersonalizedLearningPath": PersonalizedLearningPath,
@@ -129,7 +132,8 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "OnboardingFlow": OnboardingFlow,
+    "CommunityAIHub": CommunityAIHub,
+    "AdvancedAITutor": AdvancedAITutor,
 }
 
 export const pagesConfig = {

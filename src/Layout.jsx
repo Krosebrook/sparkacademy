@@ -75,7 +75,7 @@ const navigationItems = [
   },
   {
     title: "AI Tutor",
-    url: createPageUrl("AITutor"),
+    url: createPageUrl("AdvancedAITutor"),
     icon: Bot,
     description: "Get Help"
   },
@@ -102,6 +102,18 @@ const navigationItems = [
     url: createPageUrl("OfflineCourses"),
     icon: Download,
     description: "Downloaded"
+  },
+  {
+    title: "Community AI",
+    url: createPageUrl("CommunityAIHub"),
+    icon: Users,
+    description: "AI Insights"
+  },
+  {
+    title: "AI Creator Studio",
+    url: createPageUrl("AICreatorStudio"),
+    icon: Wand2,
+    description: "Course Tools"
   },
   {
     title: "Instructor Tools",
