@@ -8,10 +8,15 @@ Deno.serve(async (req) => {
 
     const { course_id } = await req.json();
 
+    const userProfile = await base44.asServiceRole.entities.User.get(user.email);
+    const learningGoal = userProfile?.learning_goal || 'Complete the course efficiently';
+    
+    const course = await base44.asServiceRole.entities.Course.get(course_id);
+
     const prompt = `Create a personalized study plan with spaced repetition:
 
-User goal: ${goal || 'Complete the course efficiently'}
-Course: ${course_id}
+Learning Goal: ${learningGoal}
+Course: ${course?.title || 'Course'}
 
 Generate:
 - Goal summary

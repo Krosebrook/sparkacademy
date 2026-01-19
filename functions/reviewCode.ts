@@ -8,11 +8,13 @@ Deno.serve(async (req) => {
 
     const { code, learning_goal } = await req.json();
 
+    const goalContext = learning_goal ? `\n\nLearning Goal: ${learning_goal}\nTailor feedback to help them progress toward this goal.` : '';
+
     const prompt = `Review this code and provide feedback:
 
 \`\`\`
 ${code}
-\`\`\`
+\`\`\`${goalContext}
 
 Provide:
 - Quality score (0-100)
