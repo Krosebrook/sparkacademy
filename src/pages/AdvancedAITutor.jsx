@@ -11,10 +11,12 @@ import StudyPlanGenerator from '@/components/learning/StudyPlanGenerator';
 import AICodeReviewer from '@/components/learning/AICodeReviewer';
 import EnhancedAITutor from '@/components/learning/EnhancedAITutor';
 import ProactiveCheckIn from '@/components/learning/ProactiveCheckIn';
+import DynamicLearningPath from '@/components/learning/DynamicLearningPath';
 
 export default function AdvancedAITutor() {
   const [learningGoal, setLearningGoal] = useState('');
   const [goalSaved, setGoalSaved] = useState(false);
+  const [confusionPoints, setConfusionPoints] = useState([]);
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -78,10 +80,14 @@ export default function AdvancedAITutor() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="tutor" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="tutor">
               <MessageSquare className="w-4 h-4 mr-2" />
               AI Tutor Chat
+            </TabsTrigger>
+            <TabsTrigger value="learning-path">
+              <Target className="w-4 h-4 mr-2" />
+              Learning Path
             </TabsTrigger>
             <TabsTrigger value="study-plan">
               <Calendar className="w-4 h-4 mr-2" />
@@ -102,9 +108,30 @@ export default function AdvancedAITutor() {
                 </p>
               </CardHeader>
               <CardContent>
-                <EnhancedAITutor />
+                <EnhancedAITutor onConfusionUpdate={setConfusionPoints} />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="learning-path" className="space-y-4">
+            {enrollments.length > 0 ? (
+              enrollments.map((enrollment) => (
+                <DynamicLearningPath 
+                  key={enrollment.id} 
+                  courseId={enrollment.course_id}
+                  confusionPoints={confusionPoints}
+                />
+              ))
+            ) : (
+              <Card>
+                <CardContent className="flex items-center justify-center py-12">
+                  <div className="text-center text-gray-500">
+                    <Target className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                    <p>Enroll in a course to generate your personalized learning path</p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="study-plan" className="space-y-4">

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Send, Lightbulb, AlertCircle, Target, TrendingUp } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 
-export default function EnhancedAITutor({ courseId, currentLesson }) {
+export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUpdate }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -85,7 +85,9 @@ Identify:
           }
         });
         
-        setConfusionPoints(result.confusion_points || []);
+        const points = result.confusion_points || [];
+        setConfusionPoints(points);
+        if (onConfusionUpdate) onConfusionUpdate(points);
       } catch (error) {
         console.error("Failed to analyze confusion:", error);
       }
