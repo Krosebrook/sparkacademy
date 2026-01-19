@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Wand2, FileText, ClipboardCheck, Video, DollarSign } from 'lucide-react';
 import AISyllabusGenerator from '@/components/creator/AISyllabusGenerator';
+import AICourseDescriptionGenerator from '@/components/creator/AICourseDescriptionGenerator';
 import DiverseAssessmentGenerator from '@/components/creator/DiverseAssessmentGenerator';
 import MultimediaContentSuggester from '@/components/creator/MultimediaContentSuggester';
 import MonetizationStrategist from '@/components/creator/MonetizationStrategist';
@@ -24,10 +25,14 @@ export default function AICreatorStudio() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="syllabus" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="syllabus">
               <FileText className="w-4 h-4 mr-2" />
               Syllabus
+            </TabsTrigger>
+            <TabsTrigger value="descriptions">
+              <Wand2 className="w-4 h-4 mr-2" />
+              Descriptions
             </TabsTrigger>
             <TabsTrigger value="assessments">
               <ClipboardCheck className="w-4 h-4 mr-2" />
@@ -53,6 +58,20 @@ export default function AICreatorStudio() {
               </CardHeader>
               <CardContent>
                 <AISyllabusGenerator />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="descriptions" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>AI Course Description Generator</CardTitle>
+                <p className="text-sm text-gray-500">
+                  Create engaging course descriptions optimized for marketing pages, catalogs, emails, and social media
+                </p>
+              </CardHeader>
+              <CardContent>
+                <AICourseDescriptionGenerator />
               </CardContent>
             </Card>
           </TabsContent>
