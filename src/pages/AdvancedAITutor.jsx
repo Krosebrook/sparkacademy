@@ -10,6 +10,7 @@ import { Brain, Calendar, Code, Target, MessageSquare } from 'lucide-react';
 import StudyPlanGenerator from '@/components/learning/StudyPlanGenerator';
 import AICodeReviewer from '@/components/learning/AICodeReviewer';
 import EnhancedAITutor from '@/components/learning/EnhancedAITutor';
+import ProactiveCheckIn from '@/components/learning/ProactiveCheckIn';
 
 export default function AdvancedAITutor() {
   const [learningGoal, setLearningGoal] = useState('');
@@ -42,6 +43,9 @@ export default function AdvancedAITutor() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6">
       <div className="max-w-7xl mx-auto space-y-6">
+        {/* Proactive Check-ins */}
+        <ProactiveCheckIn />
+
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
           <div className="flex items-center gap-3 mb-2">
