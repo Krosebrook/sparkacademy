@@ -5,6 +5,7 @@ import { Sparkles, FileText, PenTool, HelpCircle } from 'lucide-react';
 import AILessonOutlineGenerator from '@/components/creator/AILessonOutlineGenerator';
 import AILessonContentDrafter from '@/components/creator/AILessonContentDrafter';
 import AIQuizAssignmentGenerator from '@/components/creator/AIQuizAssignmentGenerator';
+import AdvancedAssessmentGenerator from '@/components/creator/AdvancedAssessmentGenerator';
 
 export default function CreatorAIAssistant() {
   const [generatedOutline, setGeneratedOutline] = useState(null);
@@ -41,7 +42,7 @@ export default function CreatorAIAssistant() {
 
         {/* AI Tools Tabs */}
         <Tabs defaultValue="outline" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-[#1a0a2e] border border-gray-700">
+          <TabsList className="grid w-full grid-cols-4 bg-[#1a0a2e] border border-gray-700">
             <TabsTrigger value="outline" className="data-[state=active]:bg-purple-500/20">
               <FileText className="w-4 h-4 mr-2" />
               Lesson Outline
@@ -52,7 +53,11 @@ export default function CreatorAIAssistant() {
             </TabsTrigger>
             <TabsTrigger value="quiz" className="data-[state=active]:bg-purple-500/20">
               <HelpCircle className="w-4 h-4 mr-2" />
-              Quiz & Assignments
+              Basic Assessments
+            </TabsTrigger>
+            <TabsTrigger value="advanced" className="data-[state=active]:bg-purple-500/20">
+              <Sparkles className="w-4 h-4 mr-2" />
+              Advanced Assessments
             </TabsTrigger>
           </TabsList>
 
@@ -72,6 +77,10 @@ export default function CreatorAIAssistant() {
             <AIQuizAssignmentGenerator 
               lessonTopic={generatedOutline?.title}
             />
+          </TabsContent>
+
+          <TabsContent value="advanced">
+            <AdvancedAssessmentGenerator />
           </TabsContent>
         </Tabs>
 
