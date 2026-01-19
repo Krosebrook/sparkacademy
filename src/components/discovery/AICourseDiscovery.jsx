@@ -4,14 +4,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Search, Sparkles, Loader2, TrendingUp, BookOpen, ChevronRight, Map } from 'lucide-react';
+import { Search, Sparkles, Loader2, TrendingUp, BookOpen, ChevronRight, Map, Briefcase } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import LearningJourneyCard from './LearningJourneyCard';
+import CareerGoalsSetter from './CareerGoalsSetter';
+import CareerPathCard from './CareerPathCard';
 
 export default function AICourseDiscovery({ userEmail }) {
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
+  const [careerGoals, setCareerGoals] = useState('');
   const [recommendations, setRecommendations] = useState(null);
 
   const handleSearch = async () => {
@@ -87,6 +90,22 @@ export default function AICourseDiscovery({ userEmail }) {
 
       {recommendations && (
         <>
+          {/* Career Paths */}
+          {recommendations.career_paths?.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-green-400" />
+                <h3 className="text-xl font-bold text-white">Career Paths for You</h3>
+              </div>
+              <p className="text-sm text-gray-400 -mt-2">
+                Based on your goals and industry trends, here are career paths you can pursue:
+              </p>
+              {recommendations.career_paths.map((path, idx) => (
+                <CareerPathCard key={idx} careerPath={path} />
+              ))}
+            </div>
+          )}
+
           {/* Learning Journeys */}
           {recommendations.learning_journeys?.length > 0 && (
             <div className="space-y-4">

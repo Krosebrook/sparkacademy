@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { user_email, query } = await req.json();
+    const { user_email, query, career_goals } = await req.json();
 
     const enrollments = await base44.entities.Enrollment?.filter({ 
       student_email: user_email 
@@ -20,17 +20,29 @@ Deno.serve(async (req) => {
     const userProfile = await base44.asServiceRole.entities.UserProfile?.filter({ user_email }).catch(() => []);
     const learningPath = await base44.asServiceRole.entities.LearningPathProgress?.filter({ user_email }).catch(() => []);
 
-    const basePrompt = query 
-      ? `User wants to learn: "${query}"\n\n`
-      : `Based on user's profile:\nCourses completed: ${enrollments.filter(e => e.status === 'completed').length}\nCurrent enrollments: ${enrollments.length}\nKnowledge gaps: ${learningPath[0]?.knowledge_gaps?.map(g => g.topic).join(', ') || 'None identified'}\n\n`;
+    const careerGoalsSection = career_goals 
+      ? `\n\nUSER'S CAREER GOALS:\n${career_goals}\n\nIMPORTANT: All recommendations MUST align with these career goals and aspirations.`
+      : '';
 
-    const prompt = `${basePrompt}Create personalized learning journeys.
+    const basePrompt = query 
+      ? `User wants to learn: "${query}"`
+      : `User's profile:\nCourses completed: ${enrollments.filter(e => e.status === 'completed').length}\nCurrent enrollments: ${enrollments.length}\nKnowledge gaps: ${learningPath[0]?.knowledge_gaps?.map(g => g.topic).join(', ') || 'None identified'}`;
+
+    const prompt = `${basePrompt}${careerGoalsSection}\n\nCreate holistic career and learning recommendations.
 
 Available courses: ${allCourses.length}
-User aspirations: ${userProfile[0]?.portfolio_goals?.sector_priorities || 'Career advancement'}
 Skill gaps: ${learningPath[0]?.knowledge_gaps?.map(g => g.topic).join(', ') || 'General skill building'}
 
-Create 3-5 comprehensive LEARNING JOURNEYS (not just course lists):
+Provide HOLISTIC CAREER RECOMMENDATIONS:
+
+1. CAREER PATHS (2-4 paths): Specific career roles that align with user's goals, showing:
+   - Role progression (Junior → Mid → Senior)
+   - Required skills with importance levels
+   - Industry demand, growth rate, job openings
+   - Salary ranges and timeline to achieve
+   - Which learning journey maps to this path
+
+2. LEARNING JOURNEYS (3-5 journeys): Comprehensive learning tracks
 Each journey should:
 - Target a specific career outcome or skill mastery
 - Include 3-6 courses in logical progression
@@ -40,10 +52,37 @@ Each journey should:
 - Include milestone checkpoints
 - Reference current industry trends
 
-Also suggest 3-5 individual courses and trending topics.
+3. Individual courses and trending topics.
 
 Format as JSON:
 {
+  "career_paths": [
+    {
+      "path_id": "unique_id",
+      "title": "Career role title",
+      "description": "What this career involves",
+      "timeline": "Time to achieve (e.g., '12-18 months')",
+      "demand_level": "high/medium/low",
+      "growth_rate": "e.g., '22% annually'",
+      "job_openings": "e.g., '10,000+ openings'",
+      "salary_range": "e.g., '$80k-$150k'",
+      "required_skills": [
+        {
+          "name": "Skill name",
+          "importance": 0-100
+        }
+      ],
+      "progression_stages": [
+        {
+          "role": "Junior/Mid/Senior role title",
+          "experience_required": "e.g., '0-2 years'",
+          "typical_salary": "e.g., '$60k-$80k'"
+        }
+      ],
+      "industry_insights": "Why this career is relevant now",
+      "recommended_journey_id": "matching journey ID"
+    }
+  ],
   "learning_journeys": [
     {
       "journey_id": "unique_id",
@@ -88,6 +127,45 @@ Format as JSON:
       response_json_schema: {
         type: "object",
         properties: {
+          career_paths: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                path_id: { type: "string" },
+                title: { type: "string" },
+                description: { type: "string" },
+                timeline: { type: "string" },
+                demand_level: { type: "string" },
+                growth_rate: { type: "string" },
+                job_openings: { type: "string" },
+                salary_range: { type: "string" },
+                required_skills: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      importance: { type: "number" }
+                    }
+                  }
+                },
+                progression_stages: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      role: { type: "string" },
+                      experience_required: { type: "string" },
+                      typical_salary: { type: "string" }
+                    }
+                  }
+                },
+                industry_insights: { type: "string" },
+                recommended_journey_id: { type: "string" }
+              }
+            }
+          },
           learning_journeys: {
             type: "array",
             items: {
