@@ -24,7 +24,8 @@ export default function AICourseDiscovery({ userEmail }) {
     try {
       const { data } = await base44.functions.invoke('discoverCourses', {
         user_email: userEmail,
-        query: query.trim()
+        query: query.trim(),
+        career_goals: careerGoals.trim() || null
       });
       setRecommendations(data);
     } catch (error) {
@@ -34,12 +35,14 @@ export default function AICourseDiscovery({ userEmail }) {
     }
   };
 
-  const loadSmartRecommendations = async () => {
+  const handleGoalsSet = async (goals) => {
+    setCareerGoals(goals);
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('discoverCourses', {
         user_email: userEmail,
-        query: null
+        query: null,
+        career_goals: goals
       });
       setRecommendations(data);
     } catch (error) {
@@ -51,32 +54,26 @@ export default function AICourseDiscovery({ userEmail }) {
 
   return (
     <div className="space-y-6">
+      <CareerGoalsSetter onGoalsSet={handleGoalsSet} currentGoals={careerGoals} />
+
       <Card className="card-glow">
         <CardHeader>
           <CardTitle className="text-white flex items-center gap-2">
-            <Sparkles className="w-5 h-5" />
-            AI Course Discovery
+            <Search className="w-5 h-5" />
+            Quick Search
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Search Bar */}
+        <CardContent>
           <div className="flex gap-2">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Describe what you want to learn... (e.g., 'I want to build mobile apps')"
+              placeholder="Search for specific topics... (optional)"
               className="flex-1"
             />
             <Button onClick={handleSearch} disabled={loading || !query.trim()}>
               {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            </Button>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-gray-400">Or</span>
-            <Button size="sm" variant="outline" onClick={loadSmartRecommendations} disabled={loading}>
-              Get Smart Recommendations
             </Button>
           </div>
         </CardContent>
