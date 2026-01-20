@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Send, Lightbulb, AlertCircle, Target, TrendingUp } from "lucide-react";
+import { Brain, Send, Lightbulb, AlertCircle, Target, TrendingUp, ExternalLink } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
+import ExternalResourcesCurator from '@/components/learning/ExternalResourcesCurator';
 
 export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUpdate }) {
   const [messages, setMessages] = useState([]);
@@ -16,6 +17,8 @@ export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUp
   const [studyPlan, setStudyPlan] = useState(null);
   const [learningStyle, setLearningStyle] = useState(null);
   const [personalizedResources, setPersonalizedResources] = useState([]);
+  const [externalResources, setExternalResources] = useState([]);
+  const [showExternalResources, setShowExternalResources] = useState(false);
   const messagesEndRef = useRef(null);
 
   const { data: user } = useQuery({
@@ -112,8 +115,11 @@ Identify:
         
         // Generate personalized resources for high severity confusion
         const highSeverity = points.find(p => p.severity === 'high');
-        if (highSeverity && learningStyle) {
-          generatePersonalizedResources(highSeverity.topic);
+        if (highSeverity) {
+          if (learningStyle) {
+            generatePersonalizedResources(highSeverity.topic);
+          }
+          setShowExternalResources(true);
         }
       } catch (error) {
         console.error("Failed to analyze confusion:", error);
@@ -454,8 +460,27 @@ Keep responses concise and student-friendly.`
             >
               Key takeaways
             </Button>
+            {confusionPoints.length > 0 && (
+              <Button 
+                variant="outline" 
+                className="w-full text-xs justify-start gap-1"
+                onClick={() => setShowExternalResources(!showExternalResources)}
+              >
+                <ExternalLink className="w-3 h-3" />
+                {showExternalResources ? 'Hide' : 'Find'} External Resources
+              </Button>
+            )}
           </CardContent>
         </Card>
+
+        {/* External Resources */}
+        {showExternalResources && confusionPoints.length > 0 && (
+          <ExternalResourcesCurator 
+            topic={confusionPoints[0]?.topic || currentLesson?.title || course?.title}
+            learningStyle={learningStyle?.primary_style}
+            onResourcesFound={setExternalResources}
+          />
+        )}
       </div>
     </div>
   );
