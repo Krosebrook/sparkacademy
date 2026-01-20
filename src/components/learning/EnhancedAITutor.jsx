@@ -62,13 +62,19 @@ export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUp
     try {
       const interactionHistory = messages.filter(m => m.role === 'user').slice(-20).map(m => m.content);
       
+      if (interactionHistory.length < 5) {
+        return;
+      }
+      
       const { data } = await base44.functions.invoke('detectLearningStyle', {
         interaction_history: interactionHistory,
         quiz_patterns: enrollment?.quiz_scores || {},
         time_spent_data: {}
       });
       
-      setLearningStyle(data);
+      if (data) {
+        setLearningStyle(data);
+      }
     } catch (error) {
       console.error('Learning style detection failed:', error);
     }
@@ -128,14 +134,18 @@ Identify:
   };
 
   const generatePersonalizedResources = async (topic) => {
+    if (!topic?.trim()) return;
+    
     try {
       const { data } = await base44.functions.invoke('generatePersonalizedResources', {
         confusion_topic: topic,
         learning_style: learningStyle?.primary_style || 'visual',
-        course_context: course?.title
+        course_context: course?.title || 'General topic'
       });
       
-      setPersonalizedResources(data.resources || []);
+      if (data?.resources) {
+        setPersonalizedResources(data.resources);
+      }
     } catch (error) {
       console.error('Resource generation failed:', error);
     }

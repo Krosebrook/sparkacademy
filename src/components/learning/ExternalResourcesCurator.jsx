@@ -11,20 +11,30 @@ export default function ExternalResourcesCurator({ topic, learningStyle, onResou
   const [summary, setSummary] = useState('');
 
   const curateResources = async () => {
+    if (!topic?.trim()) {
+      alert('Please provide a topic to search for resources');
+      return;
+    }
+    
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('curateExternalResources', {
-        topic,
-        learning_style: learningStyle,
+        topic: topic.trim(),
+        learning_style: learningStyle || 'visual',
         difficulty_level: 'intermediate',
         resource_types: ['article', 'video', 'interactive_tool', 'tutorial']
       });
       
-      setResources(data.resources || []);
-      setSummary(data.search_summary || '');
-      if (onResourcesFound) onResourcesFound(data.resources);
+      if (data?.resources && data.resources.length > 0) {
+        setResources(data.resources);
+        setSummary(data.search_summary || '');
+        if (onResourcesFound) onResourcesFound(data.resources);
+      } else {
+        alert('No resources found. Try a different search term.');
+      }
     } catch (error) {
       console.error('Resource curation error:', error);
+      alert('Failed to find resources. Please try again.');
     } finally {
       setLoading(false);
     }

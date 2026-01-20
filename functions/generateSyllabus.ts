@@ -7,6 +7,12 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { topic, target_audience, objectives, duration_weeks = 8 } = await req.json();
+    
+    if (!topic?.trim()) {
+      return Response.json({ error: 'Topic is required' }, { status: 400 });
+    }
+    
+    const weeks = Math.max(4, Math.min(parseInt(duration_weeks) || 8, 16));
 
     const audienceMap = {
       'absolute_beginners': 'absolute beginners with no prior experience',
@@ -21,7 +27,7 @@ Deno.serve(async (req) => {
     const prompt = `Create a comprehensive course syllabus for: "${topic}"
 
 Target Audience: ${audienceDescription}
-Duration: ${duration_weeks} weeks
+Duration: ${weeks} weeks
 ${objectives ? `Instructor's Learning Objectives: ${objectives}` : ''}
 
 Generate a detailed syllabus with:
@@ -29,7 +35,7 @@ Generate a detailed syllabus with:
 2. Course overview (2-3 paragraphs explaining the course)
 3. Learning objectives (4-6 clear, measurable objectives)
 4. Prerequisites (what students need before starting)
-5. ${duration_weeks} modules (one per week) with:
+5. ${weeks} modules (one per week) with:
    - Module title
    - Duration estimate
    - Description

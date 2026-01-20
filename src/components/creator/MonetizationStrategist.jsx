@@ -38,18 +38,24 @@ export default function MonetizationStrategist() {
       const user = await base44.auth.me();
       const allCourses = await base44.entities.Course.filter({ created_by: user.email });
       
+      if (!allCourses || allCourses.length < 2) {
+        alert('You need at least 2 courses to create bundles');
+        return;
+      }
+      
       const { data } = await base44.functions.invoke('generateBundleStrategy', {
         courses: allCourses.map(c => ({
           id: c.id,
-          title: c.title,
-          level: c.level,
-          category: c.category,
-          price: c.price
+          title: c.title || 'Untitled Course',
+          level: c.level || 'intermediate',
+          category: c.category || 'general',
+          price: c.price || 0
         }))
       });
       setBundleStrategy(data);
     } catch (error) {
       console.error('Bundle strategy error:', error);
+      alert('Failed to generate bundle strategy. Please try again.');
     } finally {
       setBundleLoading(false);
     }

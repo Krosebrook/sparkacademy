@@ -7,6 +7,18 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { interaction_history, quiz_patterns, time_spent_data } = await req.json();
+    
+    if (!interaction_history || interaction_history.length < 5) {
+      return Response.json({ 
+        primary_style: 'visual',
+        primary_confidence: 50,
+        secondary_style: 'kinesthetic',
+        secondary_confidence: 30,
+        indicators: ['Insufficient interaction data - default to visual learning'],
+        study_recommendations: ['Complete more lessons to refine learning style detection'],
+        preferred_formats: ['videos', 'diagrams', 'interactive exercises']
+      });
+    }
 
     const prompt = `Analyze student learning patterns to detect their primary learning style:
 

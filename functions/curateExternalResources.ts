@@ -7,6 +7,10 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { topic, learning_style, difficulty_level, resource_types } = await req.json();
+    
+    if (!topic?.trim()) {
+      return Response.json({ error: 'Topic is required' }, { status: 400 });
+    }
 
     const prompt = `Find and curate the best external learning resources for: "${topic}"
 

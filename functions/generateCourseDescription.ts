@@ -7,6 +7,10 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { topic, key_benefits, target_audience } = await req.json();
+    
+    if (!topic?.trim()) {
+      return Response.json({ error: 'Topic is required' }, { status: 400 });
+    }
 
     const audienceMap = {
       'absolute_beginners': 'absolute beginners',

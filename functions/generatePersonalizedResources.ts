@@ -7,6 +7,10 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { confusion_topic, learning_style, course_context } = await req.json();
+    
+    if (!confusion_topic?.trim()) {
+      return Response.json({ error: 'Confusion topic is required' }, { status: 400 });
+    }
 
     const styleGuidance = {
       visual: 'Focus on diagrams, flowcharts, infographics, video tutorials, and visual code examples',

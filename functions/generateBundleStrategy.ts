@@ -7,6 +7,12 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { courses } = await req.json();
+    
+    if (!courses || !Array.isArray(courses) || courses.length < 2) {
+      return Response.json({ 
+        error: 'At least 2 courses are required to create bundles' 
+      }, { status: 400 });
+    }
 
     const prompt = `Analyze these courses and create optimal bundle strategies:
 

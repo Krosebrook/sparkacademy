@@ -11,14 +11,23 @@ export default function AICoachingPanel({ courseId }) {
   const [coaching, setCoaching] = useState(null);
 
   const generateCoaching = async () => {
+    if (!courseId) {
+      alert('Please select a course first');
+      return;
+    }
+    
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('generateInstructorCoaching', {
         course_id: courseId
       });
-      setCoaching(data);
+      
+      if (data) {
+        setCoaching(data);
+      }
     } catch (error) {
       console.error('Coaching generation error:', error);
+      alert('Failed to generate coaching insights. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +68,7 @@ export default function AICoachingPanel({ courseId }) {
               </TabsList>
 
               <TabsContent value="priorities" className="space-y-3 mt-4">
-                {coaching.top_priorities?.map((priority, idx) => (
+                {coaching.top_priorities?.length > 0 ? coaching.top_priorities.map((priority, idx) => (
                   <div key={idx} className="bg-purple-900/20 border border-purple-500/30 rounded-lg p-3">
                     <div className="flex items-start justify-between mb-2">
                       <h5 className="font-semibold text-white text-sm">{priority.priority}</h5>
@@ -76,7 +85,11 @@ export default function AICoachingPanel({ courseId }) {
                       ))}
                     </div>
                   </div>
-                ))}
+                )) : (
+                  <div className="text-center py-8 text-gray-400">
+                    <p>No priority actions at this time</p>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="content" className="space-y-4 mt-4">
@@ -86,14 +99,18 @@ export default function AICoachingPanel({ courseId }) {
                     Content Improvements
                   </h4>
                   <div className="space-y-2">
-                    {coaching.content_improvements?.map((improvement, idx) => (
+                    {coaching.content_improvements?.length > 0 ? coaching.content_improvements.map((improvement, idx) => (
                       <div key={idx} className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-3">
                         <div className="font-medium text-white text-sm mb-1">{improvement.lesson_topic}</div>
                         <div className="text-xs text-gray-400 mb-1">Issue: {improvement.issue}</div>
                         <div className="text-xs text-blue-300 mb-1">Evidence: {improvement.data_evidence}</div>
                         <div className="text-xs text-green-300">→ {improvement.recommendation}</div>
                       </div>
-                    ))}
+                    )) : (
+                      <div className="text-center py-4 text-gray-400 text-sm">
+                        <p>No content improvements needed at this time</p>
+                      </div>
+                    )}
                   </div>
                 </div>
 

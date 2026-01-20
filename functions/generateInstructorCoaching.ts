@@ -7,11 +7,41 @@ Deno.serve(async (req) => {
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
     const { course_id } = await req.json();
+    
+    if (!course_id) {
+      return Response.json({ error: 'Course ID is required' }, { status: 400 });
+    }
 
     // Fetch course analytics data
-    const enrollments = await base44.asServiceRole.entities.Enrollment.filter({ course_id });
-    const course = await base44.asServiceRole.entities.Course.get(course_id);
-    const feedback = await base44.asServiceRole.entities.CourseFeedback.filter({ course_id });
+    const [enrollments, course, feedback] = await Promise.all([
+      base44.asServiceRole.entities.Enrollment.filter({ course_id }).catch(() => []),
+      base44.asServiceRole.entities.Course.get(course_id).catch(() => null),
+      base44.asServiceRole.entities.CourseFeedback.filter({ course_id }).catch(() => [])
+    ]);
+    
+    if (!course) {
+      return Response.json({ error: 'Course not found' }, { status: 404 });
+    }
+    
+    if (!enrollments || enrollments.length === 0) {
+      return Response.json({
+        executive_summary: 'No enrollment data available yet. Start by inviting students to your course.',
+        top_priorities: [],
+        content_improvements: [],
+        engagement_strategies: ['Build your student base', 'Share your course with potential students'],
+        at_risk_interventions: [],
+        success_metrics: {
+          weekly_kpis: ['Track first enrollments'],
+          thirty_day_goals: ['Achieve 10+ enrollments'],
+          long_term_targets: []
+        },
+        teaching_effectiveness: {
+          strengths: [],
+          areas_for_growth: [],
+          pro_development: []
+        }
+      });
+    }
 
     const avgEngagement = enrollments.reduce((sum, e) => sum + (e.engagement_score || 50), 0) / Math.max(enrollments.length, 1);
     const completionRate = (enrollments.filter(e => e.completion_percentage === 100).length / Math.max(enrollments.length, 1)) * 100;
