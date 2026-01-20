@@ -12,6 +12,7 @@ import { BarChart3, Users, Sparkles, BookOpen } from 'lucide-react';
 import StudentProgressAnalytics from '@/components/instructor/StudentProgressAnalytics';
 import ContentInsightsPanel from '@/components/instructor/ContentInsightsPanel';
 import AIContentAssistant from '@/components/instructor/AIContentAssistant';
+import AICoachingPanel from '@/components/instructor/AICoachingPanel';
 
 export default function EnhancedInstructorDashboard() {
   const [selectedCourse, setSelectedCourse] = useState(null);
@@ -59,23 +60,31 @@ export default function EnhancedInstructorDashboard() {
 
         {selectedCourse ? (
           <Tabs defaultValue="analytics" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
+            <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
               <TabsTrigger value="analytics" className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
-                Student Analytics
+                Analytics
+              </TabsTrigger>
+              <TabsTrigger value="coaching" className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                AI Coaching
               </TabsTrigger>
               <TabsTrigger value="content" className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4" />
-                Content Insights
+                Insights
               </TabsTrigger>
               <TabsTrigger value="ai" className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
-                AI Content Tool
+                AI Tools
               </TabsTrigger>
             </TabsList>
 
             <TabsContent value="analytics" className="space-y-6">
               <StudentProgressAnalytics courseId={selectedCourse} />
+            </TabsContent>
+
+            <TabsContent value="coaching" className="space-y-6">
+              <AICoachingPanel courseId={selectedCourse} />
             </TabsContent>
 
             <TabsContent value="content" className="space-y-6">

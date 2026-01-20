@@ -24,6 +24,7 @@ import CourseSummary from './pages/CourseSummary';
 import CourseVersioning from './pages/CourseVersioning';
 import CourseViewer from './pages/CourseViewer';
 import CreateCourse from './pages/CreateCourse';
+import CreatorAIAssistant from './pages/CreatorAIAssistant';
 import CreatorAnalytics from './pages/CreatorAnalytics';
 import CreatorAnalyticsAdvanced from './pages/CreatorAnalyticsAdvanced';
 import CreatorEarnings from './pages/CreatorEarnings';
@@ -64,7 +65,6 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import CreatorAIAssistant from './pages/CreatorAIAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -95,6 +95,7 @@ export const PAGES = {
     "CourseVersioning": CourseVersioning,
     "CourseViewer": CourseViewer,
     "CreateCourse": CreateCourse,
+    "CreatorAIAssistant": CreatorAIAssistant,
     "CreatorAnalytics": CreatorAnalytics,
     "CreatorAnalyticsAdvanced": CreatorAnalyticsAdvanced,
     "CreatorEarnings": CreatorEarnings,
@@ -135,7 +136,6 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "CreatorAIAssistant": CreatorAIAssistant,
 }
 
 export const pagesConfig = {

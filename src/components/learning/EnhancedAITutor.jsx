@@ -14,6 +14,8 @@ export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUp
   const [isTyping, setIsTyping] = useState(false);
   const [confusionPoints, setConfusionPoints] = useState([]);
   const [studyPlan, setStudyPlan] = useState(null);
+  const [learningStyle, setLearningStyle] = useState(null);
+  const [personalizedResources, setPersonalizedResources] = useState([]);
   const messagesEndRef = useRef(null);
 
   const { data: user } = useQuery({
@@ -48,7 +50,26 @@ export default function EnhancedAITutor({ courseId, currentLesson, onConfusionUp
     if (messages.length >= 3) {
       analyzeConfusionPoints();
     }
+    if (messages.length >= 10 && !learningStyle) {
+      detectLearningStyle();
+    }
   }, [messages]);
+
+  const detectLearningStyle = async () => {
+    try {
+      const interactionHistory = messages.filter(m => m.role === 'user').slice(-20).map(m => m.content);
+      
+      const { data } = await base44.functions.invoke('detectLearningStyle', {
+        interaction_history: interactionHistory,
+        quiz_patterns: enrollment?.quiz_scores || {},
+        time_spent_data: {}
+      });
+      
+      setLearningStyle(data);
+    } catch (error) {
+      console.error('Learning style detection failed:', error);
+    }
+  };
 
   const analyzeConfusionPoints = async () => {
     const recentMessages = messages.slice(-5);
@@ -88,9 +109,29 @@ Identify:
         const points = result.confusion_points || [];
         setConfusionPoints(points);
         if (onConfusionUpdate) onConfusionUpdate(points);
+        
+        // Generate personalized resources for high severity confusion
+        const highSeverity = points.find(p => p.severity === 'high');
+        if (highSeverity && learningStyle) {
+          generatePersonalizedResources(highSeverity.topic);
+        }
       } catch (error) {
         console.error("Failed to analyze confusion:", error);
       }
+    }
+  };
+
+  const generatePersonalizedResources = async (topic) => {
+    try {
+      const { data } = await base44.functions.invoke('generatePersonalizedResources', {
+        confusion_topic: topic,
+        learning_style: learningStyle?.primary_style || 'visual',
+        course_context: course?.title
+      });
+      
+      setPersonalizedResources(data.resources || []);
+    } catch (error) {
+      console.error('Resource generation failed:', error);
     }
   };
 
@@ -171,21 +212,29 @@ Recent Confusion: ${confusionPoints.map(c => c.topic).join(', ')}
         `${m.role === 'user' ? 'Student' : 'Tutor'}: ${m.content}`
       ).join('\n');
 
+      const styleGuidance = learningStyle ? `
+Learning Style: ${learningStyle.primary_style} (${learningStyle.primary_confidence}% confidence)
+Adapt explanations for ${learningStyle.primary_style} learners - ${learningStyle.preferred_formats?.join(', ')}` : '';
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are an AI tutor helping a student. Provide helpful, encouraging responses tailored to their learning goal.
+        prompt: `You are an AI tutor helping a student. Provide helpful, encouraging responses tailored to their learning goal and style.
 
 Context:
 ${context}
+${styleGuidance}
 
 Conversation:
 ${conversationHistory}
 Student: ${input}
 
-Adapt your response to align with their learning goal. Provide:
-1. Clear explanation relevant to their goal
-2. Examples that connect to their goal
-3. Guided steps if it's a problem
-4. Encouragement that reinforces their goal
+Adapt your response to:
+1. Align with their learning goal
+2. Match their learning style (${learningStyle?.primary_style || 'adaptive'})
+3. Provide clear explanations with relevant examples
+4. Include guided steps for problems
+5. Offer encouragement that reinforces their goal
+
+For ${learningStyle?.primary_style || 'all'} learners, emphasize ${learningStyle?.preferred_formats?.[0] || 'multi-modal'} approaches.
 
 Keep responses concise and student-friendly.`
       });
@@ -270,6 +319,52 @@ Keep responses concise and student-friendly.`
 
       {/* Sidebar - Insights */}
       <div className="space-y-4">
+        {/* Learning Style */}
+        {learningStyle && (
+          <Card className="card-glow">
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Brain className="w-4 h-4 text-blue-400" />
+                Your Learning Style
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded-lg">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="font-medium text-white text-sm">{learningStyle.primary_style}</div>
+                  <Badge className="bg-blue-500/20 text-blue-300">{learningStyle.primary_confidence}%</Badge>
+                </div>
+                <div className="text-xs text-gray-400 space-y-1">
+                  {learningStyle.study_recommendations?.slice(0, 2).map((rec, i) => (
+                    <div key={i}>• {rec}</div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Personalized Resources */}
+        {personalizedResources.length > 0 && (
+          <Card className="card-glow">
+            <CardHeader>
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Lightbulb className="w-4 h-4 text-yellow-400" />
+                Recommended Resources
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 max-h-64 overflow-y-auto">
+              {personalizedResources.slice(0, 3).map((resource, idx) => (
+                <div key={idx} className="p-2 bg-yellow-900/20 border border-yellow-500/30 rounded text-xs">
+                  <div className="font-medium text-white mb-1">{resource.title}</div>
+                  <Badge className="text-xs mb-1">{resource.type}</Badge>
+                  <div className="text-gray-400">{resource.estimated_time}</div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Confusion Points */}
         {confusionPoints.length > 0 && (
           <Card className="card-glow">
