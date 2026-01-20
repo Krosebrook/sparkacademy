@@ -18,7 +18,10 @@ export default function AICourseDescriptionGenerator() {
   const [copiedPlatform, setCopiedPlatform] = useState(null);
 
   const generateDescriptions = async () => {
-    if (!courseTopic.trim()) return;
+    if (!courseTopic.trim()) {
+      alert('Please enter a course topic');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -27,9 +30,13 @@ export default function AICourseDescriptionGenerator() {
         key_benefits: keyBenefits.trim() || undefined,
         target_audience: targetAudience
       });
-      setDescriptions(data);
+      
+      if (data) {
+        setDescriptions(data);
+      }
     } catch (error) {
       console.error('Description generation error:', error);
+      alert('Failed to generate descriptions. Please try again.');
     } finally {
       setLoading(false);
     }

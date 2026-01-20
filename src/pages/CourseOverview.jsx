@@ -13,6 +13,7 @@ import ContentImprovementSuggestions from "@/components/instructor/ContentImprov
 import AIModeration from "@/components/discussion/AIModeration";
 import FAQAnalyzer from "@/components/discussion/FAQAnalyzer";
 import CourseCompletionAnalytics from "@/components/analytics/CourseCompletionAnalytics";
+import PersonalizedCourseRecommendations from "@/components/recommendations/PersonalizedCourseRecommendations";
 
 import { createPageUrl } from "@/utils";
 
@@ -250,6 +251,14 @@ export default function CourseOverview() {
                         </Card>
                     </TabsContent>
                 </Tabs>
+
+                {/* Course Recommendations */}
+                <div className="mt-8">
+                    <PersonalizedCourseRecommendations 
+                        context="course_page" 
+                        currentCourseId={courseId} 
+                    />
+                </div>
             </div>
         </div>
     );

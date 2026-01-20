@@ -12,6 +12,7 @@ import QuickActions from "../components/dashboard/QuickActions";
 import EnrolledCourses from "../components/dashboard/EnrolledCourses";
 import CourseRecommendations from "../components/dashboard/CourseRecommendations";
 import PersonalizedRecommendations from "@/components/recommendations/PersonalizedRecommendations";
+import PersonalizedCourseRecommendations from "@/components/recommendations/PersonalizedCourseRecommendations";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
 
 function LoggedInDashboard({ user }) {
@@ -94,7 +95,7 @@ function LoggedInDashboard({ user }) {
       
       <div className="mb-6 space-y-6">
         <GamificationDashboard />
-        <PersonalizedRecommendations />
+        <PersonalizedCourseRecommendations context="dashboard" />
       </div>
       
       <div className="grid lg:grid-cols-3 gap-6 mt-6">

@@ -18,7 +18,10 @@ export default function AISyllabusGenerator() {
   const [syllabus, setSyllabus] = useState(null);
 
   const generateSyllabus = async () => {
-    if (!courseTopic.trim()) return;
+    if (!courseTopic.trim()) {
+      alert('Please enter a course topic');
+      return;
+    }
 
     setLoading(true);
     try {
@@ -26,11 +29,15 @@ export default function AISyllabusGenerator() {
         topic: courseTopic.trim(),
         target_audience: targetAudience,
         objectives: objectives.trim() || undefined,
-        duration_weeks: parseInt(duration)
+        duration_weeks: parseInt(duration) || 8
       });
-      setSyllabus(data);
+      
+      if (data) {
+        setSyllabus(data);
+      }
     } catch (error) {
       console.error('Syllabus generation error:', error);
+      alert('Failed to generate syllabus. Please try again.');
     } finally {
       setLoading(false);
     }

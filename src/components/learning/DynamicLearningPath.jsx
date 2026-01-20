@@ -70,13 +70,18 @@ export default function DynamicLearningPath({ courseId, confusionPoints }) {
   });
 
   const generatePath = async () => {
+    if (!courseId) return;
+    
     setLoading(true);
     try {
       const { data } = await base44.functions.invoke('generateDynamicLearningPath', {
         course_id: courseId,
         confusion_points: confusionPoints || []
       });
-      setLearningPath(data);
+      
+      if (data) {
+        setLearningPath(data);
+      }
     } catch (error) {
       console.error('Learning path error:', error);
     } finally {
@@ -91,6 +96,7 @@ export default function DynamicLearningPath({ courseId, confusionPoints }) {
   }, [courseId, user?.email, confusionPoints]);
 
   const markStepComplete = (stepId) => {
+    if (!stepId) return;
     updatePathMutation.mutate({ stepId });
   };
 
