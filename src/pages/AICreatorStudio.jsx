@@ -1,12 +1,15 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wand2, FileText, ClipboardCheck, Video, DollarSign } from 'lucide-react';
+import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked } from 'lucide-react';
 import AISyllabusGenerator from '@/components/creator/AISyllabusGenerator';
 import AICourseDescriptionGenerator from '@/components/creator/AICourseDescriptionGenerator';
 import DiverseAssessmentGenerator from '@/components/creator/DiverseAssessmentGenerator';
 import MultimediaContentSuggester from '@/components/creator/MultimediaContentSuggester';
 import MonetizationStrategist from '@/components/creator/MonetizationStrategist';
+import AIInteractiveElementsSuggester from '@/components/creator/AIInteractiveElementsSuggester';
+import AIVideoScriptGenerator from '@/components/creator/AIVideoScriptGenerator';
+import AISupplementaryMaterialsGenerator from '@/components/creator/AISupplementaryMaterialsGenerator';
 
 export default function AICreatorStudio() {
   return (
@@ -25,26 +28,38 @@ export default function AICreatorStudio() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="syllabus" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-white border border-gray-200">
             <TabsTrigger value="syllabus">
-              <FileText className="w-4 h-4 mr-2" />
-              Syllabus
+              <FileText className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Syllabus</span>
             </TabsTrigger>
             <TabsTrigger value="descriptions">
-              <Wand2 className="w-4 h-4 mr-2" />
-              Descriptions
+              <Wand2 className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Descriptions</span>
+            </TabsTrigger>
+            <TabsTrigger value="interactive">
+              <Zap className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Interactive</span>
+            </TabsTrigger>
+            <TabsTrigger value="video">
+              <Film className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Video</span>
+            </TabsTrigger>
+            <TabsTrigger value="materials">
+              <BookMarked className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Materials</span>
             </TabsTrigger>
             <TabsTrigger value="assessments">
-              <ClipboardCheck className="w-4 h-4 mr-2" />
-              Assessments
+              <ClipboardCheck className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Assessments</span>
             </TabsTrigger>
             <TabsTrigger value="multimedia">
-              <Video className="w-4 h-4 mr-2" />
-              Multimedia
+              <Video className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Multimedia</span>
             </TabsTrigger>
             <TabsTrigger value="monetization">
-              <DollarSign className="w-4 h-4 mr-2" />
-              Monetization
+              <DollarSign className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Monetization</span>
             </TabsTrigger>
           </TabsList>
 
@@ -63,17 +78,19 @@ export default function AICreatorStudio() {
           </TabsContent>
 
           <TabsContent value="descriptions" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>AI Course Description Generator</CardTitle>
-                <p className="text-sm text-gray-500">
-                  Create engaging course descriptions optimized for marketing pages, catalogs, emails, and social media
-                </p>
-              </CardHeader>
-              <CardContent>
-                <AICourseDescriptionGenerator />
-              </CardContent>
-            </Card>
+            <AICourseDescriptionGenerator />
+          </TabsContent>
+
+          <TabsContent value="interactive" className="space-y-4">
+            <AIInteractiveElementsSuggester />
+          </TabsContent>
+
+          <TabsContent value="video" className="space-y-4">
+            <AIVideoScriptGenerator />
+          </TabsContent>
+
+          <TabsContent value="materials" className="space-y-4">
+            <AISupplementaryMaterialsGenerator />
           </TabsContent>
 
           <TabsContent value="assessments" className="space-y-4">
