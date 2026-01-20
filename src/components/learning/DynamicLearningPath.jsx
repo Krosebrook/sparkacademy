@@ -15,12 +15,15 @@ import {
   ArrowRight,
   BookOpen,
   Lightbulb,
-  RefreshCw
+  RefreshCw,
+  ExternalLink
 } from 'lucide-react';
+import ExternalResourcesCurator from '@/components/learning/ExternalResourcesCurator';
 
 export default function DynamicLearningPath({ courseId, confusionPoints }) {
   const [loading, setLoading] = useState(false);
   const [learningPath, setLearningPath] = useState(null);
+  const [showExternalResources, setShowExternalResources] = useState(false);
   const queryClient = useQueryClient();
 
   const { data: user } = useQuery({
@@ -319,8 +322,25 @@ export default function DynamicLearningPath({ courseId, confusionPoints }) {
                 </div>
               </div>
             ))}
+            
+            <Button 
+              variant="outline" 
+              className="w-full mt-3 text-xs"
+              onClick={() => setShowExternalResources(!showExternalResources)}
+            >
+              <ExternalLink className="w-3 h-3 mr-2" />
+              {showExternalResources ? 'Hide' : 'Find More'} External Resources
+            </Button>
           </CardContent>
         </Card>
+      )}
+
+      {/* External Resources Curator */}
+      {showExternalResources && learningPath?.priority_topics?.length > 0 && (
+        <ExternalResourcesCurator 
+          topic={learningPath.priority_topics[0]?.name || 'Current topic'}
+          learningStyle={pathProgress?.learning_style}
+        />
       )}
     </div>
   );
