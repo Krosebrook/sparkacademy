@@ -1,148 +1,154 @@
-/**
- * Generate Personalized Course Recommendations
- * 
- * AI-powered recommendation engine that analyzes:
- * - Learning history and completion patterns
- * - Quiz scores and performance metrics
- * - Engagement patterns and time spent
- * - Stated interests and goals
- * 
- * @returns {Object} Personalized course recommendations and learning paths
- */
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    if (!user) {
-      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    const { context } = await req.json();
+    
+    // Fetch student data
+    const [enrollments, completedCourses, allCourses, learningGoal] = await Promise.all([
+      base44.asServiceRole.entities.Enrollment.filter({ student_email: user.email }).catch(() => []),
+      base44.asServiceRole.entities.Certificate.filter({ student_email: user.email }).catch(() => []),
+      base44.asServiceRole.entities.Course.list().catch(() => []),
+      base44.asServiceRole.entities.UserProfile.filter({ user_email: user.email }).then(p => p[0]?.onboarding_progress?.learning_goal).catch(() => null)
+    ]);
+
+    if (!allCourses || allCourses.length === 0) {
+      return Response.json({
+        next_in_path: [],
+        advanced_topics: [],
+        skill_diversification: [],
+        personalized_note: 'No courses available at this time.'
+      });
     }
 
-    // Fetch user's learning data
-    const enrollments = await base44.entities.Enrollment.filter({ student_email: user.email });
-    const allCourses = await base44.entities.Course.list();
-    const learningPaths = await base44.entities.LearningPathProgress.filter({ user_email: user.email });
-    const badges = await base44.entities.UserBadge.filter({ user_email: user.email });
-
-    // Calculate performance metrics
-    const completionRate = enrollments.length > 0 
-      ? enrollments.reduce((sum, e) => sum + (e.completion_percentage || 0), 0) / enrollments.length 
-      : 0;
-
-    const avgQuizScore = enrollments.length > 0
-      ? enrollments.reduce((sum, e) => sum + (e.quiz_average || 0), 0) / enrollments.length
-      : 0;
-
-    // Identify completed courses and categories
-    const completedCourses = enrollments.filter(e => e.completion_percentage >= 100);
-    const inProgressCourses = enrollments.filter(e => e.completion_percentage > 0 && e.completion_percentage < 100);
+    const completedCourseIds = completedCourses.map(c => c.course_id);
+    const inProgressCourses = enrollments.filter(e => 
+      e.completion_percentage < 100 && e.completion_percentage > 0
+    );
     
-    const completedCategories = [...new Set(
-      completedCourses.map(e => {
-        const course = allCourses.find(c => c.id === e.course_id);
-        return course?.category;
-      }).filter(Boolean)
-    )];
+    const currentSkills = enrollments.map(e => {
+      const course = allCourses.find(c => c.id === e.course_id);
+      return course?.category || 'general';
+    }).filter((v, i, a) => a.indexOf(v) === i);
 
-    // Get knowledge gaps and interests
-    const knowledgeGaps = learningPaths.flatMap(lp => lp.knowledge_gaps || []);
-    const interests = user.interests || [];
+    const avgEngagement = enrollments.reduce((sum, e) => sum + (e.engagement_score || 50), 0) / Math.max(enrollments.length, 1);
+    const completionRate = (completedCourseIds.length / Math.max(enrollments.length, 1)) * 100;
 
-    // Generate AI recommendations
-    const result = await base44.integrations.Core.InvokeLLM({
-      prompt: `Analyze this student's learning profile and recommend personalized courses and learning paths.
+    const prompt = `Analyze this student's learning data and recommend personalized courses:
 
-Student Profile:
+STUDENT PROFILE:
+- Learning Goal: ${learningGoal || 'Not specified'}
+- Courses Completed: ${completedCourseIds.length}
+- Courses In Progress: ${inProgressCourses.length}
+- Average Engagement: ${avgEngagement.toFixed(1)}%
 - Completion Rate: ${completionRate.toFixed(1)}%
-- Average Quiz Score: ${avgQuizScore.toFixed(1)}%
-- Completed Courses: ${completedCourses.length}
-- In-Progress Courses: ${inProgressCourses.length}
-- Completed Categories: ${completedCategories.join(', ') || 'None'}
-- Stated Interests: ${interests.join(', ') || 'Not specified'}
-- Badges Earned: ${badges.length}
-- Knowledge Gaps: ${knowledgeGaps.map(k => k.topic).join(', ') || 'None identified'}
+- Current Skills: ${currentSkills.join(', ')}
 
-Available Courses:
-${allCourses.map(c => `- ${c.title} (${c.category}) - ${c.description?.substring(0, 100)}...`).join('\n')}
+COMPLETED COURSES:
+${completedCourses.map(c => {
+  const course = allCourses.find(co => co.id === c.course_id);
+  return `- ${course?.title || 'Unknown'} (Level: ${course?.level || 'N/A'}, Category: ${course?.category || 'N/A'})`;
+}).join('\n') || 'None'}
 
-Provide:
-1. Top 5 recommended courses with specific reasons
-2. 3 personalized learning paths (sequences of courses)
-3. Skills to develop based on their progress
-4. Engagement recommendations to improve completion rate`,
-      response_json_schema: {
-        type: "object",
-        properties: {
-          top_recommendations: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                course_title: { type: "string" },
-                course_id: { type: "string" },
-                match_score: { type: "number" },
-                reasons: { type: "array", items: { type: "string" } },
-                estimated_time: { type: "string" },
-                difficulty_match: { type: "string" }
-              }
+IN-PROGRESS COURSES:
+${inProgressCourses.map(e => {
+  const course = allCourses.find(c => c.id === e.course_id);
+  return `- ${course?.title || 'Unknown'} (${e.completion_percentage}% complete, Level: ${course?.level || 'N/A'})`;
+}).join('\n') || 'None'}
+
+AVAILABLE COURSES:
+${allCourses.filter(c => !completedCourseIds.includes(c.id) && !inProgressCourses.find(e => e.course_id === c.id)).slice(0, 20).map(c => 
+  `- ID: ${c.id}, Title: ${c.title}, Level: ${c.level || 'intermediate'}, Category: ${c.category || 'general'}`
+).join('\n')}
+
+Context: ${context || 'General recommendations'}
+
+Provide 3 types of recommendations:
+
+1. NEXT IN LEARNING PATH (3-4 courses):
+   - Natural progression from completed/in-progress courses
+   - Aligned with learning goal
+   - Sequential skill building
+   
+2. ADVANCED MASTERY TOPICS (2-3 courses):
+   - Advanced topics in areas they've mastered
+   - Deepens existing expertise
+   - Higher difficulty level
+   
+3. SKILL DIVERSIFICATION (2-3 courses):
+   - Complementary skills from different categories
+   - Expands their skillset
+   - Opens new opportunities
+
+For each recommendation provide:
+- course_id (from available courses)
+- title
+- reason (why this is recommended for THIS student)
+- confidence_score (0-100)
+- estimated_completion_weeks
+- prerequisites_met (true/false)`;
+
+    const schema = {
+      type: "object",
+      properties: {
+        next_in_path: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              course_id: { type: "string" },
+              title: { type: "string" },
+              reason: { type: "string" },
+              confidence_score: { type: "number" },
+              estimated_completion_weeks: { type: "number" },
+              prerequisites_met: { type: "boolean" }
             }
-          },
-          learning_paths: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                path_name: { type: "string" },
-                goal: { type: "string" },
-                courses: { type: "array", items: { type: "string" } },
-                total_duration: { type: "string" },
-                skills_gained: { type: "array", items: { type: "string" } }
-              }
+          }
+        },
+        advanced_topics: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              course_id: { type: "string" },
+              title: { type: "string" },
+              reason: { type: "string" },
+              confidence_score: { type: "number" },
+              estimated_completion_weeks: { type: "number" },
+              prerequisites_met: { type: "boolean" }
             }
-          },
-          skills_to_develop: {
-            type: "array",
-            items: {
-              type: "object",
-              properties: {
-                skill: { type: "string" },
-                current_level: { type: "string" },
-                target_level: { type: "string" },
-                recommended_courses: { type: "array", items: { type: "string" } }
-              }
+          }
+        },
+        skill_diversification: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              course_id: { type: "string" },
+              title: { type: "string" },
+              reason: { type: "string" },
+              confidence_score: { type: "number" },
+              estimated_completion_weeks: { type: "number" },
+              prerequisites_met: { type: "boolean" }
             }
-          },
-          engagement_tips: {
-            type: "array",
-            items: { type: "string" }
-          },
-          next_best_action: { type: "string" }
-        }
+          }
+        },
+        personalized_note: { type: "string" }
       }
+    };
+
+    const result = await base44.asServiceRole.integrations.Core.InvokeLLM({
+      prompt,
+      response_json_schema: schema
     });
 
-    // Store recommendations
-    await base44.entities.CourseRecommendation.create({
-      student_email: user.email,
-      recommendations: result.top_recommendations,
-      learning_paths: result.learning_paths,
-      generated_date: new Date().toISOString(),
-      based_on_metrics: {
-        completion_rate: completionRate,
-        avg_quiz_score: avgQuizScore,
-        courses_completed: completedCourses.length
-      }
-    });
-
-    return Response.json({
-      success: true,
-      ...result
-    });
+    return Response.json(result);
   } catch (error) {
-    console.error('Error generating recommendations:', error);
+    console.error('Recommendations error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });
