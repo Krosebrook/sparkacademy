@@ -1,3 +1,4 @@
+import AIContentAnalyticsDashboard from './pages/AIContentAnalyticsDashboard';
 import AICreatorAnalyticsDashboard from './pages/AICreatorAnalyticsDashboard';
 import AICreatorAssistant from './pages/AICreatorAssistant';
 import AICreatorStudio from './pages/AICreatorStudio';
@@ -66,11 +67,12 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import AIContentAnalyticsDashboard from './pages/AIContentAnalyticsDashboard';
+import B2BClientDashboard from './pages/B2BClientDashboard';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AIContentAnalyticsDashboard": AIContentAnalyticsDashboard,
     "AICreatorAnalyticsDashboard": AICreatorAnalyticsDashboard,
     "AICreatorAssistant": AICreatorAssistant,
     "AICreatorStudio": AICreatorStudio,
@@ -139,7 +141,7 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "AIContentAnalyticsDashboard": AIContentAnalyticsDashboard,
+    "B2BClientDashboard": B2BClientDashboard,
 }
 
 export const pagesConfig = {
