@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked, Calendar } from 'lucide-react';
+import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked, Calendar, Target, BookOpen, Globe } from 'lucide-react';
 import AISyllabusGenerator from '@/components/creator/AISyllabusGenerator';
 import AICourseDescriptionGenerator from '@/components/creator/AICourseDescriptionGenerator';
 import DiverseAssessmentGenerator from '@/components/creator/DiverseAssessmentGenerator';
@@ -11,6 +11,9 @@ import AIInteractiveElementsSuggester from '@/components/creator/AIInteractiveEl
 import AIVideoScriptGenerator from '@/components/creator/AIVideoScriptGenerator';
 import AISupplementaryMaterialsGenerator from '@/components/creator/AISupplementaryMaterialsGenerator';
 import AILessonPlanningAssistant from '@/components/creator/AILessonPlanningAssistant';
+import AIPracticeProblemsGenerator from '@/components/creator/AIPracticeProblemsGenerator';
+import AIStudyGuidesGenerator from '@/components/creator/AIStudyGuidesGenerator';
+import AIRealWorldExamplesIntegrator from '@/components/creator/AIRealWorldExamplesIntegrator';
 
 export default function AICreatorStudio() {
   return (
@@ -29,7 +32,7 @@ export default function AICreatorStudio() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="syllabus" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 bg-white border border-gray-200">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 bg-white border border-gray-200">
             <TabsTrigger value="syllabus">
               <FileText className="w-4 h-4 lg:mr-2" />
               <span className="hidden lg:inline">Syllabus</span>
@@ -65,6 +68,18 @@ export default function AICreatorStudio() {
             <TabsTrigger value="monetization">
               <DollarSign className="w-4 h-4 lg:mr-2" />
               <span className="hidden lg:inline">Monetization</span>
+            </TabsTrigger>
+            <TabsTrigger value="practice">
+              <Target className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Practice</span>
+            </TabsTrigger>
+            <TabsTrigger value="study">
+              <BookOpen className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Study Guides</span>
+            </TabsTrigger>
+            <TabsTrigger value="realworld">
+              <Globe className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Real-World</span>
             </TabsTrigger>
           </TabsList>
 
@@ -142,6 +157,18 @@ export default function AICreatorStudio() {
                 <MonetizationStrategist />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="practice" className="space-y-4">
+            <AIPracticeProblemsGenerator />
+          </TabsContent>
+
+          <TabsContent value="study" className="space-y-4">
+            <AIStudyGuidesGenerator />
+          </TabsContent>
+
+          <TabsContent value="realworld" className="space-y-4">
+            <AIRealWorldExamplesIntegrator />
           </TabsContent>
         </Tabs>
 
