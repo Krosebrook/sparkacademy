@@ -7,8 +7,9 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { 
   Building2, Users, TrendingUp, AlertTriangle, Target, Award, 
-  BarChart3, Activity, Zap, ArrowUpRight, ArrowDownRight 
+  BarChart3, Activity, Zap, ArrowUpRight, ArrowDownRight, Brain 
 } from 'lucide-react';
+import AIClientOnboarding from '@/components/b2b/AIClientOnboarding';
 
 export default function B2BClientDashboard() {
   const [selectedOrg, setSelectedOrg] = useState('all');
@@ -216,11 +217,27 @@ export default function B2BClientDashboard() {
         )}
 
         <Tabs defaultValue="departments" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 bg-white border border-gray-200">
+          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+            <TabsTrigger value="onboarding">
+              <Brain className="w-4 h-4 mr-2" />
+              AI Onboarding
+            </TabsTrigger>
             <TabsTrigger value="departments">Department Breakdown</TabsTrigger>
             <TabsTrigger value="skillgaps">Skill Gaps</TabsTrigger>
             <TabsTrigger value="interventions">Recommended Actions</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="onboarding">
+            {selectedOrg !== 'all' && organizations?.find(o => o.id === selectedOrg) ? (
+              <AIClientOnboarding organization={organizations.find(o => o.id === selectedOrg)} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6 text-center text-gray-500">
+                  Select a specific organization to access AI-powered onboarding
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
           <TabsContent value="departments" className="space-y-4">
             <Card>
