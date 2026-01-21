@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked } from 'lucide-react';
+import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked, Calendar } from 'lucide-react';
 import AISyllabusGenerator from '@/components/creator/AISyllabusGenerator';
 import AICourseDescriptionGenerator from '@/components/creator/AICourseDescriptionGenerator';
 import DiverseAssessmentGenerator from '@/components/creator/DiverseAssessmentGenerator';
@@ -10,6 +10,7 @@ import MonetizationStrategist from '@/components/creator/MonetizationStrategist'
 import AIInteractiveElementsSuggester from '@/components/creator/AIInteractiveElementsSuggester';
 import AIVideoScriptGenerator from '@/components/creator/AIVideoScriptGenerator';
 import AISupplementaryMaterialsGenerator from '@/components/creator/AISupplementaryMaterialsGenerator';
+import AILessonPlanningAssistant from '@/components/creator/AILessonPlanningAssistant';
 
 export default function AICreatorStudio() {
   return (
@@ -28,10 +29,14 @@ export default function AICreatorStudio() {
 
         {/* Main Tabs */}
         <Tabs defaultValue="syllabus" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 bg-white border border-gray-200">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-9 bg-white border border-gray-200">
             <TabsTrigger value="syllabus">
               <FileText className="w-4 h-4 lg:mr-2" />
               <span className="hidden lg:inline">Syllabus</span>
+            </TabsTrigger>
+            <TabsTrigger value="lessons">
+              <Calendar className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Lessons</span>
             </TabsTrigger>
             <TabsTrigger value="descriptions">
               <Wand2 className="w-4 h-4 lg:mr-2" />
@@ -75,6 +80,10 @@ export default function AICreatorStudio() {
                 <AISyllabusGenerator />
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="lessons" className="space-y-4">
+            <AILessonPlanningAssistant />
           </TabsContent>
 
           <TabsContent value="descriptions" className="space-y-4">

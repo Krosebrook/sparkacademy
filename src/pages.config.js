@@ -61,11 +61,11 @@ import Storefront from './pages/Storefront';
 import StudentAnalytics from './pages/StudentAnalytics';
 import StudentGamification from './pages/StudentGamification';
 import StudentLearningPath from './pages/StudentLearningPath';
+import StudentPortfolio from './pages/StudentPortfolio';
 import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import StudentPortfolio from './pages/StudentPortfolio';
 import __Layout from './Layout.jsx';
 
 
@@ -133,11 +133,11 @@ export const PAGES = {
     "StudentAnalytics": StudentAnalytics,
     "StudentGamification": StudentGamification,
     "StudentLearningPath": StudentLearningPath,
+    "StudentPortfolio": StudentPortfolio,
     "StudyGroups": StudyGroups,
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "StudentPortfolio": StudentPortfolio,
 }
 
 export const pagesConfig = {
