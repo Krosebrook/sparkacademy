@@ -121,6 +121,12 @@ const navigationItems = [
     url: createPageUrl("EnhancedInstructorDashboard"),
     icon: BarChart3,
     description: "Analytics"
+  },
+  {
+    title: "B2B Client Analytics",
+    url: createPageUrl("B2BClientDashboard"),
+    icon: BarChart3,
+    description: "Enterprise Insights"
   }
 ];
 
