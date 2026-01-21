@@ -117,6 +117,12 @@ const navigationItems = [
     description: "Course Tools"
   },
   {
+    title: "Study Dashboard",
+    url: createPageUrl("StudyDashboard"),
+    icon: BookOpen,
+    description: "AI Learning"
+  },
+  {
     title: "Instructor Tools",
     url: createPageUrl("EnhancedInstructorDashboard"),
     icon: BarChart3,

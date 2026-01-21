@@ -69,6 +69,9 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
+import EnhancedCourseViewer from './pages/EnhancedCourseViewer';
+import StudyDashboard from './pages/StudyDashboard';
+import LearningComparison from './pages/LearningComparison';
 import __Layout from './Layout.jsx';
 
 
@@ -144,6 +147,9 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
+    "EnhancedCourseViewer": EnhancedCourseViewer,
+    "StudyDashboard": StudyDashboard,
+    "LearningComparison": LearningComparison,
 }
 
 export const pagesConfig = {
