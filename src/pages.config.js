@@ -4,11 +4,13 @@ import AICreatorAssistant from './pages/AICreatorAssistant';
 import AICreatorStudio from './pages/AICreatorStudio';
 import AIDebate from './pages/AIDebate';
 import AIMentor from './pages/AIMentor';
+import AIStudentAssistant from './pages/AIStudentAssistant';
 import AITools from './pages/AITools';
 import AITutor from './pages/AITutor';
 import AdaptiveLearning from './pages/AdaptiveLearning';
 import AdvancedAITutor from './pages/AdvancedAITutor';
 import AdvancedCreatorTools from './pages/AdvancedCreatorTools';
+import B2BClientDashboard from './pages/B2BClientDashboard';
 import Billing from './pages/Billing';
 import CareerPathing from './pages/CareerPathing';
 import CollaborationHub from './pages/CollaborationHub';
@@ -67,8 +69,6 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import B2BClientDashboard from './pages/B2BClientDashboard';
-import AIStudentAssistant from './pages/AIStudentAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -79,11 +79,13 @@ export const PAGES = {
     "AICreatorStudio": AICreatorStudio,
     "AIDebate": AIDebate,
     "AIMentor": AIMentor,
+    "AIStudentAssistant": AIStudentAssistant,
     "AITools": AITools,
     "AITutor": AITutor,
     "AdaptiveLearning": AdaptiveLearning,
     "AdvancedAITutor": AdvancedAITutor,
     "AdvancedCreatorTools": AdvancedCreatorTools,
+    "B2BClientDashboard": B2BClientDashboard,
     "Billing": Billing,
     "CareerPathing": CareerPathing,
     "CollaborationHub": CollaborationHub,
@@ -142,8 +144,6 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "B2BClientDashboard": B2BClientDashboard,
-    "AIStudentAssistant": AIStudentAssistant,
 }
 
 export const pagesConfig = {
