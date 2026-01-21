@@ -68,6 +68,7 @@ import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import B2BClientDashboard from './pages/B2BClientDashboard';
+import AIStudentAssistant from './pages/AIStudentAssistant';
 import __Layout from './Layout.jsx';
 
 
@@ -142,6 +143,7 @@ export const PAGES = {
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "B2BClientDashboard": B2BClientDashboard,
+    "AIStudentAssistant": AIStudentAssistant,
 }
 
 export const pagesConfig = {
