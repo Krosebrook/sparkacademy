@@ -1,0 +1,298 @@
+import React, { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { base44 } from '@/api/base44Client';
+import { useMutation } from '@tanstack/react-query';
+import { Loader2, Brain, Target, Lightbulb, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
+
+export default function AIClientOnboarding({ organization }) {
+  const [loading, setLoading] = useState(false);
+  const [assessment, setAssessment] = useState(null);
+  const [onboardingPlan, setOnboardingPlan] = useState(null);
+
+  const savePlanMutation = useMutation({
+    mutationFn: async (planData) => {
+      return base44.entities.ClientOnboardingPlan.create(planData);
+    }
+  });
+
+  const runAssessment = async () => {
+    setLoading(true);
+    try {
+      const { data: assessmentData } = await base44.functions.invoke('assessClientOrganization', {
+        organization_id: organization.id
+      });
+      setAssessment(assessmentData);
+    } catch (error) {
+      console.error('Assessment error:', error);
+      alert('Failed to run assessment');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const generatePlan = async () => {
+    if (!assessment) return;
+    
+    setLoading(true);
+    try {
+      const { data: planData } = await base44.functions.invoke('generateOnboardingPlan', {
+        organization_id: organization.id,
+        assessment: assessment.assessment
+      });
+      setOnboardingPlan(planData);
+    } catch (error) {
+      console.error('Plan generation error:', error);
+      alert('Failed to generate onboarding plan');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const savePlan = async () => {
+    if (!onboardingPlan || !assessment) return;
+
+    try {
+      const user = await base44.auth.me();
+      await savePlanMutation.mutateAsync({
+        organization_id: organization.id,
+        account_manager_email: user.email,
+        ai_assessment: assessment.assessment,
+        recommended_training_plan: {
+          phase_1_foundation: onboardingPlan.phase_1_foundation,
+          phase_2_application: onboardingPlan.phase_2_application,
+          phase_3_mastery: onboardingPlan.phase_3_mastery
+        },
+        account_manager_suggestions: onboardingPlan.account_manager_suggestions,
+        implementation_timeline: onboardingPlan.implementation_timeline,
+        success_metrics: onboardingPlan.success_metrics,
+        status: 'proposed'
+      });
+
+      alert('Onboarding plan saved successfully!');
+    } catch (error) {
+      console.error('Save error:', error);
+      alert('Failed to save plan');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <Card className="card-glow">
+        <CardHeader>
+          <CardTitle className="text-white flex items-center gap-2">
+            <Brain className="w-5 h-5 text-blue-400" />
+            AI-Powered Client Onboarding
+          </CardTitle>
+          <p className="text-sm text-gray-400">
+            Automated assessment and personalized training plan generation
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <h4 className="font-semibold text-white mb-2">{organization.organization_name}</h4>
+            <div className="grid grid-cols-3 gap-3 text-sm">
+              <div>
+                <span className="text-gray-400">Industry:</span>{' '}
+                <Badge className="ml-1">{organization.organization_type}</Badge>
+              </div>
+              <div>
+                <span className="text-gray-400">Employees:</span>{' '}
+                <span className="text-white">{organization.total_employees}</span>
+              </div>
+              <div>
+                <span className="text-gray-400">Tier:</span>{' '}
+                <Badge className="ml-1">{organization.subscription_tier}</Badge>
+              </div>
+            </div>
+          </div>
+
+          {!assessment && (
+            <Button onClick={runAssessment} disabled={loading} className="btn-primary w-full">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Brain className="w-4 h-4 mr-2" />}
+              Run AI Assessment
+            </Button>
+          )}
+        </CardContent>
+      </Card>
+
+      {loading && !assessment && (
+        <div className="text-center py-12">
+          <Loader2 className="w-12 h-12 mx-auto mb-4 text-blue-400 animate-spin" />
+          <p className="text-gray-400">Analyzing organization profile and AI literacy needs...</p>
+        </div>
+      )}
+
+      {assessment && (
+        <Card className="card-glow border-2 border-green-500/50">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center gap-2">
+              <Target className="w-5 h-5 text-green-400" />
+              AI Literacy Assessment Results
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-blue-900/20 rounded-lg p-3">
+                <div className="text-xs text-gray-400 mb-1">Current AI Literacy</div>
+                <div className="text-2xl font-bold text-blue-400 capitalize">
+                  {assessment.assessment.current_ai_literacy_level}
+                </div>
+              </div>
+              <div className="bg-purple-900/20 rounded-lg p-3">
+                <div className="text-xs text-gray-400 mb-1">Adoption Rate</div>
+                <div className="text-2xl font-bold text-purple-400">
+                  {assessment.adoption_rate}%
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h5 className="text-sm font-semibold text-white mb-2">Priority Training Areas</h5>
+              <div className="flex flex-wrap gap-2">
+                {assessment.assessment.priority_training_areas?.map((area, i) => (
+                  <Badge key={i} className="bg-yellow-500/20 text-yellow-300">{area}</Badge>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h5 className="text-sm font-semibold text-white mb-2">Industry-Specific Needs</h5>
+              <div className="flex flex-wrap gap-2">
+                {assessment.assessment.industry_specific_needs?.map((need, i) => (
+                  <Badge key={i} className="bg-blue-500/20 text-blue-300">{need}</Badge>
+                ))}
+              </div>
+            </div>
+
+            {assessment.assessment.risk_factors?.length > 0 && (
+              <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-3">
+                <h5 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 text-red-400" />
+                  Risk Factors
+                </h5>
+                <ul className="space-y-1">
+                  {assessment.assessment.risk_factors.map((risk, i) => (
+                    <li key={i} className="text-sm text-red-300">• {risk}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {assessment.assessment.opportunities?.length > 0 && (
+              <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-3">
+                <h5 className="text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                  <Lightbulb className="w-4 h-4 text-green-400" />
+                  Opportunities
+                </h5>
+                <ul className="space-y-1">
+                  {assessment.assessment.opportunities.map((opp, i) => (
+                    <li key={i} className="text-sm text-green-300">• {opp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <Button onClick={generatePlan} disabled={loading} className="btn-primary w-full">
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <TrendingUp className="w-4 h-4 mr-2" />}
+              Generate Onboarding Plan
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {onboardingPlan && (
+        <Card className="card-glow border-2 border-purple-500/50">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white">Personalized Onboarding Plan</CardTitle>
+              <Button onClick={savePlan} className="btn-primary">
+                <CheckCircle className="w-4 h-4 mr-2" />
+                Save Plan
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="phases" className="w-full">
+              <TabsList className="grid w-full grid-cols-3 bg-[#1a0a2e]">
+                <TabsTrigger value="phases">Training Phases</TabsTrigger>
+                <TabsTrigger value="suggestions">AM Suggestions</TabsTrigger>
+                <TabsTrigger value="timeline">Timeline</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="phases" className="space-y-4">
+                {[
+                  { phase: onboardingPlan.phase_1_foundation, title: 'Phase 1: Foundation', color: 'blue' },
+                  { phase: onboardingPlan.phase_2_application, title: 'Phase 2: Application', color: 'purple' },
+                  { phase: onboardingPlan.phase_3_mastery, title: 'Phase 3: Mastery', color: 'green' }
+                ].map(({ phase, title, color }, idx) => (
+                  <div key={idx} className={`bg-${color}-900/20 border border-${color}-500/30 rounded-lg p-4`}>
+                    <h4 className="font-semibold text-white mb-2">{title}</h4>
+                    <div className="text-sm text-gray-300 mb-3">Duration: {phase.duration_weeks} weeks</div>
+                    <div className="space-y-2">
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Courses:</div>
+                        <div className="flex flex-wrap gap-1">
+                          {phase.courses?.map((course, i) => (
+                            <Badge key={i} variant="outline" className="text-xs">{course}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-gray-400 mb-1">Target Departments:</div>
+                        <div className="flex flex-wrap gap-1">
+                          {phase.target_departments?.map((dept, i) => (
+                            <Badge key={i} className={`bg-${color}-500/20 text-${color}-300 text-xs`}>{dept}</Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="suggestions" className="space-y-3">
+                {onboardingPlan.account_manager_suggestions?.map((suggestion, idx) => (
+                  <div key={idx} className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Badge className={
+                        suggestion.priority === 'high' ? 'bg-red-500/20 text-red-300' :
+                        suggestion.priority === 'medium' ? 'bg-yellow-500/20 text-yellow-300' :
+                        'bg-blue-500/20 text-blue-300'
+                      }>
+                        {suggestion.priority}
+                      </Badge>
+                      <span className="text-sm font-semibold text-white">{suggestion.suggestion_type}</span>
+                    </div>
+                    <p className="text-sm text-gray-300 mb-2">{suggestion.recommendation}</p>
+                    <p className="text-xs text-gray-400 italic">{suggestion.rationale}</p>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="timeline" className="space-y-2">
+                {onboardingPlan.implementation_timeline?.map((item, idx) => (
+                  <div key={idx} className="bg-gray-800/50 border border-gray-600 rounded-lg p-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+                        {item.week}
+                      </div>
+                      <span className="font-semibold text-white text-sm">{item.milestone}</span>
+                    </div>
+                    <ul className="ml-10 space-y-1">
+                      {item.action_items?.map((action, i) => (
+                        <li key={i} className="text-xs text-gray-300">• {action}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
