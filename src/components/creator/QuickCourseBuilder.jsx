@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
-import { Loader2, Sparkles, CheckCircle, BookOpen, Target, Users, Lightbulb } from 'lucide-react';
+import { Loader2, Sparkles, CheckCircle, BookOpen, Target, Users, Lightbulb, Code, Eye } from 'lucide-react';
 
 export default function QuickCourseBuilder() {
   const [loading, setLoading] = useState(false);

@@ -122,18 +122,7 @@ const navigationItems = [
     icon: BookOpen,
     description: "AI Learning"
   },
-  {
-    title: "Skill Map",
-    url: createPageUrl("DynamicSkillMap"),
-    icon: BarChart3,
-    description: "Projects & Growth"
-  },
-  {
-    title: "Adaptive Path",
-    url: createPageUrl("AdaptivePathViewer"),
-    icon: BarChart3,
-    description: "Progress Track"
-  },
+
   {
     title: "Instructor Tools",
     url: createPageUrl("EnhancedInstructorDashboard"),

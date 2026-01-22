@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Loader2, Sparkles, User, Briefcase, Code, Award, Eye, Save, Copy, Check, Lightbulb } from 'lucide-react';
+import { Loader2, Sparkles, User, Briefcase, Code, Award, Eye, Save, Copy, Check, Lightbulb, ExternalLink } from 'lucide-react';
 
 export default function AIPortfolioBuilder() {
   const queryClient = useQueryClient();
