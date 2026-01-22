@@ -3,19 +3,19 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Sparkles, 
-  TrendingUp, 
-  Users, 
-  Brain, 
+import {
+  Sparkles,
+  TrendingUp,
+  Users,
+  Brain,
   Target,
   Zap,
   ArrowRight,
   ChevronDown,
   Building2,
   GraduationCap,
-  LineChart
-} from 'lucide-react';
+  LineChart } from
+'lucide-react';
 
 export default function LandingPage() {
   const [scrollY, setScrollY] = useState(0);
@@ -32,11 +32,11 @@ export default function LandingPage() {
       <section className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
         {/* Mesh Pattern Background */}
         <div className="absolute inset-0 opacity-20 pointer-events-none"
-             style={{
-               backgroundImage: 'radial-gradient(rgba(139, 92, 246, 0.3) 1px, transparent 1px)',
-               backgroundSize: '40px 40px'
-             }}
-        />
+        style={{
+          backgroundImage: 'radial-gradient(rgba(139, 92, 246, 0.3) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }} />
+
         
         {/* Glowing Orbs */}
         <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-purple-600/20 blur-[120px] rounded-full" />
@@ -234,15 +234,15 @@ export default function LandingPage() {
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-4 mb-12">
             {[
-              { label: 'Status', value: 'Active', color: 'emerald' },
-              { label: 'Precision', value: '99.7%', color: 'purple' },
-              { label: 'Latency', value: '8ms', color: 'blue' }
-            ].map((stat) => (
-              <div key={stat.label} className={`bg-${stat.color}-500/10 border border-${stat.color}-500/20 rounded-xl p-4`}>
+            { label: 'Status', value: 'Active', color: 'emerald' },
+            { label: 'Precision', value: '99.7%', color: 'purple' },
+            { label: 'Latency', value: '8ms', color: 'blue' }].
+            map((stat) =>
+            <div key={stat.label} className={`bg-${stat.color}-500/10 border border-${stat.color}-500/20 rounded-xl p-4`}>
                 <p className={`text-${stat.color}-400 text-xs font-bold uppercase tracking-wider mb-1`}>{stat.label}</p>
                 <p className="text-2xl font-bold">{stat.value}</p>
               </div>
-            ))}
+            )}
           </div>
         </div>
       </section>
@@ -329,7 +329,7 @@ export default function LandingPage() {
               </Button>
             </Link>
             <Link to={createPageUrl('Dashboard')}>
-              <Button variant="outline" className="text-lg h-14 px-8 border-purple-500/30 hover:bg-purple-500/10">
+              <Button variant="outline" className="bg-background text-slate-50 px-8 py-2 text-lg font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border shadow-sm hover:text-accent-foreground h-14 border-purple-500/30 hover:bg-purple-500/10">
                 View Demo
               </Button>
             </Link>
@@ -354,6 +354,6 @@ export default function LandingPage() {
         {/* Floating decoration */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 w-24 h-1 bg-purple-500/20 rounded-full" />
       </section>
-    </div>
-  );
+    </div>);
+
 }
