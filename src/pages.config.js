@@ -75,6 +75,8 @@ import Whiteboard from './pages/Whiteboard';
 import DynamicSkillMap from './pages/DynamicSkillMap';
 import AdaptivePathViewer from './pages/AdaptivePathViewer';
 import EngineOfInsight from './pages/EngineOfInsight';
+import CommunityForum from './pages/CommunityForum';
+import GamificationHub from './pages/GamificationHub';
 import __Layout from './Layout.jsx';
 
 
@@ -156,6 +158,8 @@ export const PAGES = {
     "DynamicSkillMap": DynamicSkillMap,
     "AdaptivePathViewer": AdaptivePathViewer,
     "EngineOfInsight": EngineOfInsight,
+    "CommunityForum": CommunityForum,
+    "GamificationHub": GamificationHub,
 }
 
 export const pagesConfig = {

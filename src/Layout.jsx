@@ -140,6 +140,18 @@ const navigationItems = [
     url: createPageUrl("EngineOfInsight"),
     icon: BarChart3,
     description: "Neural Analytics"
+  },
+  {
+    title: "Community Forum",
+    url: createPageUrl("CommunityForum"),
+    icon: Users,
+    description: "Discuss & Collaborate"
+  },
+  {
+    title: "Achievements",
+    url: createPageUrl("GamificationHub"),
+    icon: Gift,
+    description: "Badges & Ranks"
   }
 ];
 
