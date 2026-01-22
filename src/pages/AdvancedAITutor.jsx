@@ -12,6 +12,7 @@ import AICodeReviewer from '@/components/learning/AICodeReviewer';
 import EnhancedAITutor from '@/components/learning/EnhancedAITutor';
 import ProactiveCheckIn from '@/components/learning/ProactiveCheckIn';
 import DynamicLearningPath from '@/components/learning/DynamicLearningPath';
+import AIRecommendationEngine from '@/components/tutor/AIRecommendationEngine';
 
 export default function AdvancedAITutor() {
   const [learningGoal, setLearningGoal] = useState('');
@@ -79,25 +80,28 @@ export default function AdvancedAITutor() {
         </Card>
 
         {/* Main Tabs */}
-        <Tabs defaultValue="tutor" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs defaultValue="recommendations" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-5 bg-white border border-gray-200">
+            <TabsTrigger value="recommendations">
+              Recommendations
+            </TabsTrigger>
             <TabsTrigger value="tutor">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              AI Tutor Chat
+              AI Chat
             </TabsTrigger>
             <TabsTrigger value="learning-path">
-              <Target className="w-4 h-4 mr-2" />
               Learning Path
             </TabsTrigger>
             <TabsTrigger value="study-plan">
-              <Calendar className="w-4 h-4 mr-2" />
               Study Plans
             </TabsTrigger>
             <TabsTrigger value="code-review">
-              <Code className="w-4 h-4 mr-2" />
               Code Review
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="recommendations" className="space-y-4">
+            <AIRecommendationEngine userId={user?.email} />
+          </TabsContent>
 
           <TabsContent value="tutor" className="space-y-4">
             <Card>
