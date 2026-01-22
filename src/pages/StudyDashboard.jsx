@@ -159,13 +159,30 @@ export default function StudyDashboard() {
                 <h3 className="text-xl font-bold">Flashcard Deck</h3>
                 <p className="text-sm text-gray-400">15 cards to review today</p>
               </div>
-              <div className="text-right">
-                <div className="text-2xl font-bold text-pink-400">75%</div>
-                <p className="text-xs text-gray-400">Mastery</p>
+              <div className="relative w-20 h-20">
+                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="rgba(236, 72, 153, 0.2)"
+                    strokeWidth="3"
+                  />
+                  <path
+                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                    fill="none"
+                    stroke="#ec4899"
+                    strokeWidth="3"
+                    strokeDasharray="75, 100"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-xl font-bold text-pink-400">75%</span>
+                </div>
               </div>
             </div>
-            <Button className="w-full bg-pink-600 hover:bg-pink-700 shadow-[0_0_20px_rgba(236,72,153,0.3)]">
-              <Play className="w-4 h-4 mr-2" />
+            <Button className="w-full bg-pink-600 hover:bg-pink-700 shadow-[0_0_20px_rgba(236,72,153,0.3)] h-12 text-base">
+              <Play className="w-5 h-5 mr-2" />
               Start Review
             </Button>
           </CardContent>

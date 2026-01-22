@@ -37,6 +37,7 @@ import Documentation from './pages/Documentation';
 import DynamicOutline from './pages/DynamicOutline';
 import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
+import EnhancedCourseViewer from './pages/EnhancedCourseViewer';
 import EnhancedCreatorAnalytics from './pages/EnhancedCreatorAnalytics';
 import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
 import EnhancedInstructorDashboard from './pages/EnhancedInstructorDashboard';
@@ -47,6 +48,7 @@ import InstructorAITools from './pages/InstructorAITools';
 import InstructorAnalytics from './pages/InstructorAnalytics';
 import InstructorDashboard from './pages/InstructorDashboard';
 import LandingPage from './pages/LandingPage';
+import LearningComparison from './pages/LearningComparison';
 import LearningPaths from './pages/LearningPaths';
 import LearningWrapped from './pages/LearningWrapped';
 import LiveVideoSessions from './pages/LiveVideoSessions';
@@ -65,13 +67,13 @@ import StudentAnalytics from './pages/StudentAnalytics';
 import StudentGamification from './pages/StudentGamification';
 import StudentLearningPath from './pages/StudentLearningPath';
 import StudentPortfolio from './pages/StudentPortfolio';
+import StudyDashboard from './pages/StudyDashboard';
 import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import EnhancedCourseViewer from './pages/EnhancedCourseViewer';
-import StudyDashboard from './pages/StudyDashboard';
-import LearningComparison from './pages/LearningComparison';
+import DynamicSkillMap from './pages/DynamicSkillMap';
+import AdaptivePathViewer from './pages/AdaptivePathViewer';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +117,7 @@ export const PAGES = {
     "DynamicOutline": DynamicOutline,
     "EnhancedContentCreator": EnhancedContentCreator,
     "EnhancedCourseCreator": EnhancedCourseCreator,
+    "EnhancedCourseViewer": EnhancedCourseViewer,
     "EnhancedCreatorAnalytics": EnhancedCreatorAnalytics,
     "EnhancedInstructorAnalytics": EnhancedInstructorAnalytics,
     "EnhancedInstructorDashboard": EnhancedInstructorDashboard,
@@ -125,6 +128,7 @@ export const PAGES = {
     "InstructorAnalytics": InstructorAnalytics,
     "InstructorDashboard": InstructorDashboard,
     "LandingPage": LandingPage,
+    "LearningComparison": LearningComparison,
     "LearningPaths": LearningPaths,
     "LearningWrapped": LearningWrapped,
     "LiveVideoSessions": LiveVideoSessions,
@@ -143,13 +147,13 @@ export const PAGES = {
     "StudentGamification": StudentGamification,
     "StudentLearningPath": StudentLearningPath,
     "StudentPortfolio": StudentPortfolio,
+    "StudyDashboard": StudyDashboard,
     "StudyGroups": StudyGroups,
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "EnhancedCourseViewer": EnhancedCourseViewer,
-    "StudyDashboard": StudyDashboard,
-    "LearningComparison": LearningComparison,
+    "DynamicSkillMap": DynamicSkillMap,
+    "AdaptivePathViewer": AdaptivePathViewer,
 }
 
 export const pagesConfig = {
