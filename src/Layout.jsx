@@ -134,6 +134,12 @@ const navigationItems = [
     url: createPageUrl("B2BClientDashboard"),
     icon: BarChart3,
     description: "Enterprise Insights"
+  },
+  {
+    title: "Engine of Insight",
+    url: createPageUrl("EngineOfInsight"),
+    icon: BarChart3,
+    description: "Neural Analytics"
   }
 ];
 

@@ -74,6 +74,7 @@ import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import DynamicSkillMap from './pages/DynamicSkillMap';
 import AdaptivePathViewer from './pages/AdaptivePathViewer';
+import EngineOfInsight from './pages/EngineOfInsight';
 import __Layout from './Layout.jsx';
 
 
@@ -154,6 +155,7 @@ export const PAGES = {
     "Whiteboard": Whiteboard,
     "DynamicSkillMap": DynamicSkillMap,
     "AdaptivePathViewer": AdaptivePathViewer,
+    "EngineOfInsight": EngineOfInsight,
 }
 
 export const pagesConfig = {
