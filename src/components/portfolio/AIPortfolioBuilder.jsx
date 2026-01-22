@@ -165,26 +165,42 @@ export default function AIPortfolioBuilder() {
                   {suggestions.project_ideas?.length || 0} project ideas tailored to your skills
                 </div>
                 {suggestions.project_ideas?.map((project, idx) => (
-                  <div key={idx} className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                    <div className="flex items-start justify-between mb-2">
+                  <div key={idx} className="bg-gradient-to-br from-green-900/20 to-emerald-900/10 border border-green-500/30 rounded-lg p-5 hover:border-green-500/50 transition-all group">
+                    <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h4 className="font-semibold text-white text-sm mb-1">{project.title}</h4>
+                        <h4 className="font-bold text-white mb-1 text-base">{project.title}</h4>
                         <div className="flex gap-2 mb-2">
                           <Badge className="bg-green-500/20 text-green-300 text-xs">{project.difficulty}</Badge>
                           <Badge className="bg-blue-500/20 text-blue-300 text-xs">{project.estimated_hours}h</Badge>
+                          <Badge className="bg-purple-500/20 text-purple-300 text-xs">AI Generated</Badge>
                         </div>
                       </div>
-                      <Button size="sm" onClick={() => addProject(project)}>
+                      <Button size="sm" onClick={() => addProject(project)} className="bg-green-600 hover:bg-green-700">
                         Add to Portfolio
                       </Button>
                     </div>
-                    <p className="text-xs text-gray-300 mb-2">{project.description}</p>
-                    <div className="flex flex-wrap gap-1 mb-2">
+                    <p className="text-sm text-gray-300 mb-3">{project.description}</p>
+                    <div className="flex flex-wrap gap-1.5 mb-3">
                       {project.technologies?.map((tech, i) => (
-                        <Badge key={i} variant="outline" className="text-xs">{tech}</Badge>
+                        <Badge key={i} variant="outline" className="text-xs border-green-500/30 text-green-300">{tech}</Badge>
                       ))}
                     </div>
-                    <p className="text-xs text-yellow-300">💡 {project.why_build_it}</p>
+                    <div className="bg-yellow-900/20 border border-yellow-500/30 rounded-lg p-3 mb-3">
+                      <p className="text-xs text-yellow-300 flex items-start gap-2">
+                        <Lightbulb className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                        <span>{project.why_build_it}</span>
+                      </p>
+                    </div>
+                    <div className="flex gap-2 pt-3 border-t border-green-500/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Button size="sm" variant="outline" className="flex-1 text-xs border-purple-500/30 hover:bg-purple-500/10">
+                        <Eye className="w-3 h-3 mr-1" />
+                        Live Demo
+                      </Button>
+                      <Button size="sm" variant="outline" className="flex-1 text-xs border-blue-500/30 hover:bg-blue-500/10">
+                        <Code className="w-3 h-3 mr-1" />
+                        Case Study
+                      </Button>
+                    </div>
                   </div>
                 ))}
               </TabsContent>

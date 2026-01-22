@@ -14,25 +14,30 @@ import AILessonPlanningAssistant from '@/components/creator/AILessonPlanningAssi
 import AIPracticeProblemsGenerator from '@/components/creator/AIPracticeProblemsGenerator';
 import AIStudyGuidesGenerator from '@/components/creator/AIStudyGuidesGenerator';
 import AIRealWorldExamplesIntegrator from '@/components/creator/AIRealWorldExamplesIntegrator';
+import QuickCourseBuilder from '@/components/creator/QuickCourseBuilder';
 
 export default function AICreatorStudio() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 p-6">
+    <div className="min-h-screen bg-[#0f0618] text-white p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-8 text-white">
+        <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-2xl p-8 shadow-[0_0_30px_rgba(139,92,246,0.3)]">
           <div className="flex items-center gap-3 mb-2">
             <Wand2 className="w-8 h-8" />
             <h1 className="text-3xl font-bold">AI Creator Studio</h1>
           </div>
-          <p className="text-amber-100">
-            Supercharge your course creation with AI-powered syllabi, assessments, content ideas, and monetization strategies
+          <p className="text-purple-100">
+            Generate complete courses in seconds with AI-powered syllabi, lesson outlines, and practice projects
           </p>
         </div>
 
         {/* Main Tabs */}
-        <Tabs defaultValue="syllabus" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 bg-white border border-gray-200">
+        <Tabs defaultValue="quick" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-12 bg-purple-900/20 border border-purple-500/20">
+            <TabsTrigger value="quick" className="data-[state=active]:bg-purple-600">
+              <Sparkles className="w-4 h-4 lg:mr-2" />
+              <span className="hidden lg:inline">Quick Build</span>
+            </TabsTrigger>
             <TabsTrigger value="syllabus">
               <FileText className="w-4 h-4 lg:mr-2" />
               <span className="hidden lg:inline">Syllabus</span>
@@ -82,6 +87,10 @@ export default function AICreatorStudio() {
               <span className="hidden lg:inline">Real-World</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="quick" className="space-y-4">
+            <QuickCourseBuilder />
+          </TabsContent>
 
           <TabsContent value="syllabus" className="space-y-4">
             <Card>
@@ -173,13 +182,13 @@ export default function AICreatorStudio() {
         </Tabs>
 
         {/* Info Card */}
-        <Card className="border-green-500/30 bg-green-50/50">
+        <Card className="border-emerald-500/30 bg-emerald-900/20">
           <CardContent className="py-4">
             <div className="flex items-start gap-3">
-              <Wand2 className="w-5 h-5 text-green-600 mt-0.5" />
+              <Wand2 className="w-5 h-5 text-emerald-400 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-green-900 mb-1">AI-Powered Course Creation</h4>
-                <p className="text-sm text-green-800">
+                <h4 className="font-semibold text-emerald-300 mb-1">AI-Powered Course Creation</h4>
+                <p className="text-sm text-gray-400">
                   All tools in the AI Creator Studio analyze industry trends, learning science best practices, 
                   and successful course patterns to help you create engaging, effective, and profitable courses.
                 </p>

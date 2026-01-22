@@ -74,12 +74,47 @@ export default function StudyDashboard() {
       </div>
 
       <main className="p-4 space-y-6 max-w-4xl mx-auto">
-        {/* Welcome */}
-        <div className="pt-4">
-          <h1 className="text-3xl font-bold mb-1">
-            Ready to study, {user?.full_name?.split(' ')[0] || 'there'}?
-          </h1>
-          <p className="text-gray-400">You have 3 learning goals remaining today.</p>
+        {/* Welcome & Gamification Stats */}
+        <div className="pt-4 space-y-4">
+          <div>
+            <h1 className="text-3xl font-bold mb-1">
+              Ready to study, {user?.full_name?.split(' ')[0] || 'there'}?
+            </h1>
+            <p className="text-gray-400">You have 3 learning goals remaining today.</p>
+          </div>
+          
+          {/* Gamification Stats Bar */}
+          <div className="grid grid-cols-3 gap-3">
+            <Card className="bg-yellow-900/20 border-yellow-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Sparkles className="w-4 h-4 text-yellow-400" />
+                  <span className="text-2xl font-bold text-yellow-400">1,250</span>
+                </div>
+                <p className="text-xs text-gray-400">XP Points</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-purple-900/20 border-purple-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <Target className="w-4 h-4 text-purple-400" />
+                  <span className="text-2xl font-bold text-purple-400">7</span>
+                </div>
+                <p className="text-xs text-gray-400">Day Streak 🔥</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-blue-900/20 border-blue-500/30">
+              <CardContent className="p-4 text-center">
+                <div className="flex items-center justify-center gap-2 mb-1">
+                  <TrendingUp className="w-4 h-4 text-blue-400" />
+                  <span className="text-2xl font-bold text-blue-400">#12</span>
+                </div>
+                <p className="text-xs text-gray-400">Leaderboard</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* AI-Generated Review */}

@@ -68,8 +68,45 @@ export default function AdaptivePathViewer() {
       </div>
 
       <main className="max-w-4xl mx-auto p-4 space-y-6">
-        <div>
-          <h2 className="text-2xl font-bold mb-1">Your Learning Path</h2>
+        <div className="space-y-4">
+          <div>
+            <h2 className="text-2xl font-bold mb-1">Your Learning Path</h2>
+          </div>
+
+          {/* Gamification Stats */}
+          <div className="grid grid-cols-4 gap-3">
+            <Card className="bg-yellow-900/20 border-yellow-500/30">
+              <CardContent className="p-3 text-center">
+                <Sparkles className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
+                <div className="text-xl font-bold text-yellow-400">1,250</div>
+                <p className="text-[10px] text-gray-400">Points</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-purple-900/20 border-purple-500/30">
+              <CardContent className="p-3 text-center">
+                <span className="text-2xl mx-auto block mb-1">🔥</span>
+                <div className="text-xl font-bold text-purple-400">7</div>
+                <p className="text-[10px] text-gray-400">Streak</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-blue-900/20 border-blue-500/30">
+              <CardContent className="p-3 text-center">
+                <span className="text-2xl mx-auto block mb-1">🏆</span>
+                <div className="text-xl font-bold text-blue-400">12</div>
+                <p className="text-[10px] text-gray-400">Badges</p>
+              </CardContent>
+            </Card>
+            
+            <Card className="bg-emerald-900/20 border-emerald-500/30">
+              <CardContent className="p-3 text-center">
+                <TrendingUp className="w-5 h-5 text-emerald-400 mx-auto mb-1" />
+                <div className="text-xl font-bold text-emerald-400">#12</div>
+                <p className="text-[10px] text-gray-400">Rank</p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
         {/* Overall Progress */}
