@@ -8,6 +8,7 @@ import AIStudentAssistant from './pages/AIStudentAssistant';
 import AITools from './pages/AITools';
 import AITutor from './pages/AITutor';
 import AdaptiveLearning from './pages/AdaptiveLearning';
+import AdaptivePathViewer from './pages/AdaptivePathViewer';
 import AdvancedAITutor from './pages/AdvancedAITutor';
 import AdvancedCreatorTools from './pages/AdvancedCreatorTools';
 import B2BClientDashboard from './pages/B2BClientDashboard';
@@ -15,6 +16,7 @@ import Billing from './pages/Billing';
 import CareerPathing from './pages/CareerPathing';
 import CollaborationHub from './pages/CollaborationHub';
 import CommunityAIHub from './pages/CommunityAIHub';
+import CommunityForum from './pages/CommunityForum';
 import CommunityHub from './pages/CommunityHub';
 import CompetitiveLeaderboards from './pages/CompetitiveLeaderboards';
 import ContentDiscovery from './pages/ContentDiscovery';
@@ -35,6 +37,8 @@ import DailyChallenges from './pages/DailyChallenges';
 import Dashboard from './pages/Dashboard';
 import Documentation from './pages/Documentation';
 import DynamicOutline from './pages/DynamicOutline';
+import DynamicSkillMap from './pages/DynamicSkillMap';
+import EngineOfInsight from './pages/EngineOfInsight';
 import EnhancedContentCreator from './pages/EnhancedContentCreator';
 import EnhancedCourseCreator from './pages/EnhancedCourseCreator';
 import EnhancedCourseViewer from './pages/EnhancedCourseViewer';
@@ -43,6 +47,7 @@ import EnhancedInstructorAnalytics from './pages/EnhancedInstructorAnalytics';
 import EnhancedInstructorDashboard from './pages/EnhancedInstructorDashboard';
 import EnterpriseAdmin from './pages/EnterpriseAdmin';
 import GamificationDashboard from './pages/GamificationDashboard';
+import GamificationHub from './pages/GamificationHub';
 import Home from './pages/Home';
 import InstructorAITools from './pages/InstructorAITools';
 import InstructorAnalytics from './pages/InstructorAnalytics';
@@ -72,11 +77,9 @@ import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
-import DynamicSkillMap from './pages/DynamicSkillMap';
-import AdaptivePathViewer from './pages/AdaptivePathViewer';
-import EngineOfInsight from './pages/EngineOfInsight';
-import CommunityForum from './pages/CommunityForum';
-import GamificationHub from './pages/GamificationHub';
+import WorkplaceHub from './pages/WorkplaceHub';
+import TeamPulseDashboard from './pages/TeamPulseDashboard';
+import PersonalEnergyHub from './pages/PersonalEnergyHub';
 import __Layout from './Layout.jsx';
 
 
@@ -91,6 +94,7 @@ export const PAGES = {
     "AITools": AITools,
     "AITutor": AITutor,
     "AdaptiveLearning": AdaptiveLearning,
+    "AdaptivePathViewer": AdaptivePathViewer,
     "AdvancedAITutor": AdvancedAITutor,
     "AdvancedCreatorTools": AdvancedCreatorTools,
     "B2BClientDashboard": B2BClientDashboard,
@@ -98,6 +102,7 @@ export const PAGES = {
     "CareerPathing": CareerPathing,
     "CollaborationHub": CollaborationHub,
     "CommunityAIHub": CommunityAIHub,
+    "CommunityForum": CommunityForum,
     "CommunityHub": CommunityHub,
     "CompetitiveLeaderboards": CompetitiveLeaderboards,
     "ContentDiscovery": ContentDiscovery,
@@ -118,6 +123,8 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Documentation": Documentation,
     "DynamicOutline": DynamicOutline,
+    "DynamicSkillMap": DynamicSkillMap,
+    "EngineOfInsight": EngineOfInsight,
     "EnhancedContentCreator": EnhancedContentCreator,
     "EnhancedCourseCreator": EnhancedCourseCreator,
     "EnhancedCourseViewer": EnhancedCourseViewer,
@@ -126,6 +133,7 @@ export const PAGES = {
     "EnhancedInstructorDashboard": EnhancedInstructorDashboard,
     "EnterpriseAdmin": EnterpriseAdmin,
     "GamificationDashboard": GamificationDashboard,
+    "GamificationHub": GamificationHub,
     "Home": Home,
     "InstructorAITools": InstructorAITools,
     "InstructorAnalytics": InstructorAnalytics,
@@ -155,11 +163,9 @@ export const PAGES = {
     "SubscriptionSuccess": SubscriptionSuccess,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
-    "DynamicSkillMap": DynamicSkillMap,
-    "AdaptivePathViewer": AdaptivePathViewer,
-    "EngineOfInsight": EngineOfInsight,
-    "CommunityForum": CommunityForum,
-    "GamificationHub": GamificationHub,
+    "WorkplaceHub": WorkplaceHub,
+    "TeamPulseDashboard": TeamPulseDashboard,
+    "PersonalEnergyHub": PersonalEnergyHub,
 }
 
 export const pagesConfig = {
