@@ -169,7 +169,7 @@ export default function DailyQuestsPanel({ quests, onClaimRewards }) {
         <Button
           onClick={onClaimRewards}
           disabled={completedQuests === 0}
-          className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-6 rounded-2xl text-lg shadow-xl mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-6 rounded-2xl text-lg shadow-xl mt-6 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Gift className="w-5 h-5 mr-2" />
           Claim Rewards

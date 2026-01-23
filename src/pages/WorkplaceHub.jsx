@@ -43,7 +43,7 @@ export default function WorkplaceHub() {
           <p className="text-xl text-gray-200 mb-10 max-w-md mx-auto">
             Transform team dynamics with AI-powered insights and collaborative excellence.
           </p>
-          <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-12 py-7 rounded-2xl text-lg shadow-2xl">
+          <Button className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold px-12 py-7 rounded-2xl text-lg shadow-2xl">
             Get Started →
           </Button>
         </motion.div>
@@ -86,8 +86,8 @@ export default function WorkplaceHub() {
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
             >
-              <Card className="p-8 bg-gradient-to-br from-amber-100 to-orange-100 border-0 rounded-3xl shadow-lg hover:shadow-2xl transition-shadow">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-400 rounded-2xl flex items-center justify-center mb-6">
+              <Card className="p-8 bg-gradient-to-br from-purple-100 to-orange-100 border-0 rounded-3xl shadow-lg hover:shadow-2xl transition-shadow">
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-orange-500 rounded-2xl flex items-center justify-center mb-6">
                   <Users className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">Hyper-Localized</h3>
@@ -150,7 +150,7 @@ export default function WorkplaceHub() {
           <p className="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
             Join forward-thinking organizations leveraging AI to unlock unprecedented team potential.
           </p>
-          <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold px-12 py-7 rounded-2xl text-lg shadow-2xl">
+          <Button className="bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold px-12 py-7 rounded-2xl text-lg shadow-2xl">
             Request Enterprise Demo
           </Button>
         </motion.div>

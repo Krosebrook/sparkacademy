@@ -92,11 +92,11 @@ export default function PersonalEnergyHub() {
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-amber-900/80 to-orange-900/80 backdrop-blur-sm border-amber-600/50 text-white">
+            <Card className="bg-gradient-to-br from-purple-900/80 to-orange-900/80 backdrop-blur-sm border-purple-600/50 text-white">
               <CardContent className="p-6">
                 <p className="text-xs text-gray-400 uppercase tracking-wider mb-2">Current Rank</p>
                 <p className="text-4xl font-bold mb-2">{energyData.currentRank}</p>
-                <div className="flex items-center gap-1 text-amber-300 text-sm font-semibold">
+                <div className="flex items-center gap-1 text-purple-300 text-sm font-semibold">
                   ⭐ Rising Star
                 </div>
               </CardContent>
@@ -105,16 +105,16 @@ export default function PersonalEnergyHub() {
         </motion.div>
 
         {/* Daily Quest */}
-        <Card className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm border-amber-500/30 text-white mb-6">
+        <Card className="bg-gradient-to-br from-slate-800/90 to-slate-900/90 backdrop-blur-sm border-purple-500/30 text-white mb-6">
           <CardContent className="p-6">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-orange-500 rounded-xl flex items-center justify-center">
                   <Zap className="w-5 h-5 text-white" fill="white" />
                 </div>
                 <span className="font-bold uppercase tracking-wide">DAILY QUEST</span>
               </div>
-              <Badge className="bg-amber-500 text-amber-950 font-bold">
+              <Badge className="bg-purple-600 text-white font-bold">
                 {dailyQuest.progress}% Complete
               </Badge>
             </div>
@@ -133,7 +133,7 @@ export default function PersonalEnergyHub() {
 
             <p className="text-sm text-gray-300 mb-2">{dailyQuest.title}</p>
             <p className="text-xs text-gray-400">
-              {dailyQuest.description} <span className="text-amber-400 font-bold">+{dailyQuest.xpReward} XP</span>
+              {dailyQuest.description} <span className="text-purple-400 font-bold">+{dailyQuest.xpReward} XP</span>
             </p>
           </CardContent>
         </Card>
@@ -141,14 +141,14 @@ export default function PersonalEnergyHub() {
         {/* Quick Actions */}
         <div className="grid grid-cols-4 gap-4 mb-8">
           {[
-            { icon: Award, label: 'Awards', color: 'from-yellow-500 to-amber-500' },
-            { icon: Target, label: 'Quests', color: 'from-blue-500 to-cyan-500' },
-            { icon: Users, label: 'Social', color: 'from-purple-500 to-pink-500' },
-            { icon: Gift, label: 'Give', color: 'from-emerald-500 to-teal-500' }
+            { icon: Award, label: 'Awards', color: 'from-purple-500 to-orange-500' },
+            { icon: Target, label: 'Quests', color: 'from-purple-600 to-pink-500' },
+            { icon: Users, label: 'Social', color: 'from-orange-500 to-pink-500' },
+            { icon: Gift, label: 'Give', color: 'from-purple-700 to-orange-600' }
           ].map((action, idx) => (
             <button
               key={idx}
-              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-slate-800/80 to-slate-700/80 backdrop-blur-sm rounded-2xl border border-slate-600/50 hover:border-amber-500/50 transition-all"
+              className="flex flex-col items-center gap-2 p-4 bg-gradient-to-br from-slate-800/80 to-slate-700/80 backdrop-blur-sm rounded-2xl border border-slate-600/50 hover:border-purple-500/50 transition-all"
             >
               <div className={`w-12 h-12 bg-gradient-to-br ${action.color} rounded-xl flex items-center justify-center`}>
                 <action.icon className="w-6 h-6 text-white" />
@@ -162,7 +162,7 @@ export default function PersonalEnergyHub() {
         <div>
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-white">Recent Activity</h3>
-            <Button variant="ghost" className="text-amber-400 hover:text-amber-300 text-sm">
+            <Button variant="ghost" className="text-purple-400 hover:text-purple-300 text-sm">
               History
             </Button>
           </div>
@@ -175,14 +175,14 @@ export default function PersonalEnergyHub() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.1 }}
               >
-                <Card className="bg-gradient-to-br from-slate-800/60 to-slate-700/60 backdrop-blur-sm border-slate-600/50 hover:border-amber-500/50 transition-all">
+                <Card className="bg-gradient-to-br from-slate-800/60 to-slate-700/60 backdrop-blur-sm border-slate-600/50 hover:border-purple-500/50 transition-all">
                   <CardContent className="p-4 flex items-center gap-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center text-2xl">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-orange-500 rounded-full flex items-center justify-center text-2xl">
                       {activity.icon}
                     </div>
                     <div className="flex-1">
                       <p className="text-sm font-semibold text-white">
-                        <span className="text-amber-400">{activity.user}</span> {activity.action}
+                        <span className="text-purple-400">{activity.user}</span> {activity.action}
                       </p>
                       <p className="text-xs text-gray-400">{activity.time} ago</p>
                     </div>
@@ -198,11 +198,11 @@ export default function PersonalEnergyHub() {
       <div className="fixed bottom-0 left-0 right-0 bg-slate-900/95 backdrop-blur-lg border-t border-slate-800">
         <div className="max-w-md mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <button className="flex flex-col items-center gap-1 text-amber-400">
+            <button className="flex flex-col items-center gap-1 text-purple-400">
               <Home className="w-6 h-6" />
               <span className="text-xs font-bold">HOME</span>
             </button>
-            <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-amber-400 transition-colors">
+            <button className="flex flex-col items-center gap-1 text-gray-400 hover:text-purple-400 transition-colors">
               <BarChart3 className="w-6 h-6" />
               <span className="text-xs font-bold">RANK</span>
             </button>
