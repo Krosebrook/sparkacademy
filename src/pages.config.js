@@ -81,6 +81,7 @@ import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
 import PersonalizedLearningSystem from './pages/PersonalizedLearningSystem';
+import CollaborativeGamification from './pages/CollaborativeGamification';
 import __Layout from './Layout.jsx';
 
 
@@ -168,6 +169,7 @@ export const PAGES = {
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
     "PersonalizedLearningSystem": PersonalizedLearningSystem,
+    "CollaborativeGamification": CollaborativeGamification,
 }
 
 export const pagesConfig = {
