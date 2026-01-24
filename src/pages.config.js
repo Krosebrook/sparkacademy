@@ -63,6 +63,7 @@ import Onboarding from './pages/Onboarding';
 import OnboardingFlow from './pages/OnboardingFlow';
 import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import PWASettings from './pages/PWASettings';
+import PersonalEnergyHub from './pages/PersonalEnergyHub';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
 import Profile from './pages/Profile';
 import SkillGapAnalysis from './pages/SkillGapAnalysis';
@@ -75,11 +76,11 @@ import StudentPortfolio from './pages/StudentPortfolio';
 import StudyDashboard from './pages/StudyDashboard';
 import StudyGroups from './pages/StudyGroups';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import TeamPulseDashboard from './pages/TeamPulseDashboard';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
-import TeamPulseDashboard from './pages/TeamPulseDashboard';
-import PersonalEnergyHub from './pages/PersonalEnergyHub';
+import PersonalizedLearningSystem from './pages/PersonalizedLearningSystem';
 import __Layout from './Layout.jsx';
 
 
@@ -149,6 +150,7 @@ export const PAGES = {
     "OnboardingFlow": OnboardingFlow,
     "OrganizationAnalytics": OrganizationAnalytics,
     "PWASettings": PWASettings,
+    "PersonalEnergyHub": PersonalEnergyHub,
     "PersonalizedLearningPath": PersonalizedLearningPath,
     "Profile": Profile,
     "SkillGapAnalysis": SkillGapAnalysis,
@@ -161,11 +163,11 @@ export const PAGES = {
     "StudyDashboard": StudyDashboard,
     "StudyGroups": StudyGroups,
     "SubscriptionSuccess": SubscriptionSuccess,
+    "TeamPulseDashboard": TeamPulseDashboard,
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
-    "TeamPulseDashboard": TeamPulseDashboard,
-    "PersonalEnergyHub": PersonalEnergyHub,
+    "PersonalizedLearningSystem": PersonalizedLearningSystem,
 }
 
 export const pagesConfig = {
