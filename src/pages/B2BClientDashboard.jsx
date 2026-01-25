@@ -10,6 +10,9 @@ import {
   BarChart3, Activity, Zap, ArrowUpRight, ArrowDownRight, Brain 
 } from 'lucide-react';
 import AIClientOnboarding from '@/components/b2b/AIClientOnboarding';
+import SkillMappingDashboard from '@/components/enterprise/SkillMappingDashboard';
+import TalentPathwayBuilder from '@/components/enterprise/TalentPathwayBuilder';
+import ROITracker from '@/components/enterprise/ROITracker';
 
 export default function B2BClientDashboard() {
   const [selectedOrg, setSelectedOrg] = useState('all');
@@ -216,16 +219,66 @@ export default function B2BClientDashboard() {
           </Card>
         )}
 
-        <Tabs defaultValue="departments" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+        <Tabs defaultValue="skillmapping" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6 bg-white border border-gray-200">
+            <TabsTrigger value="skillmapping">
+              <Target className="w-4 h-4 mr-2" />
+              Skill Mapping
+            </TabsTrigger>
+            <TabsTrigger value="talent">
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Talent Pathways
+            </TabsTrigger>
+            <TabsTrigger value="roi">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              ROI Tracker
+            </TabsTrigger>
             <TabsTrigger value="onboarding">
               <Brain className="w-4 h-4 mr-2" />
               AI Onboarding
             </TabsTrigger>
             <TabsTrigger value="departments">Department Breakdown</TabsTrigger>
-            <TabsTrigger value="skillgaps">Skill Gaps</TabsTrigger>
             <TabsTrigger value="interventions">Recommended Actions</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="skillmapping">
+            {selectedOrg !== 'all' ? (
+              <SkillMappingDashboard organizationId={selectedOrg} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6 text-center text-gray-500">
+                  Select a specific organization to view skill mapping
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="talent">
+            {selectedOrg !== 'all' ? (
+              <TalentPathwayBuilder 
+                employeeEmail="employee@example.com" 
+                currentRole="Software Engineer"
+              />
+            ) : (
+              <Card>
+                <CardContent className="pt-6 text-center text-gray-500">
+                  Select a specific organization to generate talent pathways
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="roi">
+            {selectedOrg !== 'all' ? (
+              <ROITracker organizationId={selectedOrg} />
+            ) : (
+              <Card>
+                <CardContent className="pt-6 text-center text-gray-500">
+                  Select a specific organization to view ROI metrics
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
 
           <TabsContent value="onboarding">
             {selectedOrg !== 'all' && organizations?.find(o => o.id === selectedOrg) ? (
@@ -296,45 +349,7 @@ export default function B2BClientDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="skillgaps" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle>Organization-Wide Skill Gaps</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {analytics?.skill_gaps_analysis?.top_gaps?.map((gap, idx) => (
-                    <div
-                      key={idx}
-                      className={`rounded-lg p-4 border ${
-                        gap.severity === 'high' ? 'bg-red-50 border-red-200' :
-                        gap.severity === 'medium' ? 'bg-yellow-50 border-yellow-200' :
-                        'bg-blue-50 border-blue-200'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="font-semibold">{gap.skill}</h4>
-                            <Badge className={
-                              gap.severity === 'high' ? 'bg-red-100 text-red-700' :
-                              gap.severity === 'medium' ? 'bg-yellow-100 text-yellow-700' :
-                              'bg-blue-100 text-blue-700'
-                            }>
-                              {gap.severity}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-gray-600">
-                            {gap.affected_employees} employees ({Math.round(gap.percentage)}%) affected
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+
 
           <TabsContent value="interventions" className="space-y-4">
             <Card>

@@ -15,6 +15,7 @@ import B2BClientDashboard from './pages/B2BClientDashboard';
 import Billing from './pages/Billing';
 import CareerPathing from './pages/CareerPathing';
 import CollaborationHub from './pages/CollaborationHub';
+import CollaborativeGamification from './pages/CollaborativeGamification';
 import CommunityAIHub from './pages/CommunityAIHub';
 import CommunityForum from './pages/CommunityForum';
 import CommunityHub from './pages/CommunityHub';
@@ -65,6 +66,7 @@ import OrganizationAnalytics from './pages/OrganizationAnalytics';
 import PWASettings from './pages/PWASettings';
 import PersonalEnergyHub from './pages/PersonalEnergyHub';
 import PersonalizedLearningPath from './pages/PersonalizedLearningPath';
+import PersonalizedLearningSystem from './pages/PersonalizedLearningSystem';
 import Profile from './pages/Profile';
 import SkillGapAnalysis from './pages/SkillGapAnalysis';
 import SkillGapReport from './pages/SkillGapReport';
@@ -80,8 +82,6 @@ import TeamPulseDashboard from './pages/TeamPulseDashboard';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
-import PersonalizedLearningSystem from './pages/PersonalizedLearningSystem';
-import CollaborativeGamification from './pages/CollaborativeGamification';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +103,7 @@ export const PAGES = {
     "Billing": Billing,
     "CareerPathing": CareerPathing,
     "CollaborationHub": CollaborationHub,
+    "CollaborativeGamification": CollaborativeGamification,
     "CommunityAIHub": CommunityAIHub,
     "CommunityForum": CommunityForum,
     "CommunityHub": CommunityHub,
@@ -153,6 +154,7 @@ export const PAGES = {
     "PWASettings": PWASettings,
     "PersonalEnergyHub": PersonalEnergyHub,
     "PersonalizedLearningPath": PersonalizedLearningPath,
+    "PersonalizedLearningSystem": PersonalizedLearningSystem,
     "Profile": Profile,
     "SkillGapAnalysis": SkillGapAnalysis,
     "SkillGapReport": SkillGapReport,
@@ -168,8 +170,6 @@ export const PAGES = {
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
-    "PersonalizedLearningSystem": PersonalizedLearningSystem,
-    "CollaborativeGamification": CollaborativeGamification,
 }
 
 export const pagesConfig = {
