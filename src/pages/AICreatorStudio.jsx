@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked, Calendar, Target, BookOpen, Globe } from 'lucide-react';
+import { Wand2, FileText, ClipboardCheck, Video, DollarSign, Zap, Film, BookMarked, Calendar, Target, BookOpen, Globe, Sparkles } from 'lucide-react';
 import AISyllabusGenerator from '@/components/creator/AISyllabusGenerator';
 import AICourseDescriptionGenerator from '@/components/creator/AICourseDescriptionGenerator';
 import DiverseAssessmentGenerator from '@/components/creator/DiverseAssessmentGenerator';

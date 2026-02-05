@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import AIContentAnalyticsDashboard from './pages/AIContentAnalyticsDashboard';
+import AIContentStudio from './pages/AIContentStudio';
 import AICreatorAnalyticsDashboard from './pages/AICreatorAnalyticsDashboard';
 import AICreatorAssistant from './pages/AICreatorAssistant';
 import AICreatorStudio from './pages/AICreatorStudio';
@@ -131,12 +132,12 @@ import TeamPulseDashboard from './pages/TeamPulseDashboard';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
-import AIContentStudio from './pages/AIContentStudio';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "AIContentAnalyticsDashboard": AIContentAnalyticsDashboard,
+    "AIContentStudio": AIContentStudio,
     "AICreatorAnalyticsDashboard": AICreatorAnalyticsDashboard,
     "AICreatorAssistant": AICreatorAssistant,
     "AICreatorStudio": AICreatorStudio,
@@ -220,7 +221,6 @@ export const PAGES = {
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
-    "AIContentStudio": AIContentStudio,
 }
 
 export const pagesConfig = {
