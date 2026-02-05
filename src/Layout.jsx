@@ -42,6 +42,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { base44 } from "@/api/base44Client";
 import BrandLogo from "@/components/common/BrandLogo";
+import AIAssistant from "@/components/help/AIAssistant";
+import InteractiveTour from "@/components/help/InteractiveTour";
 
 const navigationItems = [
   {
@@ -166,6 +168,7 @@ export default function Layout({ children, currentPageName }) {
   const [user, setUser] = React.useState(null);
   const [isLoading, setIsLoading] = React.useState(true);
   const [hasAccess, setHasAccess] = React.useState(false);
+  const [showTour, setShowTour] = React.useState(false);
 
   React.useEffect(() => {
     loadUser();
@@ -373,8 +376,22 @@ export default function Layout({ children, currentPageName }) {
           <div className="flex-1 overflow-auto pt-14 md:pt-0">
             {children}
           </div>
-        </main>
-      </div>
-    </SidebarProvider>
-  );
-}
+          </main>
+
+          {/* AI Assistant - Available on all pages */}
+          <AIAssistant 
+          currentPage={currentPageName} 
+          onStartTour={() => setShowTour(true)}
+          />
+
+          {/* Interactive Tour */}
+          {showTour && (
+          <InteractiveTour 
+            pageName={currentPageName}
+            onClose={() => setShowTour(false)}
+          />
+          )}
+          </div>
+          </SidebarProvider>
+          );
+          }
