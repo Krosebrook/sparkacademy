@@ -333,12 +333,7 @@ export default function Layout({ children, currentPageName }) {
                     <span>My Profile</span>
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to={createPageUrl('Billing')} className="cursor-pointer">
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    <span>Billing</span>
-                  </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem onClick={async () => {
                   await base44.auth.logout();
                   window.location.href = createPageUrl("LandingPage");
