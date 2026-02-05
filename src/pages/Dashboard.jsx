@@ -120,35 +120,10 @@ export default function Dashboard() {
     const checkUser = async () => {
       try {
         const userData = await base44.auth.me();
-        
-        // CRITICAL: Check for valid subscription
-        const subscription = userData?.subscription;
-        const hasValidSubscription = subscription && 
-                                     subscription.status && 
-                                     (subscription.status === 'active' || subscription.status === 'trialing');
-        
-        console.log('[Dashboard] Access check:', {
-          email: userData?.email,
-          hasSubscription: !!subscription,
-          subscriptionStatus: subscription?.status || 'NO_SUBSCRIPTION',
-          hasValidSubscription,
-          fullSubscriptionObject: subscription
-        });
-        
-        // If user exists but NO valid subscription, redirect immediately
-        if (!hasValidSubscription) {
-          console.log('[Dashboard] ❌ ACCESS DENIED - No valid subscription, redirecting...');
-          window.location.href = createPageUrl("LandingPage");
-          return; // Don't set user or continue loading
-        }
-        
-        // Only set user if they have valid subscription
-        console.log('[Dashboard] ✅ ACCESS GRANTED - Valid subscription found');
-        setUser(userData);
-        
+        setUser(userData); // Internal use - no subscription check
       } catch (error) {
-        console.log('[Dashboard] User not authenticated, redirecting to landing...');
-        window.location.href = createPageUrl("LandingPage");
+        console.log('[Dashboard] User not authenticated');
+        base44.auth.redirectToLogin();
       } finally {
         setIsLoading(false);
       }
