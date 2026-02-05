@@ -176,20 +176,7 @@ export default function Layout({ children, currentPageName }) {
     try {
       const userData = await base44.auth.me();
       setUser(userData);
-      
-      // STRICT subscription check - must have subscription object with active/trialing status
-      const subscription = userData?.subscription;
-      const hasValidSubscription = subscription && 
-                                   subscription.status && 
-                                   (subscription.status === 'active' || subscription.status === 'trialing');
-      
-      console.log('[Layout] Subscription check:', {
-        hasSubscription: !!subscription,
-        status: subscription?.status,
-        hasValidSubscription
-      });
-      
-      setHasAccess(hasValidSubscription);
+      setHasAccess(true); // Internal use - always grant access
     } catch (error) {
       console.log("[Layout] User not authenticated");
       setUser(null);
@@ -207,23 +194,13 @@ export default function Layout({ children, currentPageName }) {
     );
   }
 
-  // Allow access to LandingPage, SubscriptionSuccess, and Billing without restrictions
-  const publicPages = ['LandingPage', 'SubscriptionSuccess', 'Billing'];
-  if (publicPages.includes(currentPageName)) {
-    return <div className="min-h-screen">{children}</div>;
-  }
-
-  // STRICT CHECK: Block if not logged in OR no valid subscription
-  if (!user || !hasAccess) {
-    console.log('[Layout] Access denied - redirecting to landing page', {
-      hasUser: !!user,
-      hasAccess
-    });
-    window.location.href = createPageUrl("LandingPage");
+  // Block if not logged in
+  if (!user) {
+    base44.auth.redirectToLogin();
     return null;
   }
 
-  // User has active subscription - show full app
+  // User is authenticated - show full app
   return (
     <SidebarProvider>
       <style>{`
