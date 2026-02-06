@@ -14,6 +14,8 @@ import CourseRecommendations from "../components/dashboard/CourseRecommendations
 import PersonalizedRecommendations from "@/components/recommendations/PersonalizedRecommendations";
 import PersonalizedCourseRecommendations from "@/components/recommendations/PersonalizedCourseRecommendations";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
+import AdaptiveLearningEngine from "@/components/learning/AdaptiveLearningEngine";
+import SmartRecommendations from "@/components/learning/SmartRecommendations";
 
 function LoggedInDashboard({ user }) {
   const [stats, setStats] = useState({
@@ -95,7 +97,8 @@ function LoggedInDashboard({ user }) {
       
       <div className="mb-6 space-y-6">
         <GamificationDashboard />
-        <PersonalizedCourseRecommendations context="dashboard" />
+        <AdaptiveLearningEngine userEmail={user?.email} performanceData={{}} />
+        <SmartRecommendations userEmail={user?.email} />
       </div>
       
       <div className="grid lg:grid-cols-3 gap-6 mt-6">
@@ -104,7 +107,7 @@ function LoggedInDashboard({ user }) {
           <RecentCourses courses={recentCourses} isLoading={isLoading} />
         </div>
         <div className="space-y-6">
-          <CourseRecommendations userEmail={user.email} />
+          <PersonalizedCourseRecommendations context="dashboard" />
           <QuickActions />
         </div>
       </div>
