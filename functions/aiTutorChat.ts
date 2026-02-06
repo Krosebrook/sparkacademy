@@ -4,49 +4,65 @@ Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
-    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-    const { question, context, course_id, lesson_topic } = await req.json();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    // Get student's learning context
-    const [employeeProfile, skillsPathway, enrollments] = await Promise.all([
-      base44.entities.EmployeeProfile.filter({ employee_email: user.email }).then(r => r[0]),
-      base44.entities.SkillsPathway.filter({ employee_id: user.email, status: 'active' }).then(r => r[0]),
-      course_id ? base44.entities.Enrollment.filter({ student_email: user.email, course_id }) : Promise.resolve([])
-    ]);
+    const { courseId, lessonId, question, courseContent, conversationHistory } = await req.json();
 
-    const prompt = `You are an expert AI tutor for INTInc's corporate AI training platform. Provide clear, helpful, and personalized responses to employee questions.
-
-STUDENT CONTEXT:
-- Role: ${employeeProfile?.current_role || 'Not specified'}
-- Department: ${employeeProfile?.department || 'Not specified'}
-- AI Experience: ${employeeProfile?.ai_experience_level || 'beginner'}
-- Learning Pathway: ${skillsPathway?.pathway_name || 'General AI literacy'}
-${lesson_topic ? `- Current Topic: ${lesson_topic}` : ''}
-
-STUDENT QUESTION:
-${question}
-
-${context ? `ADDITIONAL CONTEXT:\n${context}` : ''}
-
-Provide:
-1. A clear, concise answer tailored to their experience level
-2. Practical examples relevant to their role/department
-3. Follow-up suggestions for deeper learning
-4. Related concepts they should explore
-
-Be encouraging, supportive, and adapt your explanation to their background.`;
-
-    const response = await base44.asServiceRole.integrations.Core.InvokeLLM({
-      prompt
+    // Get student's learning history
+    const metrics = await base44.entities.CourseEngagementMetrics.filter({
+      course_id: courseId,
+      student_email: user.email
     });
 
-    return Response.json({
-      answer: response,
-      timestamp: new Date().toISOString()
+    const studentContext = metrics[0] || {};
+    
+    // Build context-aware prompt
+    const prompt = `You are an intelligent AI tutor helping a student in their course. Be supportive, clear, and pedagogical.
+
+Course Context: ${courseContent}
+Current Lesson: ${lessonId}
+
+Student's Learning History:
+- Progress: ${studentContext.progress_percentage || 0}%
+- Quiz Performance: ${JSON.stringify(studentContext.quiz_performance || [])}
+- Recent Struggles: ${JSON.stringify(studentContext.struggle_indicators?.slice(-3) || [])}
+
+Conversation History:
+${conversationHistory?.map(msg => `${msg.role}: ${msg.content}`).join('\n') || 'None'}
+
+Student Question: ${question}
+
+Provide a helpful response that:
+1. Answers their question clearly
+2. Explains the concept at their level
+3. Provides relevant examples
+4. Offers hints, not direct answers for assignments
+5. Encourages critical thinking`;
+
+    const response = await base44.integrations.Core.InvokeLLM({
+      prompt,
+      add_context_from_internet: false
     });
+
+    // Track interaction
+    await base44.functions.invoke('trackEngagement', {
+      courseId,
+      engagementType: 'ai_tutor',
+      data: {
+        question,
+        lessonContext: lessonId
+      }
+    });
+
+    return Response.json({ 
+      response,
+      tutorAdvice: response
+    });
+
   } catch (error) {
-    console.error('AI tutor error:', error);
     return Response.json({ error: error.message }, { status: 500 });
   }
 });

@@ -8,6 +8,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AdvancedCourseAnalytics from '@/components/analytics/AdvancedCourseAnalytics';
 import { BarChart3, Users, Sparkles, BookOpen } from 'lucide-react';
 import StudentProgressAnalytics from '@/components/instructor/StudentProgressAnalytics';
 import ContentInsightsPanel from '@/components/instructor/ContentInsightsPanel';
