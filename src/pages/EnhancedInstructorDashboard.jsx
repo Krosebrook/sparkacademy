@@ -61,10 +61,14 @@ export default function EnhancedInstructorDashboard() {
 
         {selectedCourse ? (
           <Tabs defaultValue="analytics" className="w-full">
-            <TabsList className="grid w-full grid-cols-4 bg-white border border-gray-200">
+            <TabsList className="grid w-full grid-cols-5 bg-white border border-gray-200">
+              <TabsTrigger value="overview" className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Overview
+              </TabsTrigger>
               <TabsTrigger value="analytics" className="flex items-center gap-2">
                 <BarChart3 className="w-4 h-4" />
-                Analytics
+                Advanced Analytics
               </TabsTrigger>
               <TabsTrigger value="coaching" className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
@@ -80,8 +84,12 @@ export default function EnhancedInstructorDashboard() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="analytics" className="space-y-6">
+            <TabsContent value="overview" className="space-y-6">
               <StudentProgressAnalytics courseId={selectedCourse} />
+            </TabsContent>
+
+            <TabsContent value="analytics" className="space-y-6">
+              <AdvancedCourseAnalytics courseId={selectedCourse} />
             </TabsContent>
 
             <TabsContent value="coaching" className="space-y-6">
