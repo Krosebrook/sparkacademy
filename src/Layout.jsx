@@ -119,6 +119,12 @@ const navigationItems = [
     description: "Course Tools"
   },
   {
+    title: "Instructor Collaboration",
+    url: createPageUrl("InstructorCollaboration"),
+    icon: Users,
+    description: "AI Forums & Review"
+  },
+  {
     title: "Study Dashboard",
     url: createPageUrl("StudyDashboard"),
     icon: BookOpen,
