@@ -102,6 +102,7 @@ import GamificationHub from './pages/GamificationHub';
 import Home from './pages/Home';
 import InstructorAITools from './pages/InstructorAITools';
 import InstructorAnalytics from './pages/InstructorAnalytics';
+import InstructorCollaboration from './pages/InstructorCollaboration';
 import InstructorDashboard from './pages/InstructorDashboard';
 import LandingPage from './pages/LandingPage';
 import LearningComparison from './pages/LearningComparison';
@@ -132,7 +133,6 @@ import TeamPulseDashboard from './pages/TeamPulseDashboard';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
-import InstructorCollaboration from './pages/InstructorCollaboration';
 import __Layout from './Layout.jsx';
 
 
@@ -192,6 +192,7 @@ export const PAGES = {
     "Home": Home,
     "InstructorAITools": InstructorAITools,
     "InstructorAnalytics": InstructorAnalytics,
+    "InstructorCollaboration": InstructorCollaboration,
     "InstructorDashboard": InstructorDashboard,
     "LandingPage": LandingPage,
     "LearningComparison": LearningComparison,
@@ -222,7 +223,6 @@ export const PAGES = {
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
-    "InstructorCollaboration": InstructorCollaboration,
 }
 
 export const pagesConfig = {

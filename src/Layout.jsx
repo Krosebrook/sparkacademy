@@ -53,6 +53,12 @@ const navigationItems = [
     description: "Overview"
   },
   {
+    title: "Discover Courses",
+    url: createPageUrl("CourseDiscovery"),
+    icon: BookOpen,
+    description: "AI Search"
+  },
+  {
     title: "Create Course",
     url: createPageUrl("CourseCreator"),
     icon: PlusCircle,
