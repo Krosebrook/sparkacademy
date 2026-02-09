@@ -1,0 +1,20 @@
+name: SparkAcademy Environment Setup
+
+# This file defines the setup steps for GitHub Copilot agents
+# to properly build and test the SparkAcademy application
+
+steps:
+  - uses: actions/checkout@v4
+  
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: '18'
+      cache: 'npm'
+  
+  - name: Install dependencies
+    run: npm ci
+  
+  - name: Set environment variables
+    run: |
+      echo "BASE44_LEGACY_SDK_IMPORTS=true" >> $GITHUB_ENV
