@@ -26,6 +26,7 @@ function LoggedInDashboard({ user }) {
   const [recentCourses, setRecentCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
+  const [totalXP, setTotalXP] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   const loadDashboardData = useCallback(async () => {
