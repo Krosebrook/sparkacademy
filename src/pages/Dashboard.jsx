@@ -52,6 +52,12 @@ function LoggedInDashboard({ user }) {
         avgRating: avgRating,
       });
 
+      // Load XP points
+      try {
+        const pts = await base44.entities.StudentPoints.filter({ student_email: user.email });
+        setTotalXP(pts[0]?.total_points || 0);
+      } catch {}
+
       // Load enrollments
       const userEnrollments = await base44.entities.Enrollment.filter({ student_email: user.email });
       setEnrollments(userEnrollments);
