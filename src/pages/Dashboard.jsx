@@ -97,6 +97,7 @@ function LoggedInDashboard({ user }) {
       <DashboardStats stats={stats} isLoading={isLoading} />
       
       <div className="mb-6 space-y-6">
+        <LevelProgressCard totalPoints={0} />
         <GamificationDashboard />
         <AdaptiveLearningEngine userEmail={user?.email} performanceData={{}} />
         <SmartRecommendations userEmail={user?.email} />
