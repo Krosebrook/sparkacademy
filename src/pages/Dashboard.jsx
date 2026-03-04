@@ -14,6 +14,7 @@ import CourseRecommendations from "../components/dashboard/CourseRecommendations
 import PersonalizedRecommendations from "@/components/recommendations/PersonalizedRecommendations";
 import PersonalizedCourseRecommendations from "@/components/recommendations/PersonalizedCourseRecommendations";
 import GamificationDashboard from "@/components/gamification/GamificationDashboard";
+import LevelProgressCard from "@/components/gamification/LevelProgressCard";
 import AdaptiveLearningEngine from "@/components/learning/AdaptiveLearningEngine";
 import SmartRecommendations from "@/components/learning/SmartRecommendations";
 
