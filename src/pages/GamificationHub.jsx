@@ -73,7 +73,7 @@ export default function GamificationHub() {
           <TabsContent value="progress" className="space-y-6">
             {user?.email && <CourseProgressTracker userEmail={user.email} />}
             <div className="mt-4">
-              {user?.email && <StreakTracker studentEmail={user.email} />}
+              {user?.email && <StreakTracker userEmail={user.email} />}
             </div>
           </TabsContent>
 
