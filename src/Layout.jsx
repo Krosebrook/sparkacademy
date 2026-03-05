@@ -138,6 +138,12 @@ const navigationItems = [
   },
 
   {
+    title: "Instructor Suite",
+    url: createPageUrl("InstructorSuite"),
+    icon: GraduationCap,
+    description: "Full Toolkit"
+  },
+  {
     title: "Instructor Tools",
     url: createPageUrl("EnhancedInstructorDashboard"),
     icon: BarChart3,
