@@ -133,6 +133,7 @@ import TeamPulseDashboard from './pages/TeamPulseDashboard';
 import TimeCapsule from './pages/TimeCapsule';
 import Whiteboard from './pages/Whiteboard';
 import WorkplaceHub from './pages/WorkplaceHub';
+import InstructorSuite from './pages/InstructorSuite';
 import __Layout from './Layout.jsx';
 
 
@@ -223,6 +224,7 @@ export const PAGES = {
     "TimeCapsule": TimeCapsule,
     "Whiteboard": Whiteboard,
     "WorkplaceHub": WorkplaceHub,
+    "InstructorSuite": InstructorSuite,
 }
 
 export const pagesConfig = {
