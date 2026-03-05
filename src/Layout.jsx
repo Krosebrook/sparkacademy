@@ -18,6 +18,7 @@ import {
               Gift,
               Video,
               Users,
+              GraduationCap,
             } from "lucide-react";
 import {
   DropdownMenu,
